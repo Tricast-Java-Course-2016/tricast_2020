@@ -30,12 +30,12 @@ INSERT INTO timeoffcal.worktimes (id, starttime, endtime, modifiedstarttime, mod
 INSERT INTO timeoffcal.offdays (id, date, type, status, approvedby, userid, starttime, endtime)
 	VALUES (1, '2020-03-02', 'offday', 'accepted', 1, 1, '2020-03-03 00:00:00', '2020-03-04 00:00:00');
 INSERT INTO timeoffcal.offdays (id, date, type, status, approvedby, userid, starttime, endtime)
-	VALUES (1, '2020-03-03', 'offday', 'accepted', 1, 1, '2020-03-04 8:00:00', '2020-03-04 12:00:00');
+	VALUES (2, '2020-03-03', 'offday', 'accepted', 1, 1, '2020-03-04 8:00:00', '2020-03-04 12:00:00');
 
 INSERT INTO timeoffcal.offdaylimits (id, year, maximumamount, type, userid)
 	VALUES (1, '2020', 22, 'offday', 1);	
 INSERT INTO timeoffcal.offdaylimits (id, year, maximumamount, type, userid)
-	VALUES (1, '2020', 20, 'offday', 1);
+	VALUES (2, '2020', 20, 'offday', 1);
 	
 INSERT INTO timeoffcal.specialdays (id, date)	VALUES (1, '2020-05-01');
 INSERT INTO timeoffcal.specialdays (id, date)	VALUES (2, '2020-08-20');
