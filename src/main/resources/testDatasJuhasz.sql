@@ -36,7 +36,7 @@ INSERT INTO TIMEOFFCAL.worktimes(id, startTime, endTime, modifiedStartTime, modi
 INSERT INTO TIMEOFFCAL.worktimes(id, startTime, endTime, "type", "comment", modifiedBy, workDayId)
 								VALUES(3, '2020-05-09 8:00', '2020-05-09 17:00', 'normal', 'Normal Day', 1, 3);
 INSERT INTO TIMEOFFCAL.worktimes(id, startTime, endTime, modifiedStartTime, modifiedEndTime, "type", "comment", modifiedBy, workDayId)
-								VALUES(4, '2020-05-09 8:00', '2020-05-09 17:00', '2020-04-10 9:00', '2020-04-10 18:00', 'normal', 'Happy Day', 1, 4);
+								VALUES(4, '2020-05-09 8:00', '2020-05-09 17:00', '2020-05-10 9:00', '2020-05-10 18:00', 'normal', 'Happy Day', 1, 4);
 
 
 
