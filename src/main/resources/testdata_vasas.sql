@@ -2,10 +2,10 @@ INSERT INTO timeoffcal.roles VALUES (1, 'admin');
 INSERT INTO timeoffcal.roles VALUES (2, 'employee');
 INSERT INTO timeoffcal.roles VALUES (3, 'guest');
 
-INSERT INTO timeoffcal.users VALUES (1, 'János', 'Aladár', 'Kiss', '1980.04.01.', 'jani80', 'wert56hu', 'male', 'janos.kiss@gmail.com', 'Győr, Kossuth utca 10.', '9030', '+36309999111', true, 'Tricast', '2020-03-10 00:00:00+01', '2020-03-04 00:00:00+01', 2);
-INSERT INTO timeoffcal.users VALUES (2, 'Géza', 'Béla', 'Nagy', '1981.04.01.', 'geza81', 'asdfjkle45', 'male', 'geza.nagy@gmail.com', 'Győr, Petőfi utca 15.', '9026', '+36309999441', true, 'Tricast', '2020-03-10 00:00:00+01', '2020-03-04 00:00:00+01', 1);
-INSERT INTO timeoffcal.users VALUES (3, 'Mária', 'Laura', 'Tóth', '1982.04.01.', 'mari82', 'serfdr46', 'female', 'maria.toth@gmail.com', 'Győr, Széchenyi utca 15.', '9026', '+36309934345', true, 'Tricast', '2020-03-10 00:00:00+01', '2020-03-05 00:00:00+01', 1);
-INSERT INTO timeoffcal.users VALUES (4, 'John', NULL, 'Eismann', '1999.03.27.', 'johnny99', 'qwert123', 'male', 'johnny99.eismann@gmail.com','London, Garbage street 40', '90876', '+44330993434', true, 'Fourcast', '2020-03-10 00:00:00+01', '2020-03-05 00:00:00+01', 3);
+INSERT INTO timeoffcal.users VALUES (1, 'János', 'Aladár', 'Kiss', '1980.04.01.', 'jani80', 'wert56hu', 'MALE', 'janos.kiss@gmail.com', 'Győr, Kossuth utca 10.', '9030', '+36309999111', true, 'Tricast', '2020-03-10 00:00:00+01', '2020-03-04 00:00:00+01', 2);
+INSERT INTO timeoffcal.users VALUES (2, 'Géza', 'Béla', 'Nagy', '1981.04.01.', 'geza81', 'asdfjkle45', 'MALE', 'geza.nagy@gmail.com', 'Győr, Petőfi utca 15.', '9026', '+36309999441', true, 'Tricast', '2020-03-10 00:00:00+01', '2020-03-04 00:00:00+01', 1);
+INSERT INTO timeoffcal.users VALUES (3, 'Mária', 'Laura', 'Tóth', '1982.04.01.', 'mari82', 'serfdr46', 'FEMALE', 'maria.toth@gmail.com', 'Győr, Széchenyi utca 15.', '9026', '+36309934345', true, 'Tricast', '2020-03-10 00:00:00+01', '2020-03-05 00:00:00+01', 1);
+INSERT INTO timeoffcal.users VALUES (4, 'John', NULL, 'Eismann', '1999.03.27.', 'johnny99', 'qwert123', 'MALE', 'johnny99.eismann@gmail.com','London, Garbage street 40', '90876', '+44330993434', true, 'Fourcast', '2020-03-10 00:00:00+01', '2020-03-05 00:00:00+01', 3);
 
 INSERT INTO timeoffcal.workdays VALUES (1, 1, '2020-03-04');
 INSERT INTO timeoffcal.workdays VALUES (2, 1, '2020-03-05');

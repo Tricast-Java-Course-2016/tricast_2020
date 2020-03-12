@@ -37,8 +37,9 @@ public class User implements Serializable {
 	@Column(name = "firstname")
 	private String firstName;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "gender")
-	private String gender;
+	private UserGender gender;
 
 	@Column(name = "isactive")
 	private Boolean isActive;
@@ -126,11 +127,11 @@ public class User implements Serializable {
 		this.firstName = firstName;
 	}
 
-	public String getGender() {
+	public UserGender getGender() {
 		return this.gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(UserGender gender) {
 		this.gender = gender;
 	}
 

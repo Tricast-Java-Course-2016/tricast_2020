@@ -29,7 +29,7 @@ public class CommandLineTestRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         LOG.info("Running...");
         // add your code here
-        userRepository.findAll().forEach(user -> System.out.println(user.getLastName()));
+        userRepository.findAll().forEach(user -> System.out.println(user.getGender()));
        
     }
 }
