@@ -2,53 +2,70 @@ package com.tricast.repositories.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.sql.Timestamp;
-
+import java.time.ZonedDateTime;
 
 /**
  * The persistent class for the users database table.
  * 
  */
 @Entity
-@Table(name="users")
-@NamedQuery(name="User.findAll", query="SELECT u FROM User u")
+@Table(name = "users")
+@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@SequenceGenerator(name = "SEQ_USERS", sequenceName = "SEQ_USERS")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_USERS")
 	private long id;
 
-	private Timestamp accountcreated;
+	@Column(name = "accountcreated")
+	private ZonedDateTime accountCreated;
 
+	@Column(name = "address")
 	private String address;
 
-	private String companyname;
+	@Column(name = "companyname")
+	private String companyName;
 
+	@Column(name = "dob")
 	private String dob;
 
+	@Column(name = "email")
 	private String email;
 
-	private String firstname;
+	@Column(name = "firstname")
+	private String firstName;
 
+	@Column(name = "gender")
 	private String gender;
 
-	private Boolean isactive;
+	@Column(name = "isactive")
+	private Boolean isActive;
 
-	private Timestamp lastlogin;
+	@Column(name = "lastlogin")
+	private ZonedDateTime lastLogin;
 
-	private String lastname;
+	@Column(name = "lastname")
+	private String lastName;
 
-	private String middlename;
+	@Column(name = "middlename")
+	private String middleName;
 
+	@Column(name = "password")
 	private String password;
 
+	@Column(name = "phone")
 	private String phone;
 
+	@Column(name = "postcode")
 	private String postcode;
 
-	private Integer roleid;
+	@Column(name = "roleid")
+	private Integer roleId;
 
-	private String username;
+	@Column(name = "username")
+	private String userName;
 
 	public User() {
 	}
@@ -61,12 +78,12 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public Timestamp getAccountcreated() {
-		return this.accountcreated;
+	public ZonedDateTime getAccountCreated() {
+		return this.accountCreated;
 	}
 
-	public void setAccountcreated(Timestamp accountcreated) {
-		this.accountcreated = accountcreated;
+	public void setAccountCreated(ZonedDateTime accountCreated) {
+		this.accountCreated = accountCreated;
 	}
 
 	public String getAddress() {
@@ -77,12 +94,12 @@ public class User implements Serializable {
 		this.address = address;
 	}
 
-	public String getCompanyname() {
-		return this.companyname;
+	public String getCompanyName() {
+		return this.companyName;
 	}
 
-	public void setCompanyname(String companyname) {
-		this.companyname = companyname;
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 
 	public String getDob() {
@@ -101,12 +118,12 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public String getFirstname() {
-		return this.firstname;
+	public String getFirstName() {
+		return this.firstName;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	public String getGender() {
@@ -117,36 +134,36 @@ public class User implements Serializable {
 		this.gender = gender;
 	}
 
-	public Boolean getIsactive() {
-		return this.isactive;
+	public Boolean getIsActive() {
+		return this.isActive;
 	}
 
-	public void setIsactive(Boolean isactive) {
-		this.isactive = isactive;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public Timestamp getLastlogin() {
-		return this.lastlogin;
+	public ZonedDateTime getLastLogin() {
+		return this.lastLogin;
 	}
 
-	public void setLastlogin(Timestamp lastlogin) {
-		this.lastlogin = lastlogin;
+	public void setLastLogin(ZonedDateTime lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 
-	public String getLastname() {
-		return this.lastname;
+	public String getLastName() {
+		return this.lastName;
 	}
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public String getMiddlename() {
-		return this.middlename;
+	public String getMiddleName() {
+		return this.middleName;
 	}
 
-	public void setMiddlename(String middlename) {
-		this.middlename = middlename;
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
 	}
 
 	public String getPassword() {
@@ -173,20 +190,20 @@ public class User implements Serializable {
 		this.postcode = postcode;
 	}
 
-	public Integer getRoleid() {
-		return this.roleid;
+	public Integer getRoleId() {
+		return this.roleId;
 	}
 
-	public void setRoleid(Integer roleid) {
-		this.roleid = roleid;
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
 	}
 
-	public String getUsername() {
-		return this.username;
+	public String getUserName() {
+		return this.userName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }
