@@ -1,0 +1,9 @@
+DELETE FROM timeoffcal.offdaylimits;
+DELETE FROM timeoffcal.offdays;
+DELETE FROM timeoffcal.rolepermissionset;
+DELETE FROM timeoffcal.permissions;
+DELETE FROM timeoffcal.specialdays;
+DELETE FROM timeoffcal.worktimes;
+DELETE FROM timeoffcal.workdays;
+DELETE FROM timeoffcal.users;
+DELETE FROM timeoffcal.roles;
