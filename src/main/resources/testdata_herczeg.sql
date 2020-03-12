@@ -2,13 +2,15 @@ INSERT INTO timeoffcal.roles (id, rolename)	VALUES (1, 'admin');
 INSERT INTO timeoffcal.roles (id, rolename)	VALUES (2, 'employee');
 INSERT INTO timeoffcal.roles (id, rolename) VALUES (3, 'guest');
 
-INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (1, 'admin');
-INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (2, 'user');
-INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (3, 'guest');
+INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (1, 'View other holidays');
+INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (2, 'Modify own holidays');
+INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (3, 'Modify all holidays');
 
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (1, 1, 3);
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (1, 1, 2);
 INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (1, 1, 1);
 INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (2, 2, 2);
-INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (3, 3, 3);
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (3, 3, 2);
 
 INSERT INTO timeoffcal.users (id, firstname, middlename, lastname, dob, username, password, gender, email, address, postcode, phone, isactive, companyname, lastlogin, accountcreated, roleid)
 	VALUES (1, 'Béla', 'Gyula', 'Kovács', '1975-02-26', 'kbgy75', '123123123', 'male', 'bela@kovacs.hu', 'Pécs, Petőfi utca 47,', '7621', '+36307964223', 'true', 'Gyula cége', '2020-03-06 8:30:00', '2020-02-29 12:30:00', 1);
@@ -28,7 +30,7 @@ INSERT INTO timeoffcal.worktimes (id, starttime, endtime, modifiedstarttime, mod
 	VALUES (4, '2020-03-06 14:00:00', '2020-03-06 16:30:00', NULL, NULL, 'office', 'testing', 1, 2);
 
 INSERT INTO timeoffcal.offdays (id, date, type, status, approvedby, userid, starttime, endtime)
-	VALUES (1, '2020-03-02', 'offday', 'accepted', 1, 1, '2020-03-03 00:00:00', '2020-03-04 00:00:00');
+	VALUES (1, '2020-03-02', 'offday', 'accepted', 1, 1, '2020-03-03 8:00:00', '2020-03-04 17:30:00');
 INSERT INTO timeoffcal.offdays (id, date, type, status, approvedby, userid, starttime, endtime)
 	VALUES (2, '2020-03-03', 'offday', 'accepted', 1, 1, '2020-03-04 8:00:00', '2020-03-04 12:00:00');
 
