@@ -14,6 +14,7 @@ import com.tricast.repositories.SpecialdayRepository;
 import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
+import com.tricast.repositories.entities.enums.WorktimeType;
 
 @SpringBootApplication
 public class CommandLineTestRunner implements CommandLineRunner {
@@ -45,5 +46,6 @@ public class CommandLineTestRunner implements CommandLineRunner {
         specialdayRepository.findAll().forEach(specialday -> System.out.println(specialday.getDate()));
         workdayRepository.findAll().forEach(workday -> System.out.println(workday.getDate()));
         worktimeRepository.findAll().forEach(worktime -> System.out.println(worktime.getComment()));
+        worktimeRepository.findByType(WorktimeType.DELEGACY).forEach(worktime -> System.out.println(worktime.getType()));
     }
 }
