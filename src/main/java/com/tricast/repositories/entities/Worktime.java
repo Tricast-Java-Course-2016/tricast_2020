@@ -42,6 +42,7 @@ public class Worktime implements Serializable {
 	@Column(name="starttime")
 	private Timestamp startTime;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name="type")
 	private WorktimeType type;
 
