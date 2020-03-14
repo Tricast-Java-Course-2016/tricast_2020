@@ -2,6 +2,9 @@ package com.tricast.repositories.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.tricast.repositories.entities.enums.WorktimeType;
+
 import java.sql.Timestamp;
 
 
@@ -40,7 +43,7 @@ public class Worktime implements Serializable {
 	private Timestamp startTime;
 
 	@Column(name="type")
-	private String type;
+	private WorktimeType type;
 
 	//bi-directional many-to-one association to Workday
 	@ManyToOne
@@ -114,11 +117,11 @@ public class Worktime implements Serializable {
 		this.startTime = startTime;
 	}
 
-	public String getType() {
+	public WorktimeType getType() {
 		return this.type;
 	}
 
-	public void setType(String type) {
+	public void setType(WorktimeType type) {
 		this.type = type;
 	}
 
