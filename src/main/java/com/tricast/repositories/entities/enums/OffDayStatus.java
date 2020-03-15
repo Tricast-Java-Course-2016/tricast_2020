@@ -1,4 +1,4 @@
-package com.tricast.repositories.entities;
+package com.tricast.repositories.entities.enums;
 
 public enum OffDayStatus {
 	APPROVED, REQUESTED;

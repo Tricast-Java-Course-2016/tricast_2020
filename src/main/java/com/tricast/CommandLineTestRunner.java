@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.tricast.repositories.OffDayRepository;
 import com.tricast.repositories.OffdayLimitsRepository;
 import com.tricast.repositories.SpecialdayRepository;
 import com.tricast.repositories.UserRepository;
@@ -37,6 +38,9 @@ public class CommandLineTestRunner implements CommandLineRunner {
     @Autowired
     private OffdayLimitsRepository offdayLimitsRepository;
     
+    @Autowired
+    private OffDayRepository offdayrepository;
+    
     public static void main(String[] args) {
         SpringApplication.run(CommandLineTestRunner.class, args);
     }
@@ -52,5 +56,6 @@ public class CommandLineTestRunner implements CommandLineRunner {
         worktimeRepository.findAll().forEach(worktime -> System.out.println(worktime.getComment()));
         worktimeRepository.findByType(WorktimeType.DELEGACY).forEach(worktime -> System.out.println(worktime.getType()));
         offdayLimitsRepository.findAll().forEach(offdaylimits -> System.out.println(offdaylimits.getMaximumAmount()));
+        offdayrepository.findAll().forEach(offday -> System.out.println(offday.getStatus()));
     }
 }

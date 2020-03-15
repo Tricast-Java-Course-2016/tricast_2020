@@ -3,6 +3,8 @@ package com.tricast.repositories.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.tricast.repositories.entities.enums.OffDayStatus;
+
 import java.util.Date;
 import java.time.ZonedDateTime;
 
