@@ -10,7 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="rolePermissionSet")
-@NamedQuery(name="Rolepermissionset.findAll", query="SELECT r FROM Rolepermissionset r")
+//@NamedQuery(name="Rolepermissionset.findAll", query="SELECT r FROM Rolepermissionset r")
 public class RolePermissionSet implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -36,19 +36,19 @@ public class RolePermissionSet implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getPermissionid() {
+	public Integer getPermissionId() {
 		return this.permissionId;
 	}
 
-	public void setPermissionid(Integer permissionId) {
+	public void setPermissionId(Integer permissionId) {
 		this.permissionId = permissionId;
 	}
 
-	public Integer getRoleid() {
+	public Integer getRoleId() {
 		return this.roleId;
 	}
 
-	public void setRoleid(Integer roleId) {
+	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
 	}
 
