@@ -7,10 +7,10 @@ INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (2, 'Modify own h
 INSERT INTO timeoffcal.permissions (id, permissionname)	VALUES (3, 'Modify all holidays');
 
 INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (1, 1, 3);
-INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (1, 1, 2);
-INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (1, 1, 1);
-INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (2, 2, 2);
-INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (3, 3, 2);
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (2, 1, 2);
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (3, 1, 1);
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (4, 2, 2);
+INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (5, 3, 2);
 
 INSERT INTO timeoffcal.users (id, firstname, middlename, lastname, dob, username, password, gender, email, address, postcode, phone, isactive, companyname, lastlogin, accountcreated, roleid)
 	VALUES (1, 'Béla', 'Gyula', 'Kovács', '1975-02-26', 'kbgy75', '123123123', 'male', 'bela@kovacs.hu', 'Pécs, Petőfi utca 47,', '7621', '+36307964223', 'true', 'Gyula cége', '2020-03-06 8:30:00', '2020-02-29 12:30:00', 1);
