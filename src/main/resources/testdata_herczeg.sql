@@ -21,18 +21,18 @@ INSERT INTO timeoffcal.workdays (id, userid, date)	VALUES (1, 1, '2020-03-05');
 INSERT INTO timeoffcal.workdays (id, userid, date)	VALUES (2, 1, '2020-03-06');
 
 INSERT INTO timeoffcal.worktimes (id, starttime, endtime, modifiedstarttime, modifiedendtime, type, comment, modifiedby, workdayid)
-	VALUES (1, '2020-03-05 8:00:00', '2020-03-05 11:30:00', NULL, NULL, 'office', 'testing', 1, 1);
+	VALUES (1, '2020-03-05 8:00:00', '2020-03-05 11:30:00', NULL, NULL, 'OFFICE', 'testing', 1, 1);
 INSERT INTO timeoffcal.worktimes (id, starttime, endtime, modifiedstarttime, modifiedendtime, type, comment, modifiedby, workdayid)
-	VALUES (2, '2020-03-05 13:00:00', '2020-03-05 17:30:00', NULL, NULL, 'office', 'programming', 1, 1);
+	VALUES (2, '2020-03-05 13:00:00', '2020-03-05 17:30:00', NULL, NULL, 'OFFICE', 'programming', 1, 1);
 INSERT INTO timeoffcal.worktimes (id, starttime, endtime, modifiedstarttime, modifiedendtime, type, comment, modifiedby, workdayid)
-	VALUES (3, '2020-03-06 7:00:00', '2020-03-06 12:30:00', NULL, NULL, 'office', 'programming', 1, 2);
+	VALUES (3, '2020-03-06 7:00:00', '2020-03-06 12:30:00', NULL, NULL, 'OFFICE', 'programming', 1, 2);
 INSERT INTO timeoffcal.worktimes (id, starttime, endtime, modifiedstarttime, modifiedendtime, type, comment, modifiedby, workdayid)
-	VALUES (4, '2020-03-06 14:00:00', '2020-03-06 16:30:00', NULL, NULL, 'office', 'testing', 1, 2);
+	VALUES (4, '2020-03-06 14:00:00', '2020-03-06 16:30:00', NULL, NULL, 'OFFICE', 'testing', 1, 2);
 
 INSERT INTO timeoffcal.offdays (id, date, type, status, approvedby, userid, starttime, endtime)
-	VALUES (1, '2020-03-02', 'offday', 'accepted', 1, 1, '2020-03-03 8:00:00', '2020-03-04 17:30:00');
+	VALUES (1, '2020-03-02', 'PAID', 'accepted', 1, 1, '2020-03-03 8:00:00', '2020-03-04 17:30:00');
 INSERT INTO timeoffcal.offdays (id, date, type, status, approvedby, userid, starttime, endtime)
-	VALUES (2, '2020-03-03', 'offday', 'accepted', 1, 1, '2020-03-04 8:00:00', '2020-03-04 12:00:00');
+	VALUES (2, '2020-03-03', 'SICK', 'accepted', 1, 1, '2020-03-04 8:00:00', '2020-03-04 12:00:00');
 
 INSERT INTO timeoffcal.offdaylimits (id, year, maximumamount, type, userid)
 	VALUES (1, '2020', 22, 'offday', 1);	
