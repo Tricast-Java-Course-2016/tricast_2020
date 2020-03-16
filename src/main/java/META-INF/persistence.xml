@@ -6,5 +6,6 @@
 		<class>com.tricast.repositories.entities.Workday</class>
 		<class>com.tricast.repositories.entities.Worktime</class>
 		<class>com.tricast.repositories.entities.OffdayLimits</class>
+		<class>com.tricast.repositories.entities.Rolepermissionset</class>
 	</persistence-unit>
 </persistence>
