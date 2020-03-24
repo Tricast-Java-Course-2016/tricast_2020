@@ -11,24 +11,24 @@ INSERT INTO timeoffcal.workdays VALUES (1, 1, '2020-03-04');
 INSERT INTO timeoffcal.workdays VALUES (2, 1, '2020-03-05');
 INSERT INTO timeoffcal.workdays VALUES (3, 2, '2020-03-04');
 
-INSERT INTO timeoffcal.worktimes VALUES (1, '2020-03-04 08:00:00+01', '2020-03-04 16:00:00+01', '2020-03-04 08:30:00+01', '2020-03-04 15:00:00+01', 'homeOffice', NULL, 2, 1);
-INSERT INTO timeoffcal.worktimes VALUES (2, '2020-03-05 09:00:00+01', '2020-03-05 17:00:00+01', NULL, NULL, 'office', NULL, 1, 2);
-INSERT INTO timeoffcal.worktimes VALUES (3, '2020-03-04 07:00:00+01', '2020-03-04 17:00:00+01', NULL, NULL, 'office', NULL, 2, 3);
+INSERT INTO timeoffcal.worktimes VALUES (1, '2020-03-04 08:00:00+01', '2020-03-04 16:00:00+01', '2020-03-04 08:30:00+01', '2020-03-04 15:00:00+01', 'HOMEOFFICE', NULL, 2, 1);
+INSERT INTO timeoffcal.worktimes VALUES (2, '2020-03-05 09:00:00+01', '2020-03-05 17:00:00+01', NULL, NULL, 'OFFICE', NULL, 1, 2);
+INSERT INTO timeoffcal.worktimes VALUES (3, '2020-03-04 07:00:00+01', '2020-03-04 17:00:00+01', NULL, NULL, 'OFFICE', NULL, 2, 3);
 
-INSERT INTO timeoffcal.offdays VALUES (1, '2020-06-06', 'leave', 'requeste', NULL, 1, '2020-06-06 08:00:00+02', '2020-06-06 16:00:00+02');
-INSERT INTO timeoffcal.offdays VALUES (2, '2020-06-07', 'leave', 'requeste', NULL, 1, '2020-06-07 08:00:00+02', '2020-06-07 16:00:00+02');
-INSERT INTO timeoffcal.offdays VALUES (3, '2020-06-08', 'leave', 'requeste', NULL, 1, '2020-06-08 08:00:00+02', '2020-06-08 16:00:00+02');
-INSERT INTO timeoffcal.offdays VALUES (4, '2020-06-07', 'leave', 'approved', 3, 2, '2020-06-07 08:00:00+02', '2020-06-07 16:00:00+02');
-INSERT INTO timeoffcal.offdays VALUES (5, '2020-06-08', 'leave', 'approved', 3, 2, '2020-06-08 08:00:00+02', '2020-06-08 12:00:00+02');
-INSERT INTO timeoffcal.offdays VALUES (6, '2020-06-05', 'sickLea', 'approved', 3, 1, '2020-06-05 08:00:00+02', '2020-06-05 16:00:00+02');
+INSERT INTO timeoffcal.offdays VALUES (1, '2020-06-06', 'leave', 'REQUESTED', NULL, 1, '2020-06-06 08:00:00+02', '2020-06-06 16:00:00+02');
+INSERT INTO timeoffcal.offdays VALUES (2, '2020-06-07', 'leave', 'REQUESTED', NULL, 1, '2020-06-07 08:00:00+02', '2020-06-07 16:00:00+02');
+INSERT INTO timeoffcal.offdays VALUES (3, '2020-06-08', 'leave', 'REQUESTED', NULL, 1, '2020-06-08 08:00:00+02', '2020-06-08 16:00:00+02');
+INSERT INTO timeoffcal.offdays VALUES (4, '2020-06-07', 'leave', 'APPROVED', 3, 2, '2020-06-07 08:00:00+02', '2020-06-07 16:00:00+02');
+INSERT INTO timeoffcal.offdays VALUES (5, '2020-06-08', 'leave', 'APPROVED', 3, 2, '2020-06-08 08:00:00+02', '2020-06-08 12:00:00+02');
+INSERT INTO timeoffcal.offdays VALUES (6, '2020-06-05', 'sickLea', 'APPROVED', 3, 1, '2020-06-05 08:00:00+02', '2020-06-05 16:00:00+02');
 
 
-INSERT INTO timeoffcal.offdaylimits VALUES (1, '2020', 24, 'leave', 1);
-INSERT INTO timeoffcal.offdaylimits VALUES (2, '2020', 10, 'sickLea', 1);
-INSERT INTO timeoffcal.offdaylimits VALUES (3, '2020', 26, 'leave', 2);
-INSERT INTO timeoffcal.offdaylimits VALUES (4, '2020', 10, 'sickLea', 2);
-INSERT INTO timeoffcal.offdaylimits VALUES (5, '2020', 30, 'leave', 3);
-INSERT INTO timeoffcal.offdaylimits VALUES (6, '2020', 10, 'sickLea', 3);
+INSERT INTO timeoffcal.offdaylimits VALUES (1, '2020', 24, 'PAID', 1);
+INSERT INTO timeoffcal.offdaylimits VALUES (2, '2020', 10, 'SICK', 1);
+INSERT INTO timeoffcal.offdaylimits VALUES (3, '2020', 26, 'PAID', 2);
+INSERT INTO timeoffcal.offdaylimits VALUES (4, '2020', 10, 'SICK', 2);
+INSERT INTO timeoffcal.offdaylimits VALUES (5, '2020', 30, 'PAID', 3);
+INSERT INTO timeoffcal.offdaylimits VALUES (6, '2020', 10, 'SICK', 3);
 
 INSERT INTO timeoffcal.specialdays VALUES (1, '2020-08-21');
 INSERT INTO timeoffcal.specialdays VALUES (2, '2020-12-19');
