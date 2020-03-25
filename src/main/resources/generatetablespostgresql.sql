@@ -96,7 +96,7 @@ BEGIN
 	  id NUMERIC(18,0) NOT NULL,
 	  "date" DATE NOT NULL,
 	  "type" VARCHAR(7) NOT NULL,
-	  status VARCHAR(8) NOT NULL,
+	  status VARCHAR(9) NOT NULL,
 	  approvedBy INTEGER,
 	  userId INTEGER NOT NULL,
 	  startTime TIMESTAMP(6) WITH TIME ZONE NOT NULL,

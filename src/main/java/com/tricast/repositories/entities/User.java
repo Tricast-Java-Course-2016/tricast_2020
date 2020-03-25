@@ -1,12 +1,24 @@
 package com.tricast.repositories.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.time.ZonedDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.tricast.repositories.entities.enums.UserGender;
 
 /**
  * The persistent class for the users database table.
- * 
+ *
  */
 @Entity
 @Table(name = "users")
