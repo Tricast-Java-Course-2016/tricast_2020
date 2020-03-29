@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import javax.persistence.*;
 
 
+
 /**
  * The persistent class for the specialdays database table.
  * 
@@ -43,5 +44,8 @@ public class Specialday implements Serializable {
 	public void setDate(ZonedDateTime date) {
 		this.date = date;
 	}
-
+	@Override
+	public String toString() {
+		return "Specialday [date=" + date + "]";
+	}
 }
