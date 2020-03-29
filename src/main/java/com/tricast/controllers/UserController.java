@@ -1,12 +1,14 @@
 package com.tricast.controllers;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,24 +22,37 @@ import com.tricast.repositories.entities.enums.UserGender;
 @RequestMapping(path = "rest/users")
 public class UserController {
 
-    @Autowired
-    private UserManager userManager;
+	@Autowired
+	private UserManager userManager;
 
-    // workinghours/rest/users/{id}
-    @GetMapping(path = "/{id}")
-    public Optional<User> getById(@PathVariable("id") long id) {
-        return userManager.getById(id);
-    }
+	// workinghours/rest/users/{id}
+	@GetMapping(path = "/{id}")
+	public Optional<User> getById(@PathVariable("id") long id) {
+		return userManager.getById(id);
+	}
+	
+	@PostMapping
+	public User saveUser(@RequestBody User userRequest) {
+		return userManager.createUser(userRequest);
+	}
 
-    @GetMapping
-    public List<User> getAll(@RequestParam("gender") UserGender gender) {
-        // TODO
-        return null;
-    }
+	@PutMapping
+	public User updateUser(@RequestBody User userRequest) {
+		return userManager.updateUser(userRequest);
+	}
 
-    @PostMapping
-    public User saveUser(@RequestBody User userRequest) {
-        return userManager.createUser(userRequest);
-    }
+	@GetMapping
+	public List<User> getAll() {
+		return userManager.getAll();
+	}
 
+	@GetMapping(path = "/un/{userName}")
+	public User getUserByName(@PathVariable("userName") String userName) {
+		return userManager.getUserByName(userName);
+	}
+
+	@GetMapping(path = "/ri/{roleId}")
+	public List<User> getAllUserByRoleId(@PathVariable("roleId") long roleId) {
+		return userManager.getAllUserByRoleId(roleId);
+	}
 }
