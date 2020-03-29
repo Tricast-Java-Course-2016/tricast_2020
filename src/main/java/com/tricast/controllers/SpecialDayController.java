@@ -41,5 +41,4 @@ public class SpecialDayController {
 	public void deleteSpecialday(@RequestBody int id) {
 		specialDayManager.deleteSpecialday(id);
 	}
-
 }
