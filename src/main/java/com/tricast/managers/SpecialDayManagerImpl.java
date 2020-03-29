@@ -52,5 +52,4 @@ public class SpecialDayManagerImpl implements SpecialDayManager{
 	private ZonedDateTime getTheYearFinalDay(int year) {
 		return ZonedDateTime.of(year, 12, 31, 23, 59, 59, 999, ZoneId.systemDefault());
 	}
-	
 }
