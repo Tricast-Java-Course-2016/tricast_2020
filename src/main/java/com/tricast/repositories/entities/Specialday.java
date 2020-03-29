@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import javax.persistence.*;
 
 
+
 /**
  * The persistent class for the specialdays database table.
  * 
@@ -17,8 +18,8 @@ public class Specialday implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="SPECIALDAYS_ID_GENERATOR", sequenceName="SEQ_SPECIALDAYS")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SPECIALDAYS_ID_GENERATOR")
+	@SequenceGenerator(name="SEQ_SPECIALLIMITS", sequenceName="SEQ_SPECIALLIMITS")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_SPECIALLIMITS")
 	@Column(name="id")
 	private long id;
 	
@@ -44,4 +45,9 @@ public class Specialday implements Serializable {
 		this.date = date;
 	}
 
+	@Override
+	public String toString() {
+		return "Specialday [date=" + date + "]";
+	}
+	
 }
