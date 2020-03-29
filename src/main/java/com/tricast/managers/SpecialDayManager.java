@@ -5,6 +5,7 @@ import java.util.List;
 import com.tricast.repositories.entities.Specialday;
 
 public interface SpecialDayManager {
+	
 	List<Specialday> getSpecialDaysInTheYear(String year);
 	
 	Specialday createSpecialday(Specialday specialdayRequest);
