@@ -17,8 +17,8 @@ public class Specialday implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="SPECIALDAYS_ID_GENERATOR", sequenceName="SEQ_SPECIALDAYS")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SPECIALDAYS_ID_GENERATOR")
+	@SequenceGenerator(name="SEQ_SPECIALLIMITS", sequenceName="SEQ_SPECIALLIMITS")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_SPECIALLIMITS")
 	@Column(name="id")
 	private long id;
 	
