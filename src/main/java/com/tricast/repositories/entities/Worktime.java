@@ -47,10 +47,13 @@ public class Worktime implements Serializable {
 	private WorktimeType type;
 
 	//bi-directional many-to-one association to Workday
-	@ManyToOne
+	/*@ManyToOne
 	@JoinColumn(name="workdayid")
-	private Workday workday;
+	private Workday workday;*/
 
+	@Column(name="workdayid")
+	private long workdayId;
+	
 	public Worktime() {
 	}
 
@@ -69,7 +72,7 @@ public class Worktime implements Serializable {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
+/*
 	public Timestamp getModifiedstarttime() {
 		return this.modifiedStartTime;
 	}
@@ -77,7 +80,7 @@ public class Worktime implements Serializable {
 	public void setModifiedstarttime(Timestamp modifiedstarttime) {
 		this.modifiedStartTime = modifiedstarttime;
 	}
-
+*/
 	public Timestamp getEndTime() {
 		return endTime;
 	}
@@ -101,11 +104,11 @@ public class Worktime implements Serializable {
 	public void setModifiedEndTime(Timestamp modifiedEndTime) {
 		this.modifiedEndTime = modifiedEndTime;
 	}
-
+//
 	public Timestamp getModifiedStartTime() {
 		return modifiedStartTime;
 	}
-
+//
 	public void setModifiedStartTime(Timestamp modifiedStartTime) {
 		this.modifiedStartTime = modifiedStartTime;
 	}
@@ -125,13 +128,22 @@ public class Worktime implements Serializable {
 	public void setType(WorktimeType type) {
 		this.type = type;
 	}
-
+	
+	public long getWorkdayId() {
+		return this.workdayId;
+	}
+	
+	public void setWorkdayId(long workdayId) {
+		this.workdayId = workdayId;
+	}
+	
+	/*
 	public Workday getWorkday() {
 		return this.workday;
 	}
 
 	public void setWorkday(Workday workday) {
 		this.workday = workday;
-	}
+	}*/
 
 }
