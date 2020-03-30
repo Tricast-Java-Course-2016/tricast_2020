@@ -10,7 +10,7 @@ import com.tricast.repositories.OffDayRepository;
 import com.tricast.repositories.entities.Offday;
 
 @Component
-public class OffDayManagerImpl {
+public class OffDayManagerImpl implements OffDayManager{
 	
 	private OffDayRepository offDayRepository;
 	
@@ -18,29 +18,27 @@ public class OffDayManagerImpl {
 	public OffDayManagerImpl(OffDayRepository offDayRepository) {
 		this.offDayRepository = offDayRepository;
 	}
-	
 	@Override
 	public Offday createOffday(Offday offDayRequest) {
 		return offDayRepository.save(offDayRequest);
 	}
 	
 	@Override
-	public Offday modifyOffday(Offday modifyOffday) {
-		return offDayRepository.save(modifyOffday);
+	public Offday updateOffday(Offday offDayRequest) {
+		return offDayRepository.save(offDayRequest);
 	}
 	
 	@Override
-	public void deleteOffday(Offday id) {
-		offDayRepository.delete(id);
-	}
-	
-	@Override
-	public List<Offday> getAll() {
+	public List<Offday> getAlloffDays() {
 		return (List<Offday>) offDayRepository.findAll();
 	}
 	
 	@Override
 	public Optional<Offday> getById(long id) {
 		return offDayRepository.findById(id);
+	}
+	@Override
+	public void deleteOffday(long leaveId) {
+		offDayRepository.deleteById(leaveId);
 	}
 }
