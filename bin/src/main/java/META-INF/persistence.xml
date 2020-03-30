@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="workinghours">
+		<class>com.tricast.repositories.entities.User</class>
+		<class>com.tricast.repositories.entities.Specialday</class>
+		<class>com.tricast.repositories.entities.Workday</class>
+		<class>com.tricast.repositories.entities.Worktime</class>
+		<class>com.tricast.repositories.entities.OffdayLimits</class>
+		<class>com.tricast.repositories.entities.RolePermissionSet</class>
+	</persistence-unit>
+</persistence>

@@ -9,11 +9,9 @@ public interface OffDayManager {
 	
 	Optional<Offday> getById(long id);
 	
-	List<Offday> getAll();
-	
 	Offday createOffday(Offday offdayRequest);
 	
-	Offday modifyOffday(Offday offdaymodify);
+	Offday updateOffday(Offday offdayRequest);
 	
 	void deleteOffday(long leaveId);
 
