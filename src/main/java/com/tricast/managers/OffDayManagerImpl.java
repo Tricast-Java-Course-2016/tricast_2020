@@ -1,6 +1,7 @@
 package com.tricast.managers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class OffDayManagerImpl {
 	}
 	
 	@Override
-	public void deleteOffday(long LeaveId) {
-		offDayRepository.delete(LeaveId);
+	public void deleteOffday(Offday id) {
+		offDayRepository.delete(id);
 	}
 	
 	@Override
@@ -39,7 +40,7 @@ public class OffDayManagerImpl {
 	}
 	
 	@Override
-	public Offday getById(long id) {
+	public Optional<Offday> getById(long id) {
 		return offDayRepository.findById(id);
 	}
 }
