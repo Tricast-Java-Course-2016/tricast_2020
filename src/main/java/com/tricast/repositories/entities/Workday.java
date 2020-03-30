@@ -30,9 +30,9 @@ public class Workday implements Serializable {
 	private Integer userId;
 
 	//bi-directional many-to-one association to Worktime
-	@OneToMany(mappedBy="workday")
-	private List<Worktime> worktimes;
-
+	/*@OneToMany(mappedBy="workday")
+	private List<Worktime> worktimes;*/
+	
 	public Workday() {
 	}
 
@@ -61,6 +61,7 @@ public class Workday implements Serializable {
 		this.userId = userId;
 	}
 
+	/*
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -86,5 +87,5 @@ public class Workday implements Serializable {
 
 		return worktime;
 	}
-
+*/
 }
