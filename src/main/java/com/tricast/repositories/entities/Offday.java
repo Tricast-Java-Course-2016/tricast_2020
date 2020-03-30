@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 import com.tricast.repositories.entities.enums.OffDayStatus;
 
-import java.util.Date;
 import java.time.ZonedDateTime;
 
 
@@ -27,9 +26,8 @@ public class Offday implements Serializable {
 	@Column(name = "approvedby")
 	private Integer approvedBy;
 
-	@Temporal(TemporalType.DATE)
 	@Column(name = "date")
-	private Date date;
+	private ZonedDateTime date;
 
 	@Column(name = "endtime")
 	private ZonedDateTime endTime;
@@ -66,11 +64,11 @@ public class Offday implements Serializable {
 		this.approvedBy = approvedBy;
 	}
 
-	public Date getDate() {
+	public ZonedDateTime getDate() {
 		return this.date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(ZonedDateTime date) {
 		this.date = date;
 	}
 
