@@ -11,7 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.tricast.repositories.OffDayRepository;
-import com.tricast.repositories.OffdayLimitsRepository;
+import com.tricast.repositories.OffDayLimitsRepository;
 import com.tricast.repositories.SpecialdayRepository;
 import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.WorkdayRepository;
@@ -36,7 +36,7 @@ public class CommandLineTestRunner implements CommandLineRunner {
     private WorktimeRepository worktimeRepository;
     
     @Autowired
-    private OffdayLimitsRepository offdayLimitsRepository;
+    private OffDayLimitsRepository offdayLimitsRepository;
     
     @Autowired
     private OffDayRepository offdayrepository;

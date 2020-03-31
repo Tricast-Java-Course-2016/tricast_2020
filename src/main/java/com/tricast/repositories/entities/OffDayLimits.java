@@ -3,7 +3,7 @@ package com.tricast.repositories.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import com.tricast.repositories.entities.enums.OffdayType;
+import com.tricast.repositories.entities.enums.OffDayType;
 
 import java.math.BigDecimal;
 
@@ -14,8 +14,8 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name="offdaylimits")
-@NamedQuery(name="OffdayLimits.findAll", query="SELECT o FROM OffdayLimits o")
-public class OffdayLimits implements Serializable {
+@NamedQuery(name="OffDayLimits.findAll", query="SELECT o FROM OffDayLimits o")
+public class OffDayLimits implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -28,7 +28,7 @@ public class OffdayLimits implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type")
-	private OffdayType type;
+	private OffDayType type;
 	
 	@Column(name = "userid")
 	private Integer userId;
@@ -36,7 +36,7 @@ public class OffdayLimits implements Serializable {
 	@Column(name = "year")
 	private String year;
 
-	public OffdayLimits() {
+	public OffDayLimits() {
 	}
 
 	public long getId() {
@@ -55,11 +55,11 @@ public class OffdayLimits implements Serializable {
 		this.maximumAmount = maximumamount;
 	}
 
-	public OffdayType getType() {
+	public OffDayType getType() {
 		return this.type;
 	}
 
-	public void setType(OffdayType type) {
+	public void setType(OffDayType type) {
 		this.type = type;
 	}
 

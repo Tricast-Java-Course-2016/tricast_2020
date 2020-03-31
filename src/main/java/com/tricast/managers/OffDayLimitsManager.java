@@ -3,19 +3,19 @@ package com.tricast.managers;
 import java.util.List;
 import java.util.Optional;
 
-import com.tricast.repositories.entities.OffdayLimits;
+import com.tricast.repositories.entities.OffDayLimits;
 
 public interface OffDayLimitsManager {
 
-	Optional<OffdayLimits> getById(long id);
+	Optional<OffDayLimits> getById(long id);
 	
-	OffdayLimits createOffdayLimits(OffdayLimits offdayLimitsRequest);
+	OffDayLimits createOffdayLimits(OffDayLimits offdayLimitsRequest);
 	
-	OffdayLimits updateOffdayLimits(OffdayLimits offdayLimitsRequest);
+	OffDayLimits updateOffdayLimits(OffDayLimits offdayLimitsRequest);
 	
 	void deleteOffdayLimits(long id);
 	
 	boolean existsOffdayLimits(long id);
 
-	List<OffdayLimits> getAllOffdayLimits();
+	List<OffDayLimits> getAllOffdayLimits();
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tricast.managers.OffDayLimitsManager;
-import com.tricast.repositories.entities.OffdayLimits;
+import com.tricast.repositories.entities.OffDayLimits;
 
 @RestController
 @RequestMapping(path = "rest/offdaylimits")
@@ -24,17 +24,17 @@ public class OffDayLimitsController {
 	private OffDayLimitsManager offDayLimitsManager;
 	
 	@GetMapping(path = "/{id}")
-	public Optional<OffdayLimits> getById(@PathVariable("id") long id) {
+	public Optional<OffDayLimits> getById(@PathVariable("id") long id) {
 		return offDayLimitsManager.getById(id);
 	}
 	
 	@PostMapping
-	public OffdayLimits createOffdayLimits(@RequestBody OffdayLimits offdayLimitsRequest) { 
+	public OffDayLimits createOffdayLimits(@RequestBody OffDayLimits offdayLimitsRequest) { 
 		return offDayLimitsManager.createOffdayLimits(offdayLimitsRequest);
 	}
 	
 	@PutMapping
-	public OffdayLimits updateOffdayLimits(@RequestBody OffdayLimits offdayLimitsRequest) {
+	public OffDayLimits updateOffdayLimits(@RequestBody OffDayLimits offdayLimitsRequest) {
 		return offDayLimitsManager.updateOffdayLimits(offdayLimitsRequest);
 	}
 	
@@ -45,7 +45,7 @@ public class OffDayLimitsController {
 	}
 	
 	@GetMapping
-	public List<OffdayLimits> getAllOffdayLimits() {
+	public List<OffDayLimits> getAllOffdayLimits() {
 		return offDayLimitsManager.getAllOffdayLimits();
 	}
 }

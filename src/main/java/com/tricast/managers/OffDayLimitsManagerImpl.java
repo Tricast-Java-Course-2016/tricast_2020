@@ -5,30 +5,30 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.tricast.repositories.OffdayLimitsRepository;
-import com.tricast.repositories.entities.OffdayLimits;
+import com.tricast.repositories.OffDayLimitsRepository;
+import com.tricast.repositories.entities.OffDayLimits;
 
 public class OffDayLimitsManagerImpl implements OffDayLimitsManager {
 	
-	private OffdayLimitsRepository offdayLimitsRepository;
+	private OffDayLimitsRepository offdayLimitsRepository;
 	
 	@Autowired
-	public OffDayLimitsManagerImpl(OffdayLimitsRepository offdayLimitsRepository) {
+	public OffDayLimitsManagerImpl(OffDayLimitsRepository offdayLimitsRepository) {
 		this.offdayLimitsRepository = offdayLimitsRepository;
 	}
 
 	@Override
-	public Optional<OffdayLimits> getById(long id) {
+	public Optional<OffDayLimits> getById(long id) {
 		return offdayLimitsRepository.findById(id);
 	}
 
 	@Override
-	public OffdayLimits createOffdayLimits(OffdayLimits offdayLimitsRequest) {
+	public OffDayLimits createOffdayLimits(OffDayLimits offdayLimitsRequest) {
 		return offdayLimitsRepository.save(offdayLimitsRequest);
 	}
 
 	@Override
-	public OffdayLimits updateOffdayLimits(OffdayLimits offdayLimitsRequest) {
+	public OffDayLimits updateOffdayLimits(OffDayLimits offdayLimitsRequest) {
 		return offdayLimitsRepository.save(offdayLimitsRequest);
 	}
 
@@ -43,7 +43,7 @@ public class OffDayLimitsManagerImpl implements OffDayLimitsManager {
 	}
 
 	@Override
-	public List<OffdayLimits> getAllOffdayLimits() {
-		return (List<OffdayLimits>) offdayLimitsRepository.findAll();
+	public List<OffDayLimits> getAllOffdayLimits() {
+		return (List<OffDayLimits>) offdayLimitsRepository.findAll();
 	}
 }

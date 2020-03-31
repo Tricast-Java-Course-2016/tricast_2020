@@ -2,8 +2,8 @@ package com.tricast.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.tricast.repositories.entities.OffdayLimits;
+import com.tricast.repositories.entities.OffDayLimits;
 
-public interface OffdayLimitsRepository extends CrudRepository<OffdayLimits, Long> {
+public interface OffDayLimitsRepository extends CrudRepository<OffDayLimits, Long> {
 
 }
