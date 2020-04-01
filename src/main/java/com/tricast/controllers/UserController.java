@@ -1,7 +1,6 @@
 package com.tricast.controllers;
 
 import java.util.List;
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,48 +10,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.api.requests.UserCreationRequest;
+import com.tricast.api.responses.UserCreationResponse;
 import com.tricast.managers.UserManager;
 import com.tricast.repositories.entities.User;
-import com.tricast.repositories.entities.enums.UserGender;
 
 @RestController
 @RequestMapping(path = "rest/users")
 public class UserController {
 
-	@Autowired
-	private UserManager userManager;
+    @Autowired
+    private UserManager userManager;
 
-	// workinghours/rest/users/{id}
-	@GetMapping(path = "/{id}")
-	public Optional<User> getById(@PathVariable("id") long id) {
-		return userManager.getById(id);
-	}
-	
-	@PostMapping
-	public User saveUser(@RequestBody User userRequest) {
-		return userManager.createUser(userRequest);
-	}
+    // workinghours/rest/users/{id}
+    @GetMapping(path = "/{id}")
+    public Optional<User> getById(@PathVariable("id") long id) {
+        return userManager.getById(id);
+    }
 
-	@PutMapping
-	public User updateUser(@RequestBody User userRequest) {
-		return userManager.updateUser(userRequest);
-	}
+    @PostMapping
+    public User saveUser(@RequestBody User userRequest) {
+        return userManager.createUser(userRequest);
+    }
 
-	@GetMapping
-	public List<User> getAll() {
-		return userManager.getAll();
-	}
+    @PostMapping(path = "/create")
+    public UserCreationResponse createUser(@RequestBody UserCreationRequest userCreationRequest) {
+        return userManager.createUserFromRequest(userCreationRequest);
+    }
 
-	@GetMapping(path = "/un/{userName}")
-	public User getUserByName(@PathVariable("userName") String userName) {
-		return userManager.getUserByName(userName);
-	}
+    @PutMapping
+    public User updateUser(@RequestBody User userRequest) {
+        return userManager.updateUser(userRequest);
+    }
 
-	@GetMapping(path = "/ri/{roleId}")
-	public List<User> getAllUserByRoleId(@PathVariable("roleId") long roleId) {
-		return userManager.getAllUserByRoleId(roleId);
-	}
+    @GetMapping
+    public List<User> getAll() {
+        return userManager.getAll();
+    }
+
+    @GetMapping(path = "/un/{userName}")
+    public User getUserByName(@PathVariable("userName") String userName) {
+        return userManager.getUserByName(userName);
+    }
+
+    @GetMapping(path = "/ri/{roleId}")
+    public List<User> getAllUserByRoleId(@PathVariable("roleId") long roleId) {
+        return userManager.getAllUserByRoleId(roleId);
+    }
 }

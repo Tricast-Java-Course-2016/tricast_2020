@@ -4,46 +4,48 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.tricast.repositories.OffDayLimitsRepository;
 import com.tricast.repositories.entities.OffDayLimits;
 
+@Component
 public class OffDayLimitsManagerImpl implements OffDayLimitsManager {
-	
-	private OffDayLimitsRepository offdayLimitsRepository;
-	
-	@Autowired
-	public OffDayLimitsManagerImpl(OffDayLimitsRepository offdayLimitsRepository) {
-		this.offdayLimitsRepository = offdayLimitsRepository;
-	}
 
-	@Override
-	public Optional<OffDayLimits> getById(long id) {
-		return offdayLimitsRepository.findById(id);
-	}
+    private OffDayLimitsRepository offdayLimitsRepository;
 
-	@Override
-	public OffDayLimits createOffdayLimits(OffDayLimits offdayLimitsRequest) {
-		return offdayLimitsRepository.save(offdayLimitsRequest);
-	}
+    @Autowired
+    public OffDayLimitsManagerImpl(OffDayLimitsRepository offdayLimitsRepository) {
+        this.offdayLimitsRepository = offdayLimitsRepository;
+    }
 
-	@Override
-	public OffDayLimits updateOffdayLimits(OffDayLimits offdayLimitsRequest) {
-		return offdayLimitsRepository.save(offdayLimitsRequest);
-	}
+    @Override
+    public Optional<OffDayLimits> getById(long id) {
+        return offdayLimitsRepository.findById(id);
+    }
 
-	@Override
-	public void deleteOffdayLimits(long id) {
-		offdayLimitsRepository.deleteById(id);
-	}
-	
-	@Override
-	public boolean existsOffdayLimits(long id) {
-		return offdayLimitsRepository.existsById(id);
-	}
+    @Override
+    public OffDayLimits createOffdayLimits(OffDayLimits offdayLimitsRequest) {
+        return offdayLimitsRepository.save(offdayLimitsRequest);
+    }
 
-	@Override
-	public List<OffDayLimits> getAllOffdayLimits() {
-		return (List<OffDayLimits>) offdayLimitsRepository.findAll();
-	}
+    @Override
+    public OffDayLimits updateOffdayLimits(OffDayLimits offdayLimitsRequest) {
+        return offdayLimitsRepository.save(offdayLimitsRequest);
+    }
+
+    @Override
+    public void deleteOffdayLimits(long id) {
+        offdayLimitsRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsOffdayLimits(long id) {
+        return offdayLimitsRepository.existsById(id);
+    }
+
+    @Override
+    public List<OffDayLimits> getAllOffdayLimits() {
+        return (List<OffDayLimits>) offdayLimitsRepository.findAll();
+    }
 }
