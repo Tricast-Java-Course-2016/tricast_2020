@@ -37,8 +37,8 @@ public class SpecialDayController {
 		return specialDayManager.createSpecialday(specialdayRequest);
 	}
 	
-	@DeleteMapping()
-	public void deleteSpecialday(@RequestBody int id) {
+	@DeleteMapping(path = "/{id}")
+	public void deleteSpecialday(@PathVariable("id") int id) {
 		specialDayManager.deleteSpecialday(id);
 	}
 }
