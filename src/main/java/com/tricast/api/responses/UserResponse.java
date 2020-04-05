@@ -1,10 +1,16 @@
-package com.tricast.api.requests;
+package com.tricast.api.responses;
+
+import java.time.ZonedDateTime;
 
 import com.tricast.repositories.entities.enums.UserGender;
 
-public class UserCreationRequest {
+public class UserResponse {
 
-	private static final long serialVersionUID = 1870713627974030003L;
+	private static final long serialVersionUID = 4417951629931970001L;
+
+	private long id;
+
+	private ZonedDateTime accountCreated;
 
 	private String address;
 
@@ -18,11 +24,13 @@ public class UserCreationRequest {
 
 	private UserGender gender;
 
+	private Boolean isActive;
+
+	private ZonedDateTime lastLogin;
+
 	private String lastName;
 
 	private String middleName;
-
-	private String password;
 
 	private String phone;
 
@@ -31,6 +39,22 @@ public class UserCreationRequest {
 	private Integer roleId;
 
 	private String userName;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public ZonedDateTime getAccountCreated() {
+		return accountCreated;
+	}
+
+	public void setAccountCreated(ZonedDateTime accountCreated) {
+		this.accountCreated = accountCreated;
+	}
 
 	public String getAddress() {
 		return address;
@@ -80,6 +104,22 @@ public class UserCreationRequest {
 		this.gender = gender;
 	}
 
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public ZonedDateTime getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(ZonedDateTime lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
 	public String getLastName() {
 		return lastName;
 	}
@@ -94,14 +134,6 @@ public class UserCreationRequest {
 
 	public void setMiddleName(String middleName) {
 		this.middleName = middleName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getPhone() {
@@ -144,15 +176,18 @@ public class UserCreationRequest {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((accountCreated == null) ? 0 : accountCreated.hashCode());
 		result = prime * result + ((address == null) ? 0 : address.hashCode());
 		result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
 		result = prime * result + ((dob == null) ? 0 : dob.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
+		result = prime * result + ((lastLogin == null) ? 0 : lastLogin.hashCode());
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
 		result = prime * result + ((postcode == null) ? 0 : postcode.hashCode());
 		result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
@@ -168,7 +203,12 @@ public class UserCreationRequest {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserCreationRequest other = (UserCreationRequest) obj;
+		UserResponse other = (UserResponse) obj;
+		if (accountCreated == null) {
+			if (other.accountCreated != null)
+				return false;
+		} else if (!accountCreated.equals(other.accountCreated))
+			return false;
 		if (address == null) {
 			if (other.address != null)
 				return false;
@@ -196,6 +236,18 @@ public class UserCreationRequest {
 			return false;
 		if (gender != other.gender)
 			return false;
+		if (id != other.id)
+			return false;
+		if (isActive == null) {
+			if (other.isActive != null)
+				return false;
+		} else if (!isActive.equals(other.isActive))
+			return false;
+		if (lastLogin == null) {
+			if (other.lastLogin != null)
+				return false;
+		} else if (!lastLogin.equals(other.lastLogin))
+			return false;
 		if (lastName == null) {
 			if (other.lastName != null)
 				return false;
@@ -205,11 +257,6 @@ public class UserCreationRequest {
 			if (other.middleName != null)
 				return false;
 		} else if (!middleName.equals(other.middleName))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
 			return false;
 		if (phone == null) {
 			if (other.phone != null)

@@ -1,8 +1,6 @@
 package com.tricast.managers;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,113 +8,159 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tricast.api.requests.UserCreationRequest;
-import com.tricast.api.responses.UserCreationResponse;
+import com.tricast.api.requests.UserLoginRequest;
+import com.tricast.api.requests.UserPwdChangeRequest;
+import com.tricast.api.requests.UserUpdateRequest;
+import com.tricast.api.responses.UserResponse;
 import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.entities.User;
 
 @Component
 public class UserManagerImpl implements UserManager {
 
-    private UserRepository userRepository;
+	private UserRepository userRepository;
 
-    @Autowired
-    public UserManagerImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	@Autowired
+	public UserManagerImpl(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
-    @Override
-    public Optional<User> getById(long id) {
-        return userRepository.findById(id);
-    }
+	@Override
+	public Optional<User> getById(long id) {
+		return userRepository.findById(id);
+	}
 
-    @Override
-    public User createUser(User userRequest) {
-        return userRepository.save(userRequest);
-    }
+	@Override
+	public UserResponse createUserFromRequest(UserCreationRequest userCreationRequest) {
+		User newUser = mapUserCreationRequestToUser(userCreationRequest);
+		User createdUser = userRepository.save(newUser);
+		return mapUserToUserResponse(createdUser);
+	}
 
-    @Override
-    public UserCreationResponse createUserFromRequest(UserCreationRequest userCreationRequest) {
-        User newUser = mapUserCreationRequestToUser(userCreationRequest);
-        User createdUser = userRepository.save(newUser);
-        return mapUserToUserCreationResponse(createdUser);
-    }
+	@Override
+	public UserResponse updateUserFromRequest(UserUpdateRequest UserUpdateRequest) {
 
-    @Override
-    public User updateUser(User userRequest) {
-        return userRepository.save(userRequest);
-    }
+		User userToUpdate = mapUserUpdateRequestToUser(UserUpdateRequest);
+		UserResponse userResponse = null;
+		if (userToUpdate != null) {
+			User updatedUser = userRepository.save(userToUpdate);
+			userResponse = mapUserToUserResponse(updatedUser);
+		}
+		return userResponse;
+	}
 
-    @Override
-    public List<User> getAll() {
-        return (List<User>) userRepository.findAll();
-    }
+	@Override
+	public List<User> getAll() {
+		return (List<User>) userRepository.findAll();
+	}
 
-    @Override
-    public User getUserByName(String userName) {
-        List<User> listAllUser = (List<User>) userRepository.findAll();
-        for (User user : listAllUser) {
-            if (user.getUserName() != null && user.getUserName().equals(userName)) {
-                return user;
-            }
+	private User mapUserCreationRequestToUser(UserCreationRequest userCreationRequest) {
+		User newUser = new User();
+		newUser.setCompanyName(userCreationRequest.getCompanyName());
+		newUser.setAddress(userCreationRequest.getAddress());
+		newUser.setAccountCreated(ZonedDateTime.now());
+		newUser.setDob(userCreationRequest.getDob());
+		newUser.setEmail(userCreationRequest.getEmail());
+		newUser.setFirstName(userCreationRequest.getFirstName());
+		newUser.setGender(userCreationRequest.getGender());
+		newUser.setIsActive(true);
+		newUser.setLastName(userCreationRequest.getLastName());
+		newUser.setMiddleName(userCreationRequest.getMiddleName());
+		newUser.setPassword(userCreationRequest.getPassword());
+		newUser.setPhone(userCreationRequest.getPhone());
+		newUser.setPostcode(userCreationRequest.getPostcode());
+		newUser.setRoleId(userCreationRequest.getRoleId());
+		newUser.setUserName(userCreationRequest.getUserName());
+		return newUser;
+	}
 
-        }
+	private User mapUserUpdateRequestToUser(UserUpdateRequest userUpdateRequest) {
 
-        return null;
-    }
+		Optional<User> userToUpdateOptional = userRepository.findById(userUpdateRequest.getId());
 
-    @Override
-    public List<User> getAllUserByRoleId(long roleId) {
-        List<User> listResult = new ArrayList<>();
-        List<User> listAllUser = (List<User>) userRepository.findAll();
-        for (Iterator<User> iterator = listAllUser.iterator(); iterator.hasNext();) {
-            User user = iterator.next();
-            if (user.getRoleId() == roleId) {
-                listResult.add(user);
-            }
+		User userToUpdate = null;
+		if (userToUpdateOptional.isPresent()) {
+			userToUpdate = userToUpdateOptional.get();
 
-        }
+			userToUpdate.setCompanyName(userUpdateRequest.getCompanyName());
+			userToUpdate.setAddress(userUpdateRequest.getAddress());
+			userToUpdate.setDob(userUpdateRequest.getDob());
+			userToUpdate.setEmail(userUpdateRequest.getEmail());
+			userToUpdate.setFirstName(userUpdateRequest.getFirstName());
+			userToUpdate.setGender(userUpdateRequest.getGender());
+			userToUpdate.setIsActive(userUpdateRequest.getIsActive());
+			userToUpdate.setLastName(userUpdateRequest.getLastName());
+			userToUpdate.setMiddleName(userUpdateRequest.getMiddleName());
+			userToUpdate.setPassword(userUpdateRequest.getPassword());
+			userToUpdate.setPhone(userUpdateRequest.getPhone());
+			userToUpdate.setPostcode(userUpdateRequest.getPostcode());
+			userToUpdate.setRoleId(userUpdateRequest.getRoleId());
+			userToUpdate.setUserName(userUpdateRequest.getUserName());
+		}
+		return userToUpdate;
 
-        return listResult;
+	}
 
-    }
+	private UserResponse mapUserToUserResponse(User user) {
+		UserResponse updatedUser = new UserResponse();
+		updatedUser.setId(user.getId());
+		updatedUser.setCompanyName(user.getCompanyName());
+		updatedUser.setAddress(user.getAddress());
+		updatedUser.setDob(user.getDob());
+		updatedUser.setEmail(user.getEmail());
+		updatedUser.setFirstName(user.getFirstName());
+		updatedUser.setGender(user.getGender());
+		updatedUser.setIsActive(user.getIsActive());
+		updatedUser.setLastName(user.getLastName());
+		updatedUser.setMiddleName(user.getMiddleName());
+		updatedUser.setLastLogin(user.getLastLogin());
+		updatedUser.setAccountCreated(user.getAccountCreated());
+		updatedUser.setPhone(user.getPhone());
+		updatedUser.setPostcode(user.getPostcode());
+		updatedUser.setRoleId(user.getRoleId());
+		updatedUser.setUserName(user.getUserName());
 
-    private User mapUserCreationRequestToUser(UserCreationRequest userCreationRequest) {
-        User newUser = new User();
-        newUser.setCompanyName(userCreationRequest.getCompanyName());
-        newUser.setAddress(userCreationRequest.getAddress());
-        newUser.setAccountCreated(ZonedDateTime.now());
-        newUser.setDob(userCreationRequest.getDob());
-        newUser.setEmail(userCreationRequest.getEmail());
-        newUser.setFirstName(userCreationRequest.getFirstName());
-        newUser.setGender(userCreationRequest.getGender());
-        newUser.setIsActive(true);
-        newUser.setLastName(userCreationRequest.getLastName());
-        newUser.setMiddleName(userCreationRequest.getMiddleName());
-        newUser.setPassword(userCreationRequest.getPassword());
-        newUser.setPhone(userCreationRequest.getPhone());
-        newUser.setPostcode(userCreationRequest.getPostcode());
-        newUser.setRoleId(userCreationRequest.getRoleId());
-        newUser.setUserName(userCreationRequest.getUserName());
-        return newUser;
-    }
+		return updatedUser;
+	}
 
-    private UserCreationResponse mapUserToUserCreationResponse(User user) {
-        UserCreationResponse createdUser = new UserCreationResponse();
-        createdUser.setId(user.getId());
-        createdUser.setCompanyName(user.getCompanyName());
-        createdUser.setAddress(user.getAddress());
-        createdUser.setAccountCreated(user.getAccountCreated());
-        createdUser.setDob(user.getDob());
-        createdUser.setEmail(user.getEmail());
-        createdUser.setFirstName(user.getFirstName());
-        createdUser.setGender(user.getGender());
-        createdUser.setIsActive(user.getIsActive());
-        createdUser.setLastName(user.getLastName());
-        createdUser.setMiddleName(user.getMiddleName());
-        createdUser.setPhone(user.getPhone());
-        createdUser.setPostcode(user.getPostcode());
-        createdUser.setRoleId(user.getRoleId());
-        createdUser.setUserName(user.getUserName());
-        return createdUser;
-    }
+	@Override
+	public UserResponse loginUserFromRequest(UserLoginRequest userLoginRequest) {
+		// TODO titkositas jon majd ide
+		List<User> userList = userRepository.findByUserNameAndPassword(userLoginRequest.getUserName(),
+				userLoginRequest.getPassword());
+
+		if (userList != null && userList.size() == 1) {
+			User responseUser = userList.get(0);
+			return mapUserToUserResponse(responseUser);
+		}
+
+		return null;
+	}
+
+	@Override
+	public UserResponse searchUserFromRequest(String userName) {
+		List<User> userList = userRepository.findByUserName(userName);
+
+		if (userList != null && userList.size() == 1) {
+			User responseUser = userList.get(0);
+			return mapUserToUserResponse(responseUser);
+		}
+
+		return null;
+	}
+
+	@Override
+	public UserResponse pwdChangeUserFromRequest(UserPwdChangeRequest userPwdChangeRequest) {
+		Optional<User> userToUpdateOptional = userRepository.findById(Long.parseLong(userPwdChangeRequest.getUserId()));
+		User userToUpdate = null;
+		if (userToUpdateOptional.isPresent()) {
+			userToUpdate = userToUpdateOptional.get();
+			// TODO titkositas jon majd ide
+			userToUpdate.setPassword(userPwdChangeRequest.getNewPassword());
+			User updatedUser = userRepository.save(userToUpdate);
+			return mapUserToUserResponse(updatedUser);
+		}
+		return null;
+	}
+
 }

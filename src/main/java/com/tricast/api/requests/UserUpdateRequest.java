@@ -2,9 +2,11 @@ package com.tricast.api.requests;
 
 import com.tricast.repositories.entities.enums.UserGender;
 
-public class UserCreationRequest {
+public class UserUpdateRequest {
 
-	private static final long serialVersionUID = 1870713627974030003L;
+	private static final long serialVersionUID = 4417951629931970005L;
+
+	private long id;
 
 	private String address;
 
@@ -17,6 +19,8 @@ public class UserCreationRequest {
 	private String firstName;
 
 	private UserGender gender;
+
+	private Boolean isActive;
 
 	private String lastName;
 
@@ -31,6 +35,14 @@ public class UserCreationRequest {
 	private Integer roleId;
 
 	private String userName;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getAddress() {
 		return address;
@@ -78,6 +90,14 @@ public class UserCreationRequest {
 
 	public void setGender(UserGender gender) {
 		this.gender = gender;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getLastName() {
@@ -150,6 +170,8 @@ public class UserCreationRequest {
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
@@ -168,7 +190,7 @@ public class UserCreationRequest {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserCreationRequest other = (UserCreationRequest) obj;
+		UserUpdateRequest other = (UserUpdateRequest) obj;
 		if (address == null) {
 			if (other.address != null)
 				return false;
@@ -195,6 +217,13 @@ public class UserCreationRequest {
 		} else if (!firstName.equals(other.firstName))
 			return false;
 		if (gender != other.gender)
+			return false;
+		if (id != other.id)
+			return false;
+		if (isActive == null) {
+			if (other.isActive != null)
+				return false;
+		} else if (!isActive.equals(other.isActive))
 			return false;
 		if (lastName == null) {
 			if (other.lastName != null)
