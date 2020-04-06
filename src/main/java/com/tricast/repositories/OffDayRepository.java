@@ -11,5 +11,4 @@ public interface OffDayRepository extends CrudRepository<Offday, Long> {
     @Override
     List<Offday> findAll();
 
-    // Offday findbyId(Long id);
 }
