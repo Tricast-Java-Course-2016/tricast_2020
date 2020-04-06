@@ -1,11 +1,21 @@
 package com.tricast.repositories.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.tricast.repositories.entities.enums.WorktimeType;
-
-import java.sql.Timestamp;
 
 
 /**
@@ -28,19 +38,19 @@ public class Worktime implements Serializable {
 	private String comment;
 
 	@Column(name="endtime")
-	private Timestamp endTime;
+	private ZonedDateTime endTime;
 
 	@Column(name="modifiedby")
 	private Integer modifiedBy;
 
 	@Column(name="modifiedendtime")
-	private Timestamp modifiedEndTime;
+	private ZonedDateTime modifiedEndTime;
 
 	@Column(name="modifiedstarttime")
-	private Timestamp modifiedStartTime;
+	private ZonedDateTime modifiedStartTime;
 
 	@Column(name="starttime")
-	private Timestamp startTime;
+	private ZonedDateTime startTime;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name="type")
@@ -81,11 +91,11 @@ public class Worktime implements Serializable {
 		this.modifiedStartTime = modifiedstarttime;
 	}
 */
-	public Timestamp getEndTime() {
+	public ZonedDateTime getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Timestamp endTime) {
+	public void setEndTime(ZonedDateTime endTime) {
 		this.endTime = endTime;
 	}
 
@@ -97,27 +107,27 @@ public class Worktime implements Serializable {
 		this.modifiedBy = modifiedBy;
 	}
 
-	public Timestamp getModifiedEndTime() {
+	public ZonedDateTime getModifiedEndTime() {
 		return modifiedEndTime;
 	}
 
-	public void setModifiedEndTime(Timestamp modifiedEndTime) {
+	public void setModifiedEndTime(ZonedDateTime modifiedEndTime) {
 		this.modifiedEndTime = modifiedEndTime;
 	}
 //
-	public Timestamp getModifiedStartTime() {
+	public ZonedDateTime getModifiedStartTime() {
 		return modifiedStartTime;
 	}
 //
-	public void setModifiedStartTime(Timestamp modifiedStartTime) {
+	public void setModifiedStartTime(ZonedDateTime modifiedStartTime) {
 		this.modifiedStartTime = modifiedStartTime;
 	}
 
-	public Timestamp getStartTime() {
+	public ZonedDateTime getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Timestamp startTime) {
+	public void setStartTime(ZonedDateTime startTime) {
 		this.startTime = startTime;
 	}
 
