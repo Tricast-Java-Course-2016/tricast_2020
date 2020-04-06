@@ -1,8 +1,14 @@
 package com.tricast.api.responses;
 
-import com.tricast.repositories.entities.enums.OffDayType;
+import java.io.Serializable;
 
-public class OffDayResponse {
+import com.tricast.repositories.entities.enums.OffDayType;
+import com.tricast.repositories.entities.*;
+
+public class OffDayResponse implements Serializable{
+	
+	private static final long serialVersionUID =4L;
+	
 	private long id;
 	private long userId;
 	private String lastName;
@@ -27,11 +33,11 @@ public class OffDayResponse {
 		this.userId = userId;
 	}
 
-	public String getAccountRealName() {
+	public String getLastName() {
 		return lastName;
 	}
 
-	public void setAccountRealName(String lastName) {
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
@@ -80,7 +86,7 @@ public class OffDayResponse {
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "OffDayResponse [id=" + id + ", accountId=" + userId + ", accountRealName=" + lastName

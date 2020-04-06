@@ -1,8 +1,12 @@
 package com.tricast.api.requests;
 
+import java.io.Serializable;
 import com.tricast.repositories.entities.enums.OffDayType;
 
-public class OffDayRequest {
+public class OffDayRequest implements Serializable{
+	
+	private static final long serialVersionUID =4L;
+	
 	private Long id;
 	private Long userId;
 	private String fromDay;

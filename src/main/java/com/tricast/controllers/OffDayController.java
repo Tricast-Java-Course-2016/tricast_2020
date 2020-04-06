@@ -1,5 +1,6 @@
 package com.tricast.controllers;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.api.responses.OffDayResponse;
 import com.tricast.managers.OffDayManager;
 import com.tricast.repositories.entities.Offday;
 
@@ -34,7 +36,7 @@ public class OffDayController {
 	}
 
 	@PostMapping
-	public Offday createOffday(@RequestBody Offday offdayRequest) {
+	public Offday createOffday(@RequestBody Offday offdayRequest) throws SQLException {
 		return offdayManager.createOffday(offdayRequest);
 	}
 
