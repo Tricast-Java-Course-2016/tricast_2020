@@ -1,6 +1,5 @@
 package com.tricast.controllers;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.api.requests.WorktimeCreationRequest;
+import com.tricast.api.responses.WorktimeCreationResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
-import com.tricast.repositories.entities.enums.WorktimeType;
 
 @RestController
-@RequestMapping(path = "worktimes")
+@RequestMapping(path = "rest/worktimes")
 public class WorktimeController {
 	
 	@Autowired
@@ -37,6 +37,11 @@ public class WorktimeController {
 	@PostMapping
 	public Worktime saveWorktime(@RequestBody Worktime worktimeRequest) {
 		return worktimeManager.createWorktime(worktimeRequest);
+	}
+	
+	@PostMapping(path = "/create")
+	public WorktimeCreationResponse createWorktime(@RequestBody WorktimeCreationRequest worktimeCreationRequest) {
+		return worktimeManager.createWorktimeFromRequest(worktimeCreationRequest);
 	}
 	
 	@PutMapping
