@@ -21,4 +21,6 @@ public interface WorktimeManager {
 	
 	WorktimeCreationResponse createWorktimeFromRequest(WorktimeCreationRequest worktimeCreationRequest);
 
+	void deleteAllWorkTimesById(long id);
+
 }
