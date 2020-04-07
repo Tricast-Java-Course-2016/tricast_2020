@@ -28,12 +28,12 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	
 	private WorkdayRepository workdayRepository;
 	
-	private WorktimeRepository worktimeRepository;
+	private WorktimeManager worktimeManager;
 	
 	@Autowired
-	public WorkdayManagerImpl(WorkdayRepository workdayRepository, WorktimeRepository worktimeRepository) {
+	public WorkdayManagerImpl(WorkdayRepository workdayRepository, WorktimeManager worktimeManager) {
 		this.workdayRepository = workdayRepository;
-		this.worktimeRepository = worktimeRepository;
+		this.worktimeManager = worktimeManager;
 	}
 	
 	@Override
@@ -60,18 +60,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	
 	@Override
 	public void deleteById(long id) {
-		List<Worktime> worktimes = (List<Worktime>)worktimeRepository.findAll();
-		
-		System.out.println(worktimes);
-		
-		for (Worktime w : worktimes) {
-			if (w.getWorkdayId() == id) {
-				//long worktimeId = w.getId();
-				worktimeRepository.deleteById(w.getId());
-			}
-		}
-		
-		
+		worktimeManager.deleteAllWorkTimesById(id);
 		workdayRepository.deleteById(id);
 	}
 	
@@ -146,18 +135,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	//New WorkdayCreation
 	@Override
 	public WorkdayCreationResponse createWorkdayFromRequest(WorkdayCreationRequest workdayCreationRequest) {
-		Workday newWorkday = mapWorkdayCreatioonRequestToWorkday(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday);
-		
-		List<WorktimeCreationRequest> newWorktimeCreationRequests = workdayCreationRequest.getWorktimesCreationRequest();
-		List<Worktime> createdWorktimes = new ArrayList<Worktime>();
-		for (WorktimeCreationRequest worktimeCreationRequest : newWorktimeCreationRequests) {
-			Worktime newWorktime = mapWorktimeCreationRequestToWorktime(worktimeCreationRequest);
-			Worktime createdWorktime = worktimeRepository.save(newWorktime);
-			createdWorktimes.add(createdWorktime);
-		}
-		
-		return mapWorkdayToWorkdayCreationResponse(createdWorkday, createdWorktimes);
+		return null;
 	}
 
 	private Worktime mapWorktimeCreationRequestToWorktime(WorktimeCreationRequest worktimeCreationRequest) {
