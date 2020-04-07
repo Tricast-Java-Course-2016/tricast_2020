@@ -43,7 +43,6 @@ public class WorkdayManagerImpl implements WorkdayManager{
 
 	@Override
 	public Workday createWorkday(Workday workdayRequest) {
-		// TODO Auto-generated method stub
 		return workdayRepository.save(workdayRequest);
 	}
 	
@@ -107,7 +106,6 @@ public class WorkdayManagerImpl implements WorkdayManager{
 		return allWorkdaysGetResponse;
 	}
 
-	
 	private WorktimeGetResponse mapWorktimeToWorktimeGetResponse(Worktime worktime) {
 		WorktimeGetResponse createdWorktimeGetResponse = new WorktimeGetResponse();
 		
