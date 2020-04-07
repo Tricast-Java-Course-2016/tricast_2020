@@ -76,17 +76,6 @@ public class WorkdayController {
 	
 	@DeleteMapping(path = "/{id}")
 	public void deleteWorkday(@PathVariable("id") long id){
-		
-		/*Iterable<Worktime> worktimeIterable = worktimeManager.getAll();
-		
-		for (Worktime curr : worktimeIterable) {
-			if (id == curr.getWorkdayId()) {
-				long worktimeId = curr.getId();
-				worktimeManager.deleteById(worktimeId);
-				System.out.println(worktimeId + " worktime element has been removed.");
-			}
-		}*/
-		
 		workdayManager.deleteById(id);
 	}
 	
