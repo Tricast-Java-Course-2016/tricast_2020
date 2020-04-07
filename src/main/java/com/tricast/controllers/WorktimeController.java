@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tricast.api.requests.WorktimeCreationRequest;
-import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.requests.WorkdayCreationRequest;
+import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
 
@@ -40,8 +40,8 @@ public class WorktimeController {
 	}
 	
 	@PostMapping(path = "/create")
-	public WorktimeCreationResponse createWorktime(@RequestBody WorktimeCreationRequest worktimeCreationRequest) {
-		return worktimeManager.createWorktimeFromRequest(worktimeCreationRequest);
+	 WorkdayCreationResponse createWorkdayWithWorktime(@RequestBody WorkdayCreationRequest workdayCreationRequest) {
+		return worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest);
 	}
 	
 	@PutMapping
