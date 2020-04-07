@@ -1,5 +1,6 @@
 package com.tricast.managers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,13 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		worktimeRepository.deleteById(id);
 		
 	}
+	
+	@Override
+	public void deleteAllWorkTimesById(long id) {
+		List<Worktime>deleteWorktimes = worktimeRepository.findAllByWorkdayId(id);
+		worktimeRepository.deleteAll(deleteWorktimes);	
+	}
+
 	
 	/*
 	@Override
