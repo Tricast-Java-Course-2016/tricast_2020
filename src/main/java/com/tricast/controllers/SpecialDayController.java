@@ -33,10 +33,10 @@ public class SpecialDayController {
 		return specialDayManager.getSpecialDaysInTheYear(yearRequest);
 	}
 	
-	@GetMapping
-	public List<Specialday> getAllSpecialDays(){
-		return specialDayManager.getSpecialDaysInTheYear(String.valueOf(ZonedDateTime.now().getYear()));
-	}
+	//@GetMapping
+	//public List<Specialday> getAllSpecialDays(){
+		//return specialDayManager.getSpecialDaysInTheYear(String.valueOf(ZonedDateTime.now().getYear()));
+	//}
 	
 	@PostMapping
 	public Specialday saveSpecialday(@RequestBody Specialday specialdayRequest) {
