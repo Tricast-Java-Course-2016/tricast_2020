@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tricast.repositories.entities.RolePermissionSet;
-import com.tricast.repositories.entities.User;
 import com.tricast.managers.RolePermissionSetManager;
 
 @RestController
