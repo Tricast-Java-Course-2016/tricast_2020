@@ -1,5 +1,8 @@
 package com.tricast;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import javax.transaction.Transactional;
 
 
@@ -57,5 +60,7 @@ public class CommandLineTestRunner implements CommandLineRunner {
         worktimeRepository.findByType(WorktimeType.DELEGACY).forEach(worktime -> System.out.println(worktime.getType()));
         offdayLimitsRepository.findAll().forEach(offdaylimits -> System.out.println(offdaylimits.getMaximumAmount()));
         offdayrepository.findAll().forEach(offday -> System.out.println(offday.getStatus()));
+        ZonedDateTime s = ZonedDateTime.of(2020, 1, 1, 23, 59, 59, 999, ZoneId.systemDefault());
+        ZonedDateTime ss = ZonedDateTime.of(2020, 1, 2, 23, 59, 59, 999, ZoneId.systemDefault());
     }
 }
