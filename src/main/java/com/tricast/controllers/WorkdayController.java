@@ -27,52 +27,13 @@ import com.tricast.repositories.entities.Worktime;
 public class WorkdayController {
 	
 	@Autowired
-	private WorkdayManager workdayManager;
-	
-	//Delete all associated worktime element from the database
-	@Autowired
-	private WorktimeManager worktimeManager;
-	
-	@GetMapping(path = "/{id}")
-	public Optional<Workday> getByWorkdayId(@PathVariable("id") long id){
-		return workdayManager.getById(id);
-	}
-	
-	@GetMapping
-	public Iterable<Workday> getAllWorkday(){
-		return workdayManager.getAll();
-	}
+	private WorkdayManager workdayManager;	
 	
 	@GetMapping(path = "/workedhours/{id}")
 	public List<WorkdayGetResponse> getAllWorkdaysByIdAndMonth(@PathVariable("id") int id){
 		return workdayManager.getAllWorkdayByUserIdAndMonth(id);
 	}
-	
-	@GetMapping(path = "/workedhours/stats")
-	public WorkdayStatsResponse getWorkdaysStats() {
-		return null;
-	}
-	
-	@PostMapping
-	public Workday saveWorkday(@RequestBody Workday workdayRequest) {
-		return workdayManager.createWorkday(workdayRequest);
-	}
-	
-	@PostMapping(path = "/workedhours")
-	public WorkdayCreationResponse createWorkday(@RequestBody WorkdayCreationRequest workdayCreationRequest) {
-		return workdayManager.createWorkdayFromRequest(workdayCreationRequest);
-	}
-	
-	@PutMapping(path = "/{id}")
-	public Workday updateWorkdayById(@RequestBody Workday workdayRequest, @PathVariable("id") long id) {
-		return workdayManager.updateWorkday(workdayRequest, id);
-	}
-	
-	@PutMapping(path = "/workedhours/{date}")
-	public WorkdayCreationResponse updateWorkdayByDate(@RequestBody WorkdayCreationRequest workdayCreationRequest) {
-		
-		return workdayManager.createWorkdayFromRequest(workdayCreationRequest);
-	}
+
 	
 	@DeleteMapping(path = "/{id}")
 	public void deleteWorkday(@PathVariable("id") long id){
