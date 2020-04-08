@@ -34,43 +34,16 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	public WorkdayManagerImpl(WorkdayRepository workdayRepository, WorktimeManager worktimeManager) {
 		this.workdayRepository = workdayRepository;
 		this.worktimeManager = worktimeManager;
-	}
-	
-	@Override
-	public Optional<Workday> getById(long id){
-		return workdayRepository.findById(id);
-	}
+	}	
 
-	@Override
-	public Workday createWorkday(Workday workdayRequest) {
-		return workdayRepository.save(workdayRequest);
-	}
-	
-	@Override
-	public Workday updateWorkday(Workday workdayRequest, long id) {
-		// TODO Auto-generated method stub
-		Workday updatedWorkday = workdayRequest;
-		updatedWorkday.setId(id);
-		
-		return workdayRepository.save(updatedWorkday);
-	}
-	
-
-	
+	////////
 	@Override
 	public void deleteById(long id) {
 		worktimeManager.deleteAllWorkTimesById(id);
 		workdayRepository.deleteById(id);
 	}
-	
-	
-	
-	@Override
-	public Iterable<Workday> getAll (){
-		return workdayRepository.findAll();
-	}
 
-	
+	////////
 	@Override
 	public List<WorkdayGetResponse> getAllWorkdayByUserIdAndMonth(int userId) {
 		List<Integer> dataParams = getWithCurrentYearAndCurrentMonthAndCurrentDayofMonth();
@@ -106,85 +79,6 @@ public class WorkdayManagerImpl implements WorkdayManager{
 		return allWorkdaysGetResponse;
 	}
 
-	private WorktimeGetResponse mapWorktimeToWorktimeGetResponse(Worktime worktime) {
-		WorktimeGetResponse createdWorktimeGetResponse = new WorktimeGetResponse();
-		
-		createdWorktimeGetResponse.setId(worktime.getId());
-		createdWorktimeGetResponse.setComment(worktime.getComment());
-		createdWorktimeGetResponse.setEndTime(worktime.getEndTime());
-		createdWorktimeGetResponse.setModifiedBy(worktime.getModifiedBy());
-		createdWorktimeGetResponse.setStartTime(worktime.getStartTime());
-		createdWorktimeGetResponse.setWorkdayId(worktime.getWorkdayId());
-		createdWorktimeGetResponse.setModifiedEndTime(worktime.getModifiedEndTime());
-		createdWorktimeGetResponse.setModifiedStartTime(worktime.getModifiedStartTime());
-		createdWorktimeGetResponse.setType(worktime.getType());
-		
-		return createdWorktimeGetResponse;
-	}
-	
-	@Override
-	public WorkdayCreationResponse updateUserWorkdayByDate(WorkdayCreationRequest workdayCreationRequest, String day) {
-		Workday newWorkday = mapWorkdayCreatioonRequestToWorkday(workdayCreationRequest);
-		
-		
-		return null;
-	}
-	
-	//New WorkdayCreation
-	@Override
-	public WorkdayCreationResponse createWorkdayFromRequest(WorkdayCreationRequest workdayCreationRequest) {
-		return null;
-	}
 
-	private Worktime mapWorktimeCreationRequestToWorktime(WorktimeCreationRequest worktimeCreationRequest) {
-		Worktime newWorktime = new Worktime();
-		newWorktime.setComment(worktimeCreationRequest.getComment());
-		newWorktime.setEndTime(worktimeCreationRequest.getEndTime());
-		newWorktime.setModifiedBy(worktimeCreationRequest.getModifiedBy());
-		newWorktime.setStartTime(worktimeCreationRequest.getStartTime());
-		newWorktime.setType(worktimeCreationRequest.getType());
-		newWorktime.setWorkdayId(worktimeCreationRequest.getWorkdayId());
-		
-		return newWorktime;
-	}
-	
-	private Workday mapWorkdayCreatioonRequestToWorkday(WorkdayCreationRequest workdayCreationRequest) {
-		
-		Workday newWorkday = new Workday();
-		newWorkday.setDate(workdayCreationRequest.getDate());
-		newWorkday.setUserId(workdayCreationRequest.getUserId());
-		
-		return newWorkday;
-	}
-	
-	private WorkdayCreationResponse mapWorkdayToWorkdayCreationResponse(Workday workday, List<Worktime> worktimes) {
-		WorkdayCreationResponse createdWorkday = new WorkdayCreationResponse();
-		
-		//Workday
-		
-		createdWorkday.setId(workday.getId());
-		createdWorkday.setDate(workday.getDate());
-		createdWorkday.setUserId(workday.getUserId());
-		
-		//Worktimes
-		List<WorktimeCreationResponse> createdWorktimes = new ArrayList<WorktimeCreationResponse>();
-		
-		for (Worktime w : worktimes) {
-			WorktimeCreationResponse createdWorktime = new WorktimeCreationResponse();
-			createdWorktime.setId(w.getId());
-			createdWorktime.setComment(w.getComment());
-			createdWorktime.setEndTime(w.getEndTime());
-			createdWorktime.setModifiedBy(w.getModifiedBy());
-			createdWorktime.setStartTime(w.getStartTime());
-			createdWorktime.setWorkdayId(w.getWorkdayId());
-			createdWorktime.setType(w.getType());
-			
-			createdWorktimes.add(createdWorktime);
-		}
-		
-		createdWorkday.setWorktimesCreatioenResponse(createdWorktimes);
-		
-		return createdWorkday;
-	}
 	
 }
