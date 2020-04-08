@@ -27,9 +27,9 @@ public class WorktimeController {
 	private WorktimeManager worktimeManager;
 	
 	
-	@GetMapping
-	public Iterable<Worktime> getAllWorktime(){
-		return worktimeManager.getAll();
+	@GetMapping(path = "/{id}")
+	public List<Worktime> getAllWorktimeByWorktimeId(@PathVariable("id") long id){
+		return worktimeManager.getAllWorktimeByWorktimeId(id);
 	}
 	
 	
