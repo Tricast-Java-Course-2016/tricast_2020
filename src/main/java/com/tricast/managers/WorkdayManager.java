@@ -10,20 +10,7 @@ import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorkdayGetResponse;
 import com.tricast.repositories.entities.Workday;
 
-public interface WorkdayManager {
-	Optional<Workday> getById (long id);
-	
-	Iterable<Workday> getAll();
-	
-	Workday createWorkday(Workday workdayRequest);
-	
-	Workday updateWorkday(Workday workdayRequest, long id);
-	
-	WorkdayCreationResponse updateUserWorkdayByDate(WorkdayCreationRequest workdayCreationRequest, String day);
-	
+public interface WorkdayManager {	
 	List<WorkdayGetResponse> getAllWorkdayByUserIdAndMonth(int id);
-	
-	WorkdayCreationResponse createWorkdayFromRequest(WorkdayCreationRequest workdayCreationRequest);
-	
 	void deleteById(long id);
 }
