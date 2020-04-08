@@ -31,8 +31,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	}
 
 	@Override
-	public Iterable<Worktime> getAll(){
-		return worktimeRepository.findAll();
+	public List<Worktime> getAllWorktimeByWorktimeId(long id){
+		return worktimeRepository.findAllByWorkdayId(id);
 	}
 	
 	@Override
@@ -175,6 +175,12 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		}
 		
 		
+	}
+
+	@Override
+	public void deleteAllWorkTimesById(long id) {
+		List<Worktime> deleteWorkdays = worktimeRepository.findAllByWorkdayId(id);
+		worktimeRepository.deleteAll(deleteWorkdays);
 	}
 	
 	
