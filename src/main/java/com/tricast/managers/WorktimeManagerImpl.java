@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.query.criteria.LiteralHandlingMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -113,7 +114,6 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	@Override
 	public List<Worktime> saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
 		List<Worktime> updatedWorktimes = updateWorkTimesRequestMapper(worktimesListRequest,workDayid);
-		System.out.println(updatedWorktimes.toString());
 		List<Worktime> responseWorktimes = createdNewWorktimesAndUpdateOlds(updatedWorktimes);
 		deleteRemovedWorktimes(updatedWorktimes,workDayid);
 		return responseWorktimes;
@@ -121,32 +121,42 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	
 	private List<Worktime> updateWorkTimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest,long workDayid) {
 		List<Worktime> updatedWorktimes = new LinkedList<Worktime>();
-		List<WorkTimeUpdateRequest> w =worktimesListRequest.getDatasList();
+		List<WorkTimeUpdateRequest> worktimesList =worktimesListRequest.getDatasList();
 		
-		System.out.println(w.toString());
-		for (WorkTimeUpdateRequest updateDatas : w) {
-			try{
-				Worktime updateWorktimesWorktime = new Worktime();
-				updateWorktimesWorktime.setId(updateDatas.getId());
-				updateWorktimesWorktime.setComment(updateDatas.getComment());
-				updateWorktimesWorktime.setEndTime(updateDatas.getEndTime()); 
-				updateWorktimesWorktime.setStartTime(updateDatas.getStartTime()); 
-				updateWorktimesWorktime.setModifiedBy(updateDatas.getModifiedBy());
-				updateWorktimesWorktime.setType(updateDatas.getType());
-				updateWorktimesWorktime.setWorkdayId(updateDatas.getWorkdayId());
-				updatedWorktimes.add(updateWorktimesWorktime);
-			} catch (Exception e) {
-				Worktime updateWorktimesWorktime = new Worktime();
-				updateWorktimesWorktime.setComment(updateDatas.getComment());
-				updateWorktimesWorktime.setEndTime(updateDatas.getEndTime()); 
-				updateWorktimesWorktime.setStartTime(updateDatas.getStartTime()); 
-				updateWorktimesWorktime.setModifiedBy(updateDatas.getModifiedBy());
-				updateWorktimesWorktime.setType(updateDatas.getType());
-				updateWorktimesWorktime.setWorkdayId(workDayid);
-				updatedWorktimes.add(updateWorktimesWorktime);
+		for (WorkTimeUpdateRequest updateDatas : worktimesList) {
+			Worktime updateWorktimesWorktime = new Worktime();
+			long workId = updateDatas.getId();
+			if(!isNewWorktime(workId)) {
+				updateWorktimesWorktime = isModifiedTheStartTimeAndEndTime(updateDatas,workId);
 			}
+			updateWorktimesWorktime.setId(updateDatas.getId());
+			updateWorktimesWorktime.setComment(updateDatas.getComment());
+			updateWorktimesWorktime.setEndTime(updateDatas.getEndTime()); 
+			updateWorktimesWorktime.setStartTime(updateDatas.getStartTime()); 
+			updateWorktimesWorktime.setModifiedBy(updateDatas.getModifiedBy());
+			updateWorktimesWorktime.setType(updateDatas.getType());
+			updateWorktimesWorktime.setWorkdayId(updateDatas.getWorkdayId());
+			updatedWorktimes.add(updateWorktimesWorktime);
 		}
 		return updatedWorktimes;
+	}
+	
+	private boolean isNewWorktime(long worktimeId){
+		if(worktimeId==0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	private Worktime isModifiedTheStartTimeAndEndTime(WorkTimeUpdateRequest updateDatas,long worktimeId) {
+		Optional<Worktime> updateWorktime =  worktimeRepository.findById(worktimeId);
+		if (updateWorktime.get().getStartTime().equals(updateDatas.getStartTime())  && updateWorktime.get().getEndTime().equals(updateDatas.getEndTime())) {
+			updateWorktime.get().setModifiedStartTime(updateWorktime.get().getStartTime());
+			updateWorktime.get().setModifiedEndTime(updateWorktime.get().getEndTime());
+		}
+		return updateWorktime.get();
 	}
 	
 
@@ -156,7 +166,6 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	
 	private void deleteRemovedWorktimes(List<Worktime> updatedWorktimes,long workDayid) {
 		List<Worktime> WorktimesinTheRepository = worktimeRepository.findAllByWorkdayId(workDayid);
-		System.out.println(WorktimesinTheRepository.toString());
 		List<Long> onlyWorktimesId = new LinkedList<Long>();
 		for (Worktime worktime : WorktimesinTheRepository) {
 			onlyWorktimesId.add(worktime.getId());
