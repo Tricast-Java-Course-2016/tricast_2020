@@ -7,8 +7,6 @@ import com.tricast.repositories.entities.enums.WorktimeType;
 public class WorktimeCreationRequest {
 
 	private static final long serialVersionWorktimeID = 1L;
-	
-	//private long id;
 
 	private String comment;
 
@@ -16,15 +14,9 @@ public class WorktimeCreationRequest {
 
 	private Integer modifiedBy;
 
-	//private ZonedDateTime modifiedEndTime;
-
-	//private ZonedDateTime modifiedStartTime;
-
 	private ZonedDateTime startTime;
 
 	private WorktimeType type;
-	
-	private long workdayId;
 	
 	public static long getSerialversionworktimeid() {
 		return serialVersionWorktimeID;
@@ -69,14 +61,5 @@ public class WorktimeCreationRequest {
 	public void setModifiedBy(Integer modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
-
-	public long getWorkdayId() {
-		return workdayId;
-	}
-
-	public void setWorkdayId(long workdayId) {
-		this.workdayId = workdayId;
-	}
-	
 	
 }
