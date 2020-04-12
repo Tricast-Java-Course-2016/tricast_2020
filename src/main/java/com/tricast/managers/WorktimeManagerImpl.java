@@ -46,9 +46,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		List <Worktime> createdWorktimes = (List<Worktime>) worktimeRepository.saveAll(newWorktime);
 
 		WorkdayCreationResponse responseWorkday = ResponsenewWorkday(createdWorkday);
-		List <WorktimeCreationResponse> WorktimeCreationResponse = ResponsenewWorktimes(createdWorktimes);
-
-		return ResponsenNewWorkdayWithWorktimes(responseWorkday,WorktimeCreationResponse);
+		List <WorktimeCreationResponse> worktimeCreationResponse = ResponsenewWorktimes(createdWorktimes);
+		return ResponsenNewWorkdayWithWorktimes(responseWorkday,worktimeCreationResponse);
 		
 	}
 	
@@ -73,6 +72,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
 		
 		for (Worktime newWorktimes : createdWorktimes) {
+			worktimeCreationResponse.setId(newWorktimes.getId());
 			worktimeCreationResponse.setComment(newWorktimes.getComment());
 			worktimeCreationResponse.setEndTime(newWorktimes.getEndTime());
 			worktimeCreationResponse.setStartTime(newWorktimes.getStartTime());
