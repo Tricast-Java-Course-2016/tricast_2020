@@ -16,15 +16,7 @@ public class WorkdayCreationRequest {
 
 	private Integer userId;
 	
-	
-	//Worktime
-	
 	List<WorktimeCreationRequest> worktimesCreationRequest = new ArrayList<WorktimeCreationRequest>();
-	
-	
-	
-	
-	
 	
 	public ZonedDateTime getDate() {
 		return date;
