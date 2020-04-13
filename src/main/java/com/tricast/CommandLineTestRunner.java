@@ -2,10 +2,13 @@ package com.tricast;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.transaction.Transactional;
 
-
+import org.hibernate.internal.util.ZonedDateTimeComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +33,6 @@ public class CommandLineTestRunner implements CommandLineRunner {
     private UserRepository userRepository;
     
     @Autowired
-    private SpecialdayRepository specialdayRepository;
-    
-    @Autowired
-    private WorkdayRepository workdayRepository;
-    
-    @Autowired
-    private WorktimeRepository worktimeRepository;
-    
-    @Autowired
     private OffDayLimitsRepository offdayLimitsRepository;
     
     @Autowired
@@ -53,14 +47,5 @@ public class CommandLineTestRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         LOG.info("Running...");
         // add your code here
-        userRepository.findAll().forEach(user -> System.out.println(user.getGender()));
-        specialdayRepository.findAll().forEach(specialday -> System.out.println(specialday.getDate()));
-        workdayRepository.findAll().forEach(workday -> System.out.println(workday.getDate()));
-        worktimeRepository.findAll().forEach(worktime -> System.out.println(worktime.getComment()));
-        worktimeRepository.findByType(WorktimeType.DELEGACY).forEach(worktime -> System.out.println(worktime.getType()));
-        offdayLimitsRepository.findAll().forEach(offdaylimits -> System.out.println(offdaylimits.getMaximumAmount()));
-        offdayrepository.findAll().forEach(offday -> System.out.println(offday.getStatus()));
-        ZonedDateTime s = ZonedDateTime.of(2020, 1, 1, 23, 59, 59, 999, ZoneId.systemDefault());
-        ZonedDateTime ss = ZonedDateTime.of(2020, 1, 2, 23, 59, 59, 999, ZoneId.systemDefault());
     }
 }
