@@ -1,0 +1,203 @@
+@charset "UTF-8";
+
+/* ----------------------------------------------- */
+/* BASIC SETUP */
+/* ----------------------------------------------- */
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+html,
+body {
+	background-color: #fff;
+    color: #555;
+    font-family: 'Lato', 'Arial', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+}
+
+input[type="text"],
+select[type="text"] {
+	font-size: 90%;
+}
+
+/* ----------------------------------------------- */
+/* REUSABLE COMPONENTS */
+/* ----------------------------------------------- */
+
+section {
+	font-size: 90%;
+}
+
+hr {
+	width: 880px;
+	border: 1px solid;
+	border-radius: 2px
+}
+
+/* ----- HEADINGS ----- */
+
+h1 {
+    font-weight: 300;
+    text-transform: uppercase;
+    margin-top: 0;
+	margin-bottom: 2px;
+	font-size: 240%;
+	word-spacing: 4px;
+	letter-spacing: 1px;
+	
+	
+}
+
+h1:after {
+	display: block;
+	height: 2px;
+	background: linear-gradient(0.45turn, #007bff, #fff);
+    /*background-color: #007bff;*/
+    content: " ";
+    width: 600px;
+    margin-top: 30px;
+}
+
+/* ----- LINKS ----- */
+
+a:link,
+a:visited {
+	text-decoration: none;
+}
+
+a:hover,
+a:active {
+	color: #007bff;
+}
+
+
+
+/* ----- BUTTONS ----- */
+
+.btn-scroll {
+	padding: 3px 3px 0 3px;
+}
+
+.btn:link,
+.btn:visited {
+	font-size: 150%;
+	transition: color 0.2s;
+}
+
+.btn-close:hover,
+.btn-close:active {
+	color: #fa210f;
+}
+
+.btn-add:link,
+.btn-add:visited {
+	padding: 0;
+	font-size: 200%;
+}
+
+.btn-add:hover,
+.btn-add:active,
+.btn-scroll:hover,
+.btn-scroll:active {
+	color: #007bff;
+	border-color: #fff;
+}
+
+
+/* ----------------------------------------------- */
+/* WORKDAY */
+/* ----------------------------------------------- */
+
+.container-workday{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.row-first {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+
+.content-name {
+	padding-bottom: 14px;
+}
+
+.content-date{
+	padding-bottom: 5px;
+	
+}
+
+.col-last{
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding-right: 70px;
+}
+
+.row-last a {
+	margin: 10px;
+	
+}
+
+/* FOOTER */
+
+.footer div {
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	word-spacing: 20px;
+	letter-spacing: 1px;
+}
+
+
+
+
+/* ----------------------------------------------- */
+/* SEARCH */
+/* ----------------------------------------------- */
+
+.container-search{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+
+
+
+
+
+/* HEADER-SEARCH */
+
+.row-header{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+/* SEARCH BTN */
+
+.row-search div{
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.row-search div a {
+	font-size: 130%;
+}
+
