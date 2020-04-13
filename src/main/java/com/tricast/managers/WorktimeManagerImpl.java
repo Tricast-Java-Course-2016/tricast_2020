@@ -113,10 +113,16 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	@Override
 	public List<Worktime> saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
-		List<Worktime> updatedWorktimes = updateWorkTimesRequestMapper(worktimesListRequest,workDayid);
-		List<Worktime> responseWorktimes = createdNewWorktimesAndUpdateOlds(updatedWorktimes);
-		deleteRemovedWorktimes(updatedWorktimes,workDayid);
-		return responseWorktimes;
+		if(!worktimesListRequest.getDatasList().isEmpty()) {
+			List<Worktime> updatedWorktimes = updateWorkTimesRequestMapper(worktimesListRequest,workDayid);
+			List<Worktime> responseWorktimes = createdNewWorktimesAndUpdateOlds(updatedWorktimes);
+			deleteRemovedWorktimes(updatedWorktimes,workDayid);
+			return responseWorktimes;
+		}
+		else {
+			deleteAllWorkTimesById(workDayid);
+			return null;
+		}
 	}
 	
 	private List<Worktime> updateWorkTimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest,long workDayid) {
@@ -190,6 +196,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	public void deleteAllWorkTimesById(long id) {
 		List<Worktime> deleteWorkdays = worktimeRepository.findAllByWorkdayId(id);
 		worktimeRepository.deleteAll(deleteWorkdays);
+		workdayRepository.deleteById(id);
 	}
 	
 	
