@@ -17,6 +17,7 @@ import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorkdayGetResponse;
 import com.tricast.api.responses.WorkdayStatsResponse;
+import com.tricast.api.responses.WorkdayWithWorkHoursStatsGetResponse;
 import com.tricast.managers.WorkdayManager;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Workday;
@@ -30,7 +31,7 @@ public class WorkdayController {
 	private WorkdayManager workdayManager;	
 	
 	@GetMapping(path = "/workedhours/{id}")
-	public List<WorkdayGetResponse> getAllWorkdaysByIdAndMonth(@PathVariable("id") int id){
+	public WorkdayWithWorkHoursStatsGetResponse getAllWorkdaysByIdAndMonth(@PathVariable("id") int id){
 		return workdayManager.getAllWorkdayByUserIdAndMonth(id);
 	}
 
