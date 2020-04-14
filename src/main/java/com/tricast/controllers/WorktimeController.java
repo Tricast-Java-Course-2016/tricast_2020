@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tricast.api.requests.WorkTimeUpdateListRequest;
+import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.managers.WorktimeManager;
@@ -41,5 +42,10 @@ public class WorktimeController {
 	@PutMapping(path = "/{id}")
 	public List<Worktime> saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("id") long id) {
 		return worktimeManager.saveModified(worktimesListRequest,id);
+	}
+	
+	@GetMapping(path = "/Stats/{year}/{id}")
+	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("id") long id,@PathVariable("year") int year){
+		return worktimeManager.WorkTimeStatByIdResponse(id,year);
 	}
 }
