@@ -1,24 +1,24 @@
 package com.tricast.managers;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.tricast.api.requests.WorktimeCreationRequest;
-import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.requests.WorkTimeUpdateListRequest;
+import com.tricast.api.requests.WorkdayCreationRequest;
+import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.repositories.entities.Worktime;
-import com.tricast.repositories.entities.enums.WorktimeType;
+import com.tricast.api.responses.WorkTimeStatByIdResponse;
 
 public interface WorktimeManager {
-	Optional<Worktime> getById (long id);
 	
-	Iterable<Worktime> getAll();
+	List<Worktime> getAllWorktimeByWorktimeId(long id);
 	
-	Worktime createWorktime(Worktime worktimeRequest);
-	
-	void deleteById(long id);
+	List<Worktime> saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid);
 	
 	//List<Worktime> getAllByType(WorktimeType worktype);
 	
-	WorktimeCreationResponse createWorktimeFromRequest(WorktimeCreationRequest worktimeCreationRequest);
+	WorkdayCreationResponse createWorkdayWithWorktimeFromRequest( WorkdayCreationRequest workdayCreationRequest);
 
+	void deleteAllWorkTimesById(long id);
+
+	WorkTimeStatByIdResponse WorkTimeStatByIdResponse(long id,int year);
 }

@@ -1,5 +1,6 @@
 package com.tricast.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tricast.api.requests.WorktimeCreationRequest;
-import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.requests.WorkTimeUpdateListRequest;
+import com.tricast.api.responses.WorkTimeStatByIdResponse;
+import com.tricast.api.requests.WorkdayCreationRequest;
+import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
 
@@ -24,33 +27,25 @@ public class WorktimeController {
 	@Autowired
 	private WorktimeManager worktimeManager;
 	
+	
 	@GetMapping(path = "/{id}")
-	public Optional<Worktime> getWorktimeById(@PathVariable("id") long id){
-		return worktimeManager.getById(id);
+	public List<Worktime> getAllWorktimeByWorktimeId(@PathVariable("id") long id){
+		return worktimeManager.getAllWorktimeByWorktimeId(id);
 	}
 	
-	@GetMapping
-	public Iterable<Worktime> getAllWorktime(){
-		return worktimeManager.getAll();
-	}
-	
-	@PostMapping
-	public Worktime saveWorktime(@RequestBody Worktime worktimeRequest) {
-		return worktimeManager.createWorktime(worktimeRequest);
-	}
 	
 	@PostMapping(path = "/create")
-	public WorktimeCreationResponse createWorktime(@RequestBody WorktimeCreationRequest worktimeCreationRequest) {
-		return worktimeManager.createWorktimeFromRequest(worktimeCreationRequest);
+	 WorkdayCreationResponse createWorkdayWithWorktime(@RequestBody WorkdayCreationRequest workdayCreationRequest) {
+		return worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest);
 	}
 	
-	@PutMapping
-	public Worktime saveWorktimeById(@RequestBody Worktime worktimeRequest) {
-		return worktimeManager.createWorktime(worktimeRequest);
+	@PutMapping(path = "/{id}")
+	public List<Worktime> saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("id") long id) {
+		return worktimeManager.saveModified(worktimesListRequest,id);
 	}
-	 
-	@DeleteMapping(path = "/{id}")
-	public void deleteWorktime(@PathVariable("id") long id) {
-		worktimeManager.deleteById(id);
+	
+	@GetMapping(path = "/Stats/{year}/{id}")
+	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("id") long id,@PathVariable("year") int year){
+		return worktimeManager.WorkTimeStatByIdResponse(id,year);
 	}
 }

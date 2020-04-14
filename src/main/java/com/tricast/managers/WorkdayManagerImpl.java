@@ -1,9 +1,17 @@
 package com.tricast.managers;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.loading.PrivateClassLoader;
+
+import org.hibernate.query.criteria.internal.expression.function.CurrentDateFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +19,7 @@ import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.requests.WorktimeCreationRequest;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorkdayGetResponse;
-import com.tricast.api.responses.WorkdayWorktimesGetResponse;
+import com.tricast.api.responses.WorkdayWithWorkHoursStatsGetResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
 import com.tricast.api.responses.WorktimeGetResponse;
 import com.tricast.repositories.WorkdayRepository;
@@ -26,252 +34,105 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	
 	private WorktimeRepository worktimeRepository;
 	
+	private WorktimeManager worktimeManager;
+	
 	@Autowired
-	public WorkdayManagerImpl(WorkdayRepository workdayRepository, WorktimeRepository worktimeRepository) {
+	public WorkdayManagerImpl(WorkdayRepository workdayRepository, WorktimeManager worktimeManager,WorktimeRepository worktimeRepository) {
 		this.workdayRepository = workdayRepository;
+		this.worktimeManager=worktimeManager;
 		this.worktimeRepository = worktimeRepository;
-	}
-	
-	@Override
-	public Optional<Workday> getById(long id){
-		return workdayRepository.findById(id);
-	}
+	}	
 
-	@Override
-	public Workday createWorkday(Workday workdayRequest) {
-		// TODO Auto-generated method stub
-		return workdayRepository.save(workdayRequest);
-	}
-	
-	@Override
-	public Workday updateWorkday(Workday workdayRequest, long id) {
-		// TODO Auto-generated method stub
-		Workday updatedWorkday = workdayRequest;
-		updatedWorkday.setId(id);
-		
-		return workdayRepository.save(updatedWorkday);
-	}
-	
-
-	
+	////////
 	@Override
 	public void deleteById(long id) {
-		List<Worktime> worktimes = (List<Worktime>)worktimeRepository.findAll();
-		
-		System.out.println(worktimes);
-		
-		for (Worktime w : worktimes) {
-			if (w.getWorkdayId() == id) {
-				//long worktimeId = w.getId();
-				worktimeRepository.deleteById(w.getId());
-			}
-		}
-		
-		
-		workdayRepository.deleteById(id);
-	}
-	
-	
-	
-	@Override
-	public Iterable<Workday> getAll (){
-		return workdayRepository.findAll();
+		worktimeManager.deleteAllWorkTimesById(id);
 	}
 
+	public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId) {
+		List<Integer> dataParams = getWithCurrentYearAndCurrentMonthAndCurrentDayofMonth();
+		List<Workday> allWorkdays = (List<Workday>)workdayRepository.findByUserIdAndDateBetween(userId, CurrentFirstDayOfMonth(dataParams), CurrentLastDayOfMonth(dataParams));
+		List<Integer> workhoursIntegers =sumWorkhoursInCurrentWeekAndPreviousWeek(userId);
+		return WorkdayWithWorkHoursStatsGetResponseMapper(workdayResponseMapper(allWorkdays),workhoursIntegers);
+	}
 	
-	@Override
-	public List<WorkdayGetResponse> getAllWorkdayByUserIdAndMonth() {
-		long userId = 1;
-		int month = 4;
-		
-		List<Workday> allWorkdays = (List<Workday>)workdayRepository.findAll();
-		List<WorkdayGetResponse> allWorkdaysGetResponse = new ArrayList<WorkdayGetResponse>();
-		
-		for (Workday w : allWorkdays) {
-			if (userId == w.getUserId() && month == w.getDate().getMonthValue()) {
-				WorkdayGetResponse response = new WorkdayGetResponse();
-				response.setId(w.getId());
-				response.setDate(w.getDate());
-				response.setUserId(w.getUserId());
-				
-				allWorkdaysGetResponse.add(response);
-			}
+	private WorkdayWithWorkHoursStatsGetResponse WorkdayWithWorkHoursStatsGetResponseMapper(List<WorkdayGetResponse> workdaysGetResponse, List<Integer> workHoursInMinutes) {
+		WorkdayWithWorkHoursStatsGetResponse response = new WorkdayWithWorkHoursStatsGetResponse();
+		response.setWorkdaysGetResponse(workdaysGetResponse);
+		return sumWorkhoursAndWorkMinutes(response,workHoursInMinutes);
+	}
+	
+	private WorkdayWithWorkHoursStatsGetResponse sumWorkhoursAndWorkMinutes(WorkdayWithWorkHoursStatsGetResponse response, List<Integer> workHoursInMinutes) {
+		int workHours=workHoursInMinutes.get(0)/60;
+		response.setWorkhoursCurrentWeek(workHours);
+		response.setWorkminutesCurrentWeek(workHoursInMinutes.get(0)-workHours*60);
+		workHours=workHoursInMinutes.get(1)/60;
+		response.setWorkhoursPreviouseWeek(workHours);
+		response.setWorkminutesPreviouseWeek(workHoursInMinutes.get(1)-workHours*60);
+		return response;
+	}
+	
+	private List<Integer> sumWorkhoursInCurrentWeekAndPreviousWeek(int userId) {
+		ZonedDateTime dateWithFirstDayOfCurrentWeek = getDateWithFirstDayOfCurrentWeek();
+		List<Workday> worktimeAtCurrentWeek = workdayRepository.findByUserIdAndDateBetween(userId,dateWithFirstDayOfCurrentWeek,dateWithFirstDayOfCurrentWeek.plusDays(6));
+		List<Workday> worktimeAtPreviouseWeek = workdayRepository.findByUserIdAndDateBetween(userId,dateWithFirstDayOfCurrentWeek.minusWeeks(1),dateWithFirstDayOfCurrentWeek.minusWeeks(1).plusDays(6));
+		int workMinutesInCurrentWeek = sumWorktimesGiveToMinutes(getOnlyWorkdayId(worktimeAtCurrentWeek));
+		int workMinutesInPreviousWeek = sumWorktimesGiveToMinutes(getOnlyWorkdayId(worktimeAtPreviouseWeek));
+		return Arrays.asList(workMinutesInCurrentWeek, workMinutesInPreviousWeek);
+	}
+	
+	private ZonedDateTime getDateWithFirstDayOfCurrentWeek() {
+        ZonedDateTime lt  = ZonedDateTime.now();
+        return lt.minusDays(lt.getDayOfWeek().getValue()-1);
+	}
+	
+	private List<Long> getOnlyWorkdayId(List<Workday> workdays) {
+		List<Long> onlyWorkdayIds = new LinkedList<Long>();
+		for (Workday workday : workdays) {
+			onlyWorkdayIds.add(workday.getId());
 		}
-		
+		return onlyWorkdayIds;
+	}
+	
+	private int sumWorktimesGiveToMinutes(List<Long> workdayIds) {
+		int hour=0;
+		int min=0;
+		List<Worktime> getWorktimesOfweek = worktimeRepository.findAllByWorkdayIdIn(workdayIds);
+		for (Worktime worktime : getWorktimesOfweek) {
+			hour = hour + (worktime.getEndTime().getHour() - worktime.getStartTime().getHour());
+			min = min + (worktime.getEndTime().getMinute() - worktime.getStartTime().getMinute());
+		}
+		return min = min + hour * 60;
+	}
+	
+	private List<Integer> getWithCurrentYearAndCurrentMonthAndCurrentDayofMonth() { 
+		List<Integer> dataParams = new LinkedList<Integer>();
+		dataParams.add(ZonedDateTime.now().getYear());
+		dataParams.add(ZonedDateTime.now().getMonthValue());
+		dataParams.add(Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+		return dataParams;
+	}
+	
+	private ZonedDateTime CurrentFirstDayOfMonth(List<Integer> dateParam) {
+		return  ZonedDateTime.of(dateParam.get(0), dateParam.get(1), 1, 0, 0, 0, 000, ZoneId.systemDefault());
+	}
+	
+	private ZonedDateTime CurrentLastDayOfMonth(List<Integer> dateParam) {
+		return  ZonedDateTime.of(dateParam.get(0), dateParam.get(1), dateParam.get(2), 0, 0, 0, 000, ZoneId.systemDefault());
+	}
+	
+	private List<WorkdayGetResponse> workdayResponseMapper(List<Workday> allWorkdays){
+		List<WorkdayGetResponse> allWorkdaysGetResponse = new ArrayList<WorkdayGetResponse>();
+		for (Workday workDay : allWorkdays) {
+				WorkdayGetResponse response = new WorkdayGetResponse();
+				response.setId(workDay.getId());
+				response.setDate(workDay.getDate());
+				response.setUserId(workDay.getUserId());
+				allWorkdaysGetResponse.add(response);
+		}
 		return allWorkdaysGetResponse;
 	}
-	
-	
-	
-	
-	//Get a given workday data and it's associated worktimes
-	@Override
-	public WorkdayWorktimesGetResponse getUserWorktimesByDate(String date) {
-		List<Workday> workdays = (List<Workday>)workdayRepository.findAll();
-
-		long userId = 1;
-		int year = Integer.parseInt(date.substring(0, 4));
-		int month = Integer.parseInt(date.substring(4, 6));
-		int day = Integer.parseInt(date.substring(6, 8));
-		
-		List<Worktime> worktimes = (List<Worktime>)worktimeRepository.findAll();		
-		List<WorktimeGetResponse> workimeResponses = new ArrayList<WorktimeGetResponse>();
-		
-		for (Workday w : workdays) {
-			if (w.getUserId() == userId && w.getDate().getYear()== year && w.getDate().getMonthValue() == month && w.getDate().getDayOfMonth() == day) {
-				/*WorkdayWorktimesGetResponse workdayWorktimesGetResponse = new WorkdayWorktimesGetResponse();
-				workdayWorktimesGetResponse.setId(w.getId());
-				workdayWorktimesGetResponse.setDate(w.getDate());
-				workdayWorktimesGetResponse.setUserId(w.getUserId());*/
-				
-				for(Worktime wt : worktimes) {
-					if (wt.getWorkdayId() == w.getId()) {
-						WorktimeGetResponse newWorktimeGetResponse = mapWorktimeToWorktimeGetResponse(wt);
-						workimeResponses.add(newWorktimeGetResponse);
-					}
-				}
-				
-				//workdayWorktimesGetResponse.setWorktimes(workimeResponses);
-				WorkdayWorktimesGetResponse workdayWorktimesGetResponse = mapWorkdayWorktimesToWorkdayWorktimesGetResponse(w, workimeResponses);
-				return workdayWorktimesGetResponse;
-			}
-		}
-		
-		return null;
-	}
-	
-	private WorkdayWorktimesGetResponse mapWorkdayWorktimesToWorkdayWorktimesGetResponse(Workday workday, List<WorktimeGetResponse> worktimesGetResponse) {
-		WorkdayWorktimesGetResponse createdWorkdayWorktimesGetResponse = new WorkdayWorktimesGetResponse();
-		createdWorkdayWorktimesGetResponse.setId(workday.getId());
-		createdWorkdayWorktimesGetResponse.setDate(workday.getDate());
-		createdWorkdayWorktimesGetResponse.setUserId(workday.getUserId());
-		createdWorkdayWorktimesGetResponse.setWorktimes(worktimesGetResponse);
-		return createdWorkdayWorktimesGetResponse;
-	}
-	
-	private WorktimeGetResponse mapWorktimeToWorktimeGetResponse(Worktime worktime) {
-		WorktimeGetResponse createdWorktimeGetResponse = new WorktimeGetResponse();
-		
-		createdWorktimeGetResponse.setId(worktime.getId());
-		createdWorktimeGetResponse.setComment(worktime.getComment());
-		createdWorktimeGetResponse.setEndTime(worktime.getEndTime());
-		createdWorktimeGetResponse.setModifiedBy(worktime.getModifiedBy());
-		createdWorktimeGetResponse.setStartTime(worktime.getStartTime());
-		createdWorktimeGetResponse.setWorkdayId(worktime.getWorkdayId());
-		createdWorktimeGetResponse.setModifiedEndTime(worktime.getModifiedEndTime());
-		createdWorktimeGetResponse.setModifiedStartTime(worktime.getModifiedStartTime());
-		createdWorktimeGetResponse.setType(worktime.getType());
-		
-		return createdWorktimeGetResponse;
-	}
-	
-	@Override
-	public WorkdayCreationResponse updateUserWorkdayByDate(WorkdayCreationRequest workdayCreationRequest, String day) {
-		Workday newWorkday = mapWorkdayCreatioonRequestToWorkday(workdayCreationRequest);
-		
-		
-		return null;
-	}
-	
-	//New WorkdayCreation
-	@Override
-	public WorkdayCreationResponse createWorkdayFromRequest(WorkdayCreationRequest workdayCreationRequest) {
-		Workday newWorkday = mapWorkdayCreatioonRequestToWorkday(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday);
-		
-		List<WorktimeCreationRequest> newWorktimeCreationRequests = workdayCreationRequest.getWorktimesCreationRequest();
-		List<Worktime> createdWorktimes = new ArrayList<Worktime>();
-		for (WorktimeCreationRequest worktimeCreationRequest : newWorktimeCreationRequests) {
-			Worktime newWorktime = mapWorktimeCreationRequestToWorktime(worktimeCreationRequest);
-			Worktime createdWorktime = worktimeRepository.save(newWorktime);
-			createdWorktimes.add(createdWorktime);
-		}
-		
-		return mapWorkdayToWorkdayCreationResponse(createdWorkday, createdWorktimes);
-	}
-
-	private Worktime mapWorktimeCreationRequestToWorktime(WorktimeCreationRequest worktimeCreationRequest) {
-		Worktime newWorktime = new Worktime();
-		newWorktime.setComment(worktimeCreationRequest.getComment());
-		newWorktime.setEndTime(worktimeCreationRequest.getEndTime());
-		newWorktime.setModifiedBy(worktimeCreationRequest.getModifiedBy());
-		newWorktime.setStartTime(worktimeCreationRequest.getStartTime());
-		newWorktime.setType(worktimeCreationRequest.getType());
-		newWorktime.setWorkdayId(worktimeCreationRequest.getWorkdayId());
-		
-		return newWorktime;
-	}
-	
-	private Workday mapWorkdayCreatioonRequestToWorkday(WorkdayCreationRequest workdayCreationRequest) {
-		
-		Workday newWorkday = new Workday();
-		newWorkday.setDate(workdayCreationRequest.getDate());
-		newWorkday.setUserId(workdayCreationRequest.getUserId());
-		
-		return newWorkday;
-	}
-	
-	private WorkdayCreationResponse mapWorkdayToWorkdayCreationResponse(Workday workday, List<Worktime> worktimes) {
-		WorkdayCreationResponse createdWorkday = new WorkdayCreationResponse();
-		
-		//Workday
-		
-		createdWorkday.setId(workday.getId());
-		createdWorkday.setDate(workday.getDate());
-		createdWorkday.setUserId(workday.getUserId());
-		
-		//Worktimes
-		List<WorktimeCreationResponse> createdWorktimes = new ArrayList<WorktimeCreationResponse>();
-		
-		for (Worktime w : worktimes) {
-			WorktimeCreationResponse createdWorktime = new WorktimeCreationResponse();
-			createdWorktime.setId(w.getId());
-			createdWorktime.setComment(w.getComment());
-			createdWorktime.setEndTime(w.getEndTime());
-			createdWorktime.setModifiedBy(w.getModifiedBy());
-			createdWorktime.setStartTime(w.getStartTime());
-			createdWorktime.setWorkdayId(w.getWorkdayId());
-			createdWorktime.setType(w.getType());
-			
-			createdWorktimes.add(createdWorktime);
-		}
-		
-		createdWorkday.setWorktimesCreatioenResponse(createdWorktimes);
-		
-		return createdWorkday;
-	}
 
 
-
-
-
-
-
-
-	
-	
-	/*//Old
-	@Override
-	public WorkdayCreationResponse createWorkdayFromRequest(WorkdayCreationRequest workdayCreationRequest) {
-		Workday newWorkday = mapWorkdayCreatioonRequestToWorkday(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday);
-		return mapWorkdayToWorkdayCreationResponse(createdWorkday);
-	}
-
-	private Workday mapWorkdayCreatioonRequestToWorkday(WorkdayCreationRequest workdayCreationRequest) {
-		Workday newWorkday = new Workday();
-		newWorkday.setDate(workdayCreationRequest.getDate());
-		newWorkday.setUserId(workdayCreationRequest.getUserId());
-		return newWorkday;
-	}
-	
-	private WorkdayCreationResponse mapWorkdayToWorkdayCreationResponse(Workday workday) {
-		WorkdayCreationResponse createdWorkday = new WorkdayCreationResponse();
-		createdWorkday.setId(workday.getId());
-		createdWorkday.setDate(workday.getDate());
-		createdWorkday.setUserId(workday.getUserId());
-		return createdWorkday;
-	}
-	*/
 	
 }

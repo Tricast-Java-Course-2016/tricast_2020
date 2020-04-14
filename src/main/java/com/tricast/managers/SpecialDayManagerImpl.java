@@ -2,6 +2,7 @@ package com.tricast.managers;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,10 @@ public class SpecialDayManagerImpl implements SpecialDayManager{
 	}
 	
 	private ZonedDateTime getTheYearFinalDay(int year) {
-		return ZonedDateTime.of(year, 12, 31, 23, 59, 59, 999, ZoneId.systemDefault());
+		return ZonedDateTime.of(year, 12, getWithDayOfMonth(), 23, 59, 59, 999, ZoneId.systemDefault());
+	}
+	
+	private int getWithDayOfMonth() { 
+		return Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 }

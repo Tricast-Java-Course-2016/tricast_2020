@@ -4,14 +4,11 @@ import java.time.ZonedDateTime;
 
 public class WorkdayGetResponse {
 
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	
 	private long id;
+
 	
-	private ZonedDateTime date;
-
-	private Integer userId;
-
 	public long getId() {
 		return id;
 	}
@@ -19,6 +16,10 @@ private static final long serialVersionUID = 1L;
 	public void setId(long id) {
 		this.id = id;
 	}
+	
+	private ZonedDateTime date;
+
+	private int userId;
 
 	public ZonedDateTime getDate() {
 		return date;
@@ -28,18 +29,18 @@ private static final long serialVersionUID = 1L;
 		this.date = date;
 	}
 
-	public Integer getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
-	public static long getSerialversionworkdayid() {
+	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
+
 	
 	
 }

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags, viewport needed for Bootstrap -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+
+<!-- jquery is not required yet -->
+<!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+
+<title>WStat</title>
+</head>
+<body>
+	<h1>Worktimes statistics</h1>
+	<div class="container">
+		<div class="row">
+			<div class="dropdown" style="padding: 10px">
+				<button class="btn btn-secondary dropdown-toggle " type="button"
+					id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false">Years</button>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					<a class="dropdown-item" href="#">2020</a>
+				</div>
+			</div>
+			<div style="">
+				<input type="text" class="form-control" placeholder="Username"
+					aria-label="Username" aria-describedby="basic-addon1">
+			</div>
+			<div>
+				<button type="button" class="btn btn-primary" style="float: right;">Search</button>
+			</div>
+		</div>
+	</div>
+	<div class="h-100 d-inline-block" style="width: 15%; height: 100%;">Side
+		bar</div>
+	<div class="h-80 d-inline-block" style="width: 20%; height: 100%; cellspacing: 100px;">
+		<h3>statistics of emloyes</h3>
+		<!--Table-->
+		<table class="table table-sm">
+			<tbody>
+				<tr>
+					<td>Workday:</td>
+					<td>Count workday</td>
+				</tr>
+				<tr>
+					<td>Work hours:</td>
+					<td>Count workhours</td>
+				</tr>
+				<tr>
+					<td>Overtime:</td>
+					<td>Count overtimes</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="h-80 d-inline-block" style="width: 50%; height: 100%;"
+		align="Center">
+		<h3>Statistics of Year</h3>
+		<!--Table-->
+		<table id="StatsOfYear" class="table table-sm">
+			<!--Table head-->
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>1st</th>
+					<th>2nd</th>
+					<th>3rd</th>
+					<th>4th</th>
+					<th>Sum</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th scope="row">Jan</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Feb</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				<tr>
+					<th scope="row">Marc</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				<tr>
+					<th scope="row">Apr</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				<tr>
+					<th scope="row">May</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Jun</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">July</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Aug</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Sept</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Oct</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Nov</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+				<tr>
+					<th scope="row">Dec</th>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Count hours</td>
+					<td>Sum hours</td>
+				</tr>
+			</tbody>
+			<!--Table body-->
+		</table>
+		<!--Table-->
+	</div>
+	<div class="container">
+		<button type="button" class="btn btn-primary" style="float: right;">Back</button>
+	</div>
+</body>
+</html>

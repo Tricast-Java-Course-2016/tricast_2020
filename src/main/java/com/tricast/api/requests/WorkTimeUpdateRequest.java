@@ -4,9 +4,16 @@ import java.time.ZonedDateTime;
 
 import com.tricast.repositories.entities.enums.WorktimeType;
 
-public class WorktimeCreationRequest {
+public class WorkTimeUpdateRequest {
+	@Override
+	public String toString() {
+		return "WorkTimeUpdateRequest [id=" + id + ", comment=" + comment + ", endTime=" + endTime + ", modifiedBy="
+				+ modifiedBy + ", startTime=" + startTime + ", type=" + type + ", workdayId=" + workdayId + "]"+"|||||";
+	}
 
 	private static final long serialVersionWorktimeID = 1L;
+	
+	private long id;
 
 	private String comment;
 
@@ -18,8 +25,14 @@ public class WorktimeCreationRequest {
 
 	private WorktimeType type;
 	
-	public static long getSerialversionworktimeid() {
-		return serialVersionWorktimeID;
+	private long workdayId;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getComment() {
@@ -38,6 +51,14 @@ public class WorktimeCreationRequest {
 		this.endTime = endTime;
 	}
 
+	public Integer getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(Integer modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
 	public ZonedDateTime getStartTime() {
 		return startTime;
 	}
@@ -54,12 +75,17 @@ public class WorktimeCreationRequest {
 		this.type = type;
 	}
 
-	public Integer getModifiedBy() {
-		return modifiedBy;
+	public long getWorkdayId() {
+		return workdayId;
 	}
 
-	public void setModifiedBy(Integer modifiedBy) {
-		this.modifiedBy = modifiedBy;
+	public void setWorkdayId(long workdayId) {
+		this.workdayId = workdayId;
 	}
+
+	public static long getSerialversionworktimeid() {
+		return serialVersionWorktimeID;
+	}
+	
 	
 }

@@ -146,6 +146,13 @@ public class Worktime implements Serializable {
 	public void setWorkdayId(long workdayId) {
 		this.workdayId = workdayId;
 	}
+
+	@Override
+	public String toString() {
+		return "Worktime [id=" + id + ", comment=" + comment + ", endTime=" + endTime + ", modifiedBy=" + modifiedBy
+				+ ", modifiedEndTime=" + modifiedEndTime + ", modifiedStartTime=" + modifiedStartTime + ", startTime="
+				+ startTime + ", type=" + type + ", workdayId=" + workdayId + "]";
+	}
 	
 	/*
 	public Workday getWorkday() {
@@ -156,4 +163,5 @@ public class Worktime implements Serializable {
 		this.workday = workday;
 	}*/
 
+	
 }
