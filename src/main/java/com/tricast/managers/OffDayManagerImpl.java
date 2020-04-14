@@ -13,42 +13,51 @@ import com.tricast.repositories.entities.Offday;
 import com.tricast.repositories.entities.Worktime;
 
 @Component
-public class OffDayManagerImpl implements OffDayManager{
-	
+public class OffDayManagerImpl implements OffDayManager {
+
 	private OffDayRepository offDayRepository;
-	
+
 	@Autowired
 	public OffDayManagerImpl(OffDayRepository offDayRepository) {
 		this.offDayRepository = offDayRepository;
 	}
+
 	@Override
 	public Offday createOffday(Offday offDayRequest) {
 		return offDayRepository.save(offDayRequest);
 	}
-	
+
 	@Override
 	public Offday updateOffday(Offday offDayRequest) {
 		return offDayRepository.save(offDayRequest);
 	}
-	
+
 	@Override
 	public List<Offday> getAlloffDays() {
 		return (List<Offday>) offDayRepository.findAll();
 	}
-	
+
 	@Override
 	public Optional<Offday> getById(long id) {
 		return offDayRepository.findById(id);
 	}
-	
+
 	@Override
 	public void deleteOffday(long leaveId) {
-		List<Offday> offdays = (List<Offday>)offDayRepository.findAll();
+		List<Offday> offdays = (List<Offday>) offDayRepository.findAll();
 		for (Offday o : offdays) {
 			if (o.getId() == leaveId) {
 				offDayRepository.deleteById(o.getId());
 			}
-		offDayRepository.deleteById(leaveId);
+			offDayRepository.deleteById(leaveId);
+		}
 	}
+	
+	private Offday mapOffDayRequestToOffday(OffDayRequest offDayRequest) {
+		Offday newOffday = new Offday();
+		newOffday.setStarTtime(offDayRequest.getFromDay());
+		newOffday.setEndTime(offDayRequest.getToDay());
+		newOffday.setType(offDayRequest.getType());
+		return newOffday;
 	}
 }

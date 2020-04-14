@@ -1,6 +1,8 @@
 package com.tricast.api.requests;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+
 import com.tricast.repositories.entities.enums.OffDayType;
 
 public class OffDayRequest implements Serializable{
@@ -9,8 +11,8 @@ public class OffDayRequest implements Serializable{
 	
 	private Long id;
 	private Long userId;
-	private String fromDay;
-	private String toDay;
+	private ZonedDateTime fromDay;
+	private ZonedDateTime toDay;
 	private OffDayType type;
 
 	public Long getId() {
@@ -29,19 +31,19 @@ public class OffDayRequest implements Serializable{
 		this.userId = userId;
 	}
 
-	public String getFromDay() {
+	public ZonedDateTime getFromDay() {
 		return fromDay;
 	}
 
-	public void setFromDay(String fromDay) {
+	public void setFromDay(ZonedDateTime fromDay) {
 		this.fromDay = fromDay;
 	}
 
-	public String getToDay() {
+	public ZonedDateTime getToDay() {
 		return toDay;
 	}
 
-	public void setToDay(String toDay) {
+	public void setToDay(ZonedDateTime toDay) {
 		this.toDay = toDay;
 	}
 

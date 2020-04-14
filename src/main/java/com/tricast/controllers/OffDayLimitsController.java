@@ -22,28 +22,28 @@ public class OffDayLimitsController {
 
 	@Autowired
 	private OffDayLimitsManager offDayLimitsManager;
-	
+
 	@GetMapping(path = "/{id}")
 	public Optional<OffDayLimits> getById(@PathVariable("id") long id) {
 		return offDayLimitsManager.getById(id);
 	}
-	
+
 	@PostMapping
-	public OffDayLimits createOffdayLimits(@RequestBody OffDayLimits offdayLimitsRequest) { 
+	public OffDayLimits createOffdayLimits(@RequestBody OffDayLimits offdayLimitsRequest) {
 		return offDayLimitsManager.createOffdayLimits(offdayLimitsRequest);
 	}
-	
+
 	@PutMapping
 	public OffDayLimits updateOffdayLimits(@RequestBody OffDayLimits offdayLimitsRequest) {
 		return offDayLimitsManager.updateOffdayLimits(offdayLimitsRequest);
 	}
-	
+
 	@DeleteMapping(path = "/{id}")
 	public boolean deleteOffday(@PathVariable("id") long id) {
 		offDayLimitsManager.deleteOffdayLimits(id);
 		return offDayLimitsManager.existsOffdayLimits(id);
 	}
-	
+
 	@GetMapping
 	public List<OffDayLimits> getAllOffdayLimits() {
 		return offDayLimitsManager.getAllOffdayLimits();

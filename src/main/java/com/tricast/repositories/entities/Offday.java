@@ -4,7 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.tricast.repositories.entities.enums.OffDayStatus;
-
+import com.tricast.repositories.entities.enums.OffDayType;
 
 import java.time.ZonedDateTime;
 
@@ -40,8 +40,9 @@ public class Offday implements Serializable {
 	@Column(name = "status")
 	private OffDayStatus status;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "type")
-	private String type;
+	private OffDayType type;
 
 	@Column(name = "userid")
 	private Integer userId;
@@ -97,11 +98,11 @@ public class Offday implements Serializable {
 		this.status = status;
 	}
 
-	public String getType() {
+	public OffDayType getType() {
 		return this.type;
 	}
 
-	public void setType(String type) {
+	public void setType(OffDayType type) {
 		this.type = type;
 	}
 
