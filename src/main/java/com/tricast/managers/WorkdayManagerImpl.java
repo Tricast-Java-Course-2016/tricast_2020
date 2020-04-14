@@ -47,7 +47,6 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	@Override
 	public void deleteById(long id) {
 		worktimeManager.deleteAllWorkTimesById(id);
-		workdayRepository.deleteById(id);
 	}
 
 	public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId) {
