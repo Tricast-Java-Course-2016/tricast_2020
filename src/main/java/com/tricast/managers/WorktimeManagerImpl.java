@@ -88,7 +88,6 @@ public class WorktimeManagerImpl implements WorktimeManager{
 			worktimeCreationResponse.setModifiedBy(newWorktimes.getModifiedBy());
 			worktimeCreationResponse.setType(newWorktimes.getType());
 			worktimeCreationResponse.setWorkdayId(newWorktimes.getWorkdayId());
-			worktimeCreationResponse.setWorkdayId(newWorktimes.getWorkdayId());
 			responseWorktimes.add(worktimeCreationResponse);
 		}
 		return responseWorktimes;
