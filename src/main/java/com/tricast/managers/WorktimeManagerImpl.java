@@ -1,7 +1,13 @@
 package com.tricast.managers;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.IsoFields;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +17,7 @@ import com.tricast.api.requests.WorkTimeUpdateListRequest;
 import com.tricast.api.requests.WorkTimeUpdateRequest;
 import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.requests.WorktimeCreationRequest;
+import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
 import com.tricast.repositories.WorkdayRepository;
@@ -34,6 +41,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	public List<Worktime> getAllWorktimeByWorktimeId(long id){
 		return worktimeRepository.findAllByWorkdayId(id);
 	}
+	
+
 	
 	@Override
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
@@ -197,6 +206,109 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		worktimeRepository.deleteAll(deleteWorkdays);
 		workdayRepository.deleteById(id);
 	}
+
 	
+	@Override
+	public WorkTimeStatByIdResponse WorkTimeStatByIdResponse(long id,int year) {
+		return checkTheID(id,year);
+	}
 	
+	private WorkTimeStatByIdResponse checkTheID(long userId,int year) {
+		if (userId!=0) {
+			return needOneWorkerDatas(userId,year);
+		} else {
+			return needAllWorkerDatas(userId,year);
+		}
+	}
+	
+	private WorkTimeStatByIdResponse needOneWorkerDatas(long userId,int year) {
+		List<Long> WorkdayIds =getOnlyWorkdayId(getAllUsersWorkData(userId,year));
+		List<Worktime> worktimes = getWorkTimeByIDInSearchListYear(WorkdayIds);
+		List<Integer> weeksOfTheYear = new ArrayList<Integer>(selectitonAndSumWorkhoursWeeksofTheYear(worktimes).values());
+		return worktimeStatsResponseMapper(userId,weeksOfTheYear,WorkdayIds.size());
+	}
+	
+	private WorkTimeStatByIdResponse needAllWorkerDatas(long userId,int year) {
+		List<Long> WorkdayIds =getOnlyWorkdayId(getAllWorkData(year));
+		List<Worktime> worktimes = getWorkTimeByIDInSearchListYear(WorkdayIds);
+		List<Integer> weeksOfTheYear = new ArrayList<Integer>(selectitonAndSumWorkhoursWeeksofTheYear(worktimes).values());
+		return worktimeStatsResponseMapper(userId,weeksOfTheYear,WorkdayIds.size());
+	}
+	
+	private List<Workday> getAllUsersWorkData(long userId,int year) {
+		return workdayRepository.findByUserIdAndDateBetween((int) userId, createFirstDayofTheYear(year), createLastDayofTheYear(year));
+	}
+	
+	private List<Workday> getAllWorkData(int year) {
+		return workdayRepository.findByDateBetween(createFirstDayofTheYear(year), createLastDayofTheYear(year));
+	}
+	
+	private ZonedDateTime createFirstDayofTheYear(int year) {
+		return ZonedDateTime.of(year, 1, 1, 0, 0, 0, 000, ZoneId.systemDefault());
+	}
+	
+	private ZonedDateTime createLastDayofTheYear(int year) {
+		return ZonedDateTime.of(year, 12, 31, 0, 0, 0, 000, ZoneId.systemDefault());
+	}
+	
+	private List<Long> getOnlyWorkdayId(List<Workday> workdays){
+		List<Long> onlyWorkIDList = new LinkedList<Long>();
+		for (Workday workday : workdays) {
+			onlyWorkIDList.add(workday.getId());
+		}
+		return onlyWorkIDList;
+	}
+	
+	private List<Worktime> getWorkTimeByIDInSearchListYear(List<Long> workdayId){
+		return worktimeRepository.findAllByWorkdayIdIn(workdayId);
+	}
+	
+	private Map<Integer, Integer> selectitonAndSumWorkhoursWeeksofTheYear(List<Worktime> worktimes) {
+		Map<Integer, Integer> weeksOfTheYearWithWorkhoursInWeekMap = declareMap();
+		for (Worktime worktime : worktimes) {
+			addParametersTomap(worktime,weeksOfTheYearWithWorkhoursInWeekMap);
+		}
+		return weeksOfTheYearWithWorkhoursInWeekMap;
+	}
+	
+	private Map<Integer, Integer> declareMap(){
+		Map<Integer, Integer> newMap = new HashMap<Integer, Integer>();
+		for(int i =1 ;i<54;i++) {
+			newMap.put(i, 0);
+		}
+		return newMap;
+	}
+	
+	private void addParametersTomap(Worktime worktime,Map<Integer, Integer> weeksOfTheYearWithWorkhoursInWeekMap) {
+		int mapKey= worktime.getStartTime().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+		int tempValues = weeksOfTheYearWithWorkhoursInWeekMap.get(mapKey);
+		int value = tempValues + worktime.getEndTime().getHour()- worktime.getStartTime().getHour();
+		weeksOfTheYearWithWorkhoursInWeekMap.put(mapKey, value);
+	}
+	
+	private WorkTimeStatByIdResponse worktimeStatsResponseMapper(Long userId, List<Integer> weeksOfTheYear,int numberOfWorkday) {
+		WorkTimeStatByIdResponse workTimeStatByIdResponse = new WorkTimeStatByIdResponse();
+		
+		workTimeStatByIdResponse.setUserId(userId);
+		workTimeStatByIdResponse.setNumberOfworkday(numberOfWorkday);
+		workTimeStatByIdResponse.setWorktimesOfTheWeeks(weeksOfTheYear);
+		int workhours= sumWorkhours(weeksOfTheYear);
+		workTimeStatByIdResponse.setWorktimehours(workhours);
+		workTimeStatByIdResponse.setOvertimes(DoWorkerHaveOvertimes(workhours));
+		return workTimeStatByIdResponse;
+		
+	}
+	
+	private int sumWorkhours(List<Integer> weeksOfTheYear) {
+		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
+	}
+	
+	private int DoWorkerHaveOvertimes(int workhours) {
+		if (workhours>=1920) {
+			return 1920-workhours;
+		}
+		else {
+			return 0;
+		}
+	}
 }
