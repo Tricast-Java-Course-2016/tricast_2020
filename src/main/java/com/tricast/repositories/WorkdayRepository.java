@@ -10,4 +10,5 @@ import com.tricast.repositories.entities.Worktime;
 
 public interface WorkdayRepository extends CrudRepository<Workday, Long> {
 	List<Workday> findByUserIdAndDateBetween(int id,ZonedDateTime startDateTime , ZonedDateTime finishDate);
+	List<Workday> findByDateBetween(ZonedDateTime startDateTime , ZonedDateTime finishDate);
 }
