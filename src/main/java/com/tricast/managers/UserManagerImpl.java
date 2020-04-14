@@ -12,6 +12,7 @@ import com.tricast.api.requests.UserLoginRequest;
 import com.tricast.api.requests.UserPwdChangeRequest;
 import com.tricast.api.requests.UserUpdateRequest;
 import com.tricast.api.responses.UserResponse;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.entities.User;
 
@@ -138,7 +139,7 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public UserResponse searchUserFromRequest(String userName) {
+    public UserResponse searchUserFromRequest(String userName) throws WorkingHoursException {
 		List<User> userList = userRepository.findByUserName(userName);
 
 		if (userList != null && userList.size() == 1) {
@@ -146,7 +147,7 @@ public class UserManagerImpl implements UserManager {
 			return mapUserToUserResponse(responseUser);
 		}
 
-		return null;
+        throw new WorkingHoursException("User does not exist");
 	}
 
 	@Override

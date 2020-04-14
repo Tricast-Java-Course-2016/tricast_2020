@@ -2,7 +2,11 @@ package com.tricast.controllers;
 
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +21,16 @@ import com.tricast.api.requests.UserLoginRequest;
 import com.tricast.api.requests.UserPwdChangeRequest;
 import com.tricast.api.requests.UserUpdateRequest;
 import com.tricast.api.responses.UserResponse;
+import com.tricast.controllers.constants.WorkingHoursConstants;
 import com.tricast.managers.UserManager;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.User;
 
 @RestController
 @RequestMapping(path = "rest/users")
 public class UserController {
+
+    private static final Logger LOG = LogManager.getLogger(UserController.class);
 
 	@Autowired
 	private UserManager userManager;
@@ -44,8 +52,15 @@ public class UserController {
 	}
 
 	@GetMapping(path = "/search")
-	public UserResponse searchUser(@RequestParam("userName") String userName) {
-		return userManager.searchUserFromRequest(userName);
+    public ResponseEntity<?> searchUser(@RequestParam("userName") String userName) {
+        try {
+            return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
+        } catch (WorkingHoursException e) {
+            return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+        } catch (Exception e) {
+            LOG.error("Excetion at searchUser: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 	}
 
 	@PostMapping(path = "/login")
