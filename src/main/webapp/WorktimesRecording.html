@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Required meta tags, viewport needed for Bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    
+    <!-- My CSS -->
+    <link rel="stylesheet" href="css/worktimeRecording.css">
+    
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,300italic' rel='stylesheet' type='text/css'>
+    
+    <!-- jquery is not required yet -->
+    <!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+
+    <title>Working Hours</title>
+</head>
+<body>
+
+	
+	<section class="container container-workday">
+
+			
+			<form>
+				<div class="row mb-5 header">
+					<div class="col-12 themed-grid-col"><h1>Workday</h1></div>
+				</div>
+				
+				<div class="row mb-3 row-first">
+					<div class="col-6 themed-grid-col" id="user"><div class="content-name">Juhász Kristóf</div></div>
+					<div class="col-6 themed-grid-col" id="workdayDate">
+						<div class="col-last">
+							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline"></ion-icon></a>
+							<div class="content-date">2020.04.10</div>
+							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline"></ion-icon></a>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row mb-3 input-name">
+					<div class="col-2 themed-grid-col">Start</div>
+					<div class="col-2 themed-grid-col">End</div>
+					<div class="col-3 themed-grid-col">Type</div>
+					<div class="col-3 themed-grid-col">Description</div>
+					<div class="col-2 themed-grid-col">Delete</div>
+				</div>
+				<hr class="mb-4">
+				<div class="row mb-3">
+					<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time"></div>
+					<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time"></div>
+					<div class="col-3 themed-grid-col">
+						<select type="text" class="form-control" id="workingTypes">
+							<option value="OFFICE">Office</option>
+							<option value="HOMEOFFICE">Home Office</option>
+							<option value="DELEGACY">Delegacy</option>
+						</select>
+					</div>
+					<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description"></div>
+					<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time"></div>
+					<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time"></div>
+					<div class="col-3 themed-grid-col">
+						<select type="text" class="form-control" id="workingTypes">
+							<option value="OFFICE">Office</option>
+							<option value="HOMEOFFICE">Home Office</option>
+							<option value="DELEGACY">Delegacy</option>
+						</select>
+					</div>
+					<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description"></div>
+					<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+				</div>
+				
+				
+				
+				
+				
+
+				<hr class="mb-4">
+				<div class="row mb-1 row-btn">
+					<div class="col-12 themed-grid-col"><a class="btn btn-add" href="#"><ion-icon name="add-outline"></ion-icon></a></div>
+				</div>
+				
+				<div class="row mb-5 row-last">
+					<div class="col-3 themed-grid-col"></div>
+					<div class="col-3 themed-grid-col"></div>
+					<div class="col-6 themed-grid-col col-last">
+						<a class="btn btn-secondary" href="#">Back</a>
+						<a class="btn btn-primary" href="#">Accept</a>
+					</div>
+				</div>
+				<div class="row mb-3 footer">
+					<div class="col-10 themed-grid-col"><p><ion-icon name="construct-outline"></ion-icon> 2020.04.10 &#8722; <ion-icon name="person-outline"></ion-icon> Erik</p></div>
+
+				</div>
+			</form>
+	</section>
+	
+	<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+	
+</body>
+</html>
