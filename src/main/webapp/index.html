@@ -8,27 +8,94 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     
-    <!-- jquery is not required yet -->
-    <!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+    <script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
+    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/examples.js"></script>
+    
+    <script id="offDayLimits-row-template" type="text/x-handlebars-template">
+    	{{#each offDayLimits}}
+        {{#with this}}
+        	<tr>
+            	<td>{{id}}</td>
+                <td>{{userId}}</td>
+                <td>{{year}}</td>
+				<td>{{type}}</td>
+				<td>{{maxAmount}}</td>
+            </tr>
+        {{/with}}
+        {{/each}}
+    </script>
 
     <title>Working Hours</title>
   </head>
   <body>
-    <h1>Working Hours</h1>
-    
     <div class="container">
     
-        <form>
-          <div class="form-group">
-            <label for="loginUsername">Username</label>
-            <input type="text" class="form-control" id="loginUsername" placeholder="Enter the username">
-          </div>
-          <div class="form-group">
-            <label for="loginPwd">Password</label>
-            <input type="text" class="form-control" id="loginPwd" placeholder="Enter the pasword">
-          </div>
-        </form>
+        <h1 class="pb-5">Working Hours Example</h1>
+    
+        <section>
+            <h5>1. GET Example - Load off day limits</h5>
+            <form id=getExample>
+              <div class="form-group row">
+                <label class="col-sm-2" for="exYear">Year</label>
+                <input type="text" class="form-control col-sm-6" id="exYear" placeholder="Enter the year to filter the results" disabled>
+                 <div class="col-sm-4">
+                    <button class="btn btn-info " type="button" id="getOffDayLimits">Load</button>
+                </div>
+              </div>
+            </form>
+        </section>
+        
+        <section>
+            <h5>Off Day Limits</h5>
+             <table id="offDayLimits-table" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Year</th>
+                        <th>Type</th>
+                        <th>Max Days</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+             </table>
+        </section>
 
+        <section class="pt-5">
+            <h5>2. POST Example - Save off day limits</h5>
+            <form id=postExample>
+              <div class="form-group row">
+                <label class="col-sm-3" for="exUserId">User ID</label>
+                <input type="text" class="form-control col-sm-6" id="exUserId" name="userId">
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3" for="exDayOffYear">Year</label>
+                <input type="number" class="form-control col-sm-6" id="exDayOffYear" name="year">
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3" for="exMaxDays">Maximum Days Off</label>
+                <input type="number" class="form-control col-sm-6" id="exMaxDays" name="maximumAmount">
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3" for="exDayOffType">Type</label>
+                <select id="exDayOffType" class="custom-select col-sm-6" name="type">
+                    <option value="PAID">Paid</option>
+                    <option value="SICK">Sick</option>
+                    <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              <div class="form-group row">
+                 <div class="col-sm-4">
+                    <button class="btn btn-info " type="button" id="saveOffDayLimit">Save</button>
+                </div>
+              </div>
+            </form>
+        </section>
+        
     </div>
     
   </body>
