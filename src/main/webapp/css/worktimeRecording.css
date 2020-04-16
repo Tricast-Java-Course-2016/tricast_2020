@@ -176,7 +176,9 @@ a:active {
 	transform: translate(-50%, -50%);
 }
 
-
+.container-search .mobile-width {
+	display: none;
+}
 
 
 
