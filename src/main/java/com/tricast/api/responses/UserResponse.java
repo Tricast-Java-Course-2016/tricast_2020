@@ -24,7 +24,7 @@ public class UserResponse {
 
 	private UserGender gender;
 
-	private Boolean isActive;
+	private Boolean active;
 
 	private ZonedDateTime lastLogin;
 
@@ -46,6 +46,14 @@ public class UserResponse {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 
 	public ZonedDateTime getAccountCreated() {
@@ -102,14 +110,6 @@ public class UserResponse {
 
 	public void setGender(UserGender gender) {
 		this.gender = gender;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
 	}
 
 	public ZonedDateTime getLastLogin() {
@@ -184,7 +184,7 @@ public class UserResponse {
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
+		result = prime * result + ((active == null) ? 0 : active.hashCode());
 		result = prime * result + ((lastLogin == null) ? 0 : lastLogin.hashCode());
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
@@ -238,10 +238,10 @@ public class UserResponse {
 			return false;
 		if (id != other.id)
 			return false;
-		if (isActive == null) {
-			if (other.isActive != null)
+		if (active == null) {
+			if (other.active != null)
 				return false;
-		} else if (!isActive.equals(other.isActive))
+		} else if (!active.equals(other.active))
 			return false;
 		if (lastLogin == null) {
 			if (other.lastLogin != null)

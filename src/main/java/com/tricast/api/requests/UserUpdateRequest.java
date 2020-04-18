@@ -263,4 +263,12 @@ public class UserUpdateRequest {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "UserUpdateRequest [id=" + id + ", address=" + address + ", companyName=" + companyName + ", dob=" + dob
+				+ ", email=" + email + ", firstName=" + firstName + ", gender=" + gender + ", isActive=" + isActive
+				+ ", lastName=" + lastName + ", middleName=" + middleName + ", password=" + password + ", phone="
+				+ phone + ", postcode=" + postcode + ", roleId=" + roleId + ", userName=" + userName + "]";
+	}
+
 }

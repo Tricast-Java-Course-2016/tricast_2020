@@ -111,7 +111,7 @@ public class UserManagerImpl implements UserManager {
 		updatedUser.setEmail(user.getEmail());
 		updatedUser.setFirstName(user.getFirstName());
 		updatedUser.setGender(user.getGender());
-		updatedUser.setIsActive(user.getIsActive());
+		updatedUser.setActive(user.getIsActive());
 		updatedUser.setLastName(user.getLastName());
 		updatedUser.setMiddleName(user.getMiddleName());
 		updatedUser.setLastLogin(user.getLastLogin());

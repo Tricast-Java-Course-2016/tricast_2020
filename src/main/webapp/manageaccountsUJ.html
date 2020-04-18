@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags, viewport needed for Bootstrap -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+<script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/manageaccounts.js"></script>
+
+
+
+<!-- jquery is not required yet -->
+<!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+
+<title>Manage accounts</title>
+</head>
+<body class="bg-light">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-4">
+				<h2 class="text-info">Manage accounts</h2>
+				
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<br />
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-10 col-lg-8">
+				<form class="card card-sm">
+					<div class="card-body row no-gutters align-items-center">
+						<div class="col-auto">
+							<i class="fas fa-search h4 text-body"></i>
+						</div>
+						<div class="col">
+							<input
+								class="form-control form-control-lg form-control-borderless"
+								type="search" id="searchedUser" placeholder="Search user name">
+								
+						</div>
+						<div class="col-auto">
+							<button class="btn btn-lg btn-info" type="button" id="searchUserSubmit">Search</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<form id=postUser>
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-4">
+					<label class="text-info" for="firstName">First name</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccFirstName" class="form-control input-lg" type="text"
+								placeholder="First name" required name="firstName">
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<label class="text-info" for="middleName">Middle name</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccMiddleName" class="form-control input-lg" type="text"
+								placeholder="Middle name" required name="middleName">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="lastName">Last name</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccLastName" class="form-control input-lg" type="text"
+								placeholder="Last name" required name="lastName">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-4">
+					<label class="text-info" for="userName">User name</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccUserName" class="form-control input-lg" type="text"
+								placeholder="User name" required name="userName">
+							 <input type="hidden" id="id" name="id" value="">
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<label class="text-info" for="password">Password</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccPassword" class="form-control input-lg"
+								type="password" placeholder="Password" required name="password">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="email">E-mail</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccEmail" class="form-control input-lg" type="email"
+								placeholder="E-mail" required name="email">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-4">
+					<label class="text-info" for="activeField">Active</label>
+					<div class="form-group">
+						<div class="input-group">
+							<select id="manAccActiveField" class="custom-select" >
+								<option selected>Set "active" field</option>
+								<option value="0">inactive</option>
+								<option value="1">active</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<label class="text-info" for="genderField">Gender</label>
+					<div class="form-group">
+						<div class="input-group">
+							<select id="manAccGenderField" class="custom-select" name="gender">
+								<option selected>Set "gender" field</option>
+								<option value="MALE">male</option>
+								<option value="FEMALE">female</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="dob">Date of birth</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccDob" class="form-control input-lg" type="date"
+								placeholder="Date of birth" required name="dob">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="phone">Phone</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccPhone" class="form-control input-lg" type="number"
+								placeholder="Phone" required name="phone">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="postcode">Postcode</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccPostcode" class="form-control input-lg" type="text"
+								placeholder="Postcode" required name="postcode">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="address">Address</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccAddress" class="form-control input-lg" type="text"
+								placeholder="Address" required name="address">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="companyName">Company name</label>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="manAccCompanyName" class="form-control input-lg" type="text"
+								placeholder="Company name" required name="companyName">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<label class="text-info" for="roleNameField">Role name</label>
+					<div class="form-group">
+						<div class="input-group">
+							<select id="manAccRoleNameField" class="custom-select" name="roleId">
+								<option selected>Set "role name" field</option>
+								<option value="1">admin</option>
+								<option value="2">employee</option>
+								<option value="3">guest</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-1">
+					<div class="form-group">
+						<button class="btn btn-info" type="submit" id="saveChangesSubmit">Save</button>
+					</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-lg-1">
+					<div class="form-group">
+						<button class="btn btn-info" type="submit" id="backTo">Back</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</body>
+</html>

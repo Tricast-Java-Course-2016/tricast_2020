@@ -48,6 +48,7 @@ public class UserController {
 
 	@PutMapping(path = "/update")
 	public UserResponse updateUser(@RequestBody UserUpdateRequest UserUpdateRequest) {
+		LOG.info("UserUpdateRequest:" + UserUpdateRequest.toString());
 		return userManager.updateUserFromRequest(UserUpdateRequest);
 	}
 
