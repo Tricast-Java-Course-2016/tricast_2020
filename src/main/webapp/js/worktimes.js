@@ -1,24 +1,54 @@
 window.onload = function() {
     SB.Utils.initAjax();
     bindListeners();
-    loadWorktimes();
+    //loadWorktimes();
 };
 
 function bindListeners() {
     $("#saveWorkdayWorktimes").click(function(e) {
-    	//saveWorktimes();
+    	saveWorktimes();
+    });
+    //New worktime added
+    $("#addNewWorktime").click(function(e) {
+    	//addNewWorktime();
     });
 
 }
 
 //Save a not existing workday
 function saveWorktimes(){
+	///Date
+	var d = new Date();
+	var n = d.getTimezoneOffset();
+	
+	
 	let url = "/workinghours/rest/worktimes/create";
+	let loggedInUser = 1;
+	let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
+	let worktimesCreationRequest = [];
+	let workdayCreationRequest = {};
+	let worktime;
+	dataFromWorktimesForm.forEach(worktime => {
+		worktime = {
+			'startTime' : n,
+			'endTime' : n,
+			'type' : worktime.type,
+			'comment' : worktime.comment,
+			'modifiedBy' : loggedInUser
+		}
+		worktimesCreationRequest.push(worktime);
+	});
+	console.log(worktimesCreationRequest);
 	
-	let data = SB.Utils.readFormData($('#WorktimesForm'));
+	workdayCreationRequest = {
+			'date' :  n,
+			'userId' : loggedInUser,
+			"worktimesCreationRequest" : worktimesCreationRequest
+	}
 	
-	$.post("/workinghours/rest/worktimes/create", JSON.stringify(data), function(data){
-		alert('OK');
+	$.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
+		console.log('Saved Worktime' + worktimesCreationRequest);
+		//alert('OK');
 	});
 }
 
@@ -43,7 +73,7 @@ function loadWorktimes(){
 function displayWorktimes(data){
 	let workdayWorktimesList = [];
 	data.forEach(function(entry) {
-		worktime = new Worktime(entry);
+		worktime = new WorktimeToDisplay(entry);
 		workdayWorktimesList.push(worktime);
 	});
 	console.log(workdayWorktimesList);
@@ -52,7 +82,9 @@ function displayWorktimes(data){
     }));
 }
 
-class Worktime {
+
+//The loaded Worktime Format from request
+class WorktimeToDisplay {
 	constructor(entry){
 		this.id = entry.id;
 		this.comment = entry.comment;
