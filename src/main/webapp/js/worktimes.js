@@ -1,7 +1,7 @@
 window.onload = function() {
     SB.Utils.initAjax();
     bindListeners();
-    //loadWorktimes();
+    loadWorktimes();
 };
 
 function bindListeners() {
