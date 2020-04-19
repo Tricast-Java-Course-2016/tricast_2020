@@ -139,7 +139,7 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-    public UserResponse searchUserFromRequest(String userName) throws WorkingHoursException {
+	public UserResponse searchUserFromRequest(String userName) throws WorkingHoursException {
 		List<User> userList = userRepository.findByUserName(userName);
 
 		if (userList != null && userList.size() == 1) {
@@ -147,7 +147,7 @@ public class UserManagerImpl implements UserManager {
 			return mapUserToUserResponse(responseUser);
 		}
 
-        throw new WorkingHoursException("User does not exist");
+		throw new WorkingHoursException("User does not exist");
 	}
 
 	@Override
@@ -155,11 +155,15 @@ public class UserManagerImpl implements UserManager {
 		Optional<User> userToUpdateOptional = userRepository.findById(Long.parseLong(userPwdChangeRequest.getUserId()));
 		User userToUpdate = null;
 		if (userToUpdateOptional.isPresent()) {
+
 			userToUpdate = userToUpdateOptional.get();
-			// TODO titkositas jon majd ide
-			userToUpdate.setPassword(userPwdChangeRequest.getNewPassword());
-			User updatedUser = userRepository.save(userToUpdate);
-			return mapUserToUserResponse(updatedUser);
+			if (userPwdChangeRequest.getOldPassword() != null
+					&& userPwdChangeRequest.getOldPassword().equals(userToUpdate.getPassword())) {
+				// TODO titkositas jon majd ide
+				userToUpdate.setPassword(userPwdChangeRequest.getNewPassword());
+				User updatedUser = userRepository.save(userToUpdate);
+				return mapUserToUserResponse(updatedUser);
+			}
 		}
 		return null;
 	}
