@@ -19,7 +19,7 @@
     <script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
     <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/worktimesUtils.js"></script>
     <script type="text/javascript" src="js/worktimes.js"></script>
     
     <script id="worktimes-row-template" type="text/x-handlebars-template">
@@ -73,38 +73,39 @@
 				</div>
 				<hr class="mb-4">
 				
-				
-				
-				
 				<div id="worktimes-table">
+					<div class="row mb-3">
+						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time" name="startTime"></div>
+						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time" name="endTime"></div>
+						<div class="col-3 themed-grid-col">
+							<select type="text" class="form-control" id="workingTypes" name="type">
+								<option value="OFFICE">Office</option>
+								<option value="HOMEOFFICE">Home Office</option>
+								<option value="DELEGACY">Delegacy</option>
+							</select>
+						</div>
+						<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description" name="comment"></div>
+						<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+					</div>
 					
-					
-						
-							<div class="row mb-3">
-								<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time"></div>
-								<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time"></div>
-								<div class="col-3 themed-grid-col">
-									<select type="text" class="form-control" id="workingTypes">
-										<option value="OFFICE">Office</option>
-										<option value="HOMEOFFICE">Home Office</option>
-										<option value="DELEGACY">Delegacy</option>
-									</select>
-								</div>
-								<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description"></div>
-								<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
-							</div>
-						
-						
-
-						
-					
+					<div class="row mb-3">
+						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time" name="startTime"></div>
+						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time" name="endTime"></div>
+						<div class="col-3 themed-grid-col">
+							<select type="text" class="form-control" id="workingTypes" name="type">
+								<option value="OFFICE">Office</option>
+								<option value="HOMEOFFICE">Home Office</option>
+								<option value="DELEGACY">Delegacy</option>
+							</select>
+						</div>
+						<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description" name="comment"></div>
+						<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+					</div>
 				</div>
-				
-
 
 				<hr class="mb-4">
 				<div class="row mb-1 row-btn">
-					<div class="col-12 themed-grid-col"><a class="btn btn-add" href="#"><ion-icon name="add-outline"></ion-icon></a></div>
+					<div class="col-12 themed-grid-col"><a class="btn btn-add" href="#" id="addNewWorktime"><ion-icon name="add-outline"></ion-icon></a></div>
 				</div>
 				
 				<div class="row mb-5 row-last">
