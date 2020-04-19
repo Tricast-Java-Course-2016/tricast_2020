@@ -67,11 +67,13 @@ public class UserController {
 
 	@PostMapping(path = "/login")
 	public UserResponse loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+		LOG.info("userLoginRequest:" + userLoginRequest.toString());
 		return userManager.loginUserFromRequest(userLoginRequest);
 	}
 
 	@PutMapping(path = "/pwdc")
 	public UserResponse pwdChangeUser(@RequestBody UserPwdChangeRequest userPwdChangeRequest) {
+		LOG.info("UserPwdChangeRequest:" + userPwdChangeRequest.toString());
 		return userManager.pwdChangeUserFromRequest(userPwdChangeRequest);
 	}
 

@@ -57,4 +57,10 @@ public class UserPwdChangeRequest {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "UserPwdChangeRequest [userId=" + userId + ", newPassword=" + newPassword + "]";
+	}
+	
+
 }
