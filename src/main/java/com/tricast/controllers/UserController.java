@@ -43,6 +43,7 @@ public class UserController {
 
 	@PostMapping(path = "/create")
 	public UserResponse createUser(@RequestBody UserCreationRequest userCreationRequest) {
+		LOG.info("UserCreationRequest:" + userCreationRequest.toString());
 		return userManager.createUserFromRequest(userCreationRequest);
 	}
 

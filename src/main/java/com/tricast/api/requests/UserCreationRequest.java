@@ -234,4 +234,14 @@ public class UserCreationRequest {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "UserCreationRequest [address=" + address + ", companyName=" + companyName + ", dob=" + dob + ", email="
+				+ email + ", firstName=" + firstName + ", gender=" + gender + ", lastName=" + lastName + ", middleName="
+				+ middleName + ", password=" + password + ", phone=" + phone + ", postcode=" + postcode + ", roleId="
+				+ roleId + ", userName=" + userName + "]";
+	}
+	
+	
+
 }
