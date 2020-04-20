@@ -56,8 +56,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		int WorkdayId = (int) createdWorkday.getId();
 		List<Worktime> newWorktime = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,WorkdayId);
 
-        // AKOS COMMENT: itt a kasztolás elhagyható, nem kell a (List<Worktime>)
-		List <Worktime> createdWorktimes = (List<Worktime>) worktimeRepository.saveAll(newWorktime);
+		List <Worktime> createdWorktimes = worktimeRepository.saveAll(newWorktime);
 
 		WorkdayCreationResponse responseWorkday = ResponsenewWorkday(createdWorkday);
 		List <WorktimeCreationResponse> worktimeCreationResponse = ResponsenewWorktimes(createdWorktimes);
