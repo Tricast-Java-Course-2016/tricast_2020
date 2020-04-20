@@ -30,6 +30,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private WorktimeRepository worktimeRepository;
 	private WorkdayRepository workdayRepository;
+    private static final int allWorkhoursOfYear = 1920;
 
 	@Autowired
 	public WorktimeManagerImpl(WorktimeRepository worktimeRepository, WorkdayRepository workdayRepository) {
@@ -299,7 +300,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		workTimeStatByIdResponse.setWorktimesOfTheWeeks(weeksOfTheYear);
 		int workhours= sumWorkhours(weeksOfTheYear);
 		workTimeStatByIdResponse.setWorktimehours(workhours);
-		workTimeStatByIdResponse.setOvertimes(doWorkerHaveOvertimes(workhours));
+		workTimeStatByIdResponse.setOvertimes(howManyWorkhoursHaveTheEmployee(workhours));
 		return workTimeStatByIdResponse;
 
 	}
@@ -308,10 +309,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
 	}
 
-	private int doWorkerHaveOvertimes(int workhours) {
-        // AKOS COMMENT: itt is az 1920 egy magic number
-		if (workhours>=1920) {
-			return 1920-workhours;
+	private int howManyWorkhoursHaveTheEmployee(int theWorkersAllWorkhours) {
+		if (theWorkersAllWorkhours>=allWorkhoursOfYear) {
+			return allWorkhoursOfYear-theWorkersAllWorkhours;
 		}
 		else {
 			return 0;
