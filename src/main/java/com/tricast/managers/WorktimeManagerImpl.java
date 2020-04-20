@@ -49,14 +49,13 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 		Workday newWorkday = requestWorkdayMapper(workdayCreationRequest);
 		Workday createdWorkday = workdayRepository.save(newWorkday);
-
         // AKOS COMMENT: használjunk long id-kat a request/responsokon is
         // az entityken is long van
         // ha túl nagy a long akkor így visszakasztolni amúgy is veszélyes
 		int WorkdayId = (int) createdWorkday.getId();
 		List<Worktime> newWorktime = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,WorkdayId);
 
-		List <Worktime> createdWorktimes = worktimeRepository.saveAll(newWorktime);
+		List<Worktime> createdWorktimes =  (List<Worktime>)worktimeRepository.saveAll(newWorktime);
 
 		WorkdayCreationResponse responseWorkday = responsenewWorkday(createdWorkday);
 		List <WorktimeCreationResponse> worktimeCreationResponse = responsenewWorktimes(createdWorktimes);
@@ -169,9 +168,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private Worktime isModifiedTheStartTimeAndEndTime(WorkTimeUpdateRequest updateDatas,long worktimeId) {
 		Optional<Worktime> updateWorktime =  worktimeRepository.findById(worktimeId);
-		// AKOS COMMENT: itt lehet hogy ZoneDateTime equals helyett inkább az isEqual() -t kéne használni
-        if (updateWorktime.get().getStartTime().equals(updateDatas.getStartTime())
-                && updateWorktime.get().getEndTime().equals(updateDatas.getEndTime())) {
+        if (!(updateWorktime.get().getStartTime().isEqual(updateDatas.getStartTime())
+                && updateWorktime.get().getEndTime().isEqual(updateDatas.getEndTime()))) {
 			updateWorktime.get().setModifiedStartTime(updateWorktime.get().getStartTime());
 			updateWorktime.get().setModifiedEndTime(updateWorktime.get().getEndTime());
 		}
