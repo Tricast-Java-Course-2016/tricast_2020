@@ -11,5 +11,4 @@ public interface WorktimeRepository extends CrudRepository<Worktime, Long> {
 	List<Worktime> findByType(WorktimeType worktimeType);
 	List<Worktime> findAllByWorkdayId(long id);
 	List<Worktime> findAllByWorkdayIdIn(List<Long> id);
-    List<Worktime> saveAll(List<Worktime> worktimes);
 }
