@@ -57,4 +57,9 @@ public class SpecialDayManagerImpl implements SpecialDayManager{
 	private int getWithDayOfMonth() { 
 		return Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
+
+	@Override
+	public List<Specialday> getAllSpecialdays() {
+		return (List<Specialday>) specialdayRepository.findAll();
+	}
 }

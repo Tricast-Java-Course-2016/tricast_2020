@@ -10,5 +10,7 @@ public interface SpecialDayManager {
 	
 	Specialday createSpecialday(Specialday specialdayRequest);
 	
+	List<Specialday> getAllSpecialdays();
+	
 	void deleteSpecialday(int id);
 }

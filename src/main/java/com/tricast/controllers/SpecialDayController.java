@@ -1,6 +1,5 @@
 package com.tricast.controllers;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +23,21 @@ public class SpecialDayController {
 	private SpecialDayManager specialDayManager;
 	
 	@GetMapping
+	public List<Specialday> getAllSpecialdays() {
+		return specialDayManager.getAllSpecialdays();
+	}
+	
+	/*@GetMapping
 	public List<Specialday> getSpecialDaysInTheYear(){
 		return specialDayManager.getSpecialDaysInTheYear(null);
-	}
+	}*/
 	
 	@GetMapping(path = "/{year}")
 	public List<Specialday> getSpecialDaysInTheYear(@PathVariable("year") String yearRequest){
 		return specialDayManager.getSpecialDaysInTheYear(yearRequest);
 	}
 	
-	//@GetMapping
-	//public List<Specialday> getAllSpecialDays(){
-		//return specialDayManager.getSpecialDaysInTheYear(String.valueOf(ZonedDateTime.now().getYear()));
-	//}
+	
 	
 	@PostMapping
 	public Specialday saveSpecialday(@RequestBody Specialday specialdayRequest) {

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Required meta tags, viewport needed for Bootstrap -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+<script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/specialdays.js"></script>
+
+<script id="specialdays-row-template" type="text/x-handlebars-template">
+    	{{#each specialday}}
+        {{#with this}}
+        	<tr>
+				<td>{{id}}</td>
+            	<td>{{date}}</td>
+            </tr>
+        {{/with}}
+        {{/each}}
+	</script>
+
+<title>Specialdays</title>
+
+</head>
+<body class="bg-light">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class=col-lg-6>
+				<h2 class="text-info">Bank holiday and workday</h2>
+			</div>
+		</div>
+	</div>
+	<br>
+	<section>
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class=col-md-8>
+					<h5 class="text-info">Load specialdays</h5>
+				</div>
+			</div>
+		</div>
+
+		<form id="getSpecialdays">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-10 col-lg-8">
+						<label class="text-info" for="exYear">Year</label> <input
+							class="col-md-8" type="text" id="exYear"
+							placeholder="Enter the year to filter the results" disabled>
+						<button class="btn btn-info" type="button" id="getSpecialdays">Load</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</section>
+	<br>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-10 col-lg-8">
+				<section>
+					<div class="col">
+						<h5 class="text-info">Specialdays</h5>
+					</div>
+					<div>
+						<table id="specialdays-table" class="table">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Date</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+		</div>
+	</div>
+	<section>
+		<form id="postSpecialday">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-lg-4">
+						<label class="text-info" for="date">Date: <input
+							type="date" id="date" name="date"></label>
+					</div>
+					<br>
+				</div>
+				<div class="row justify-content-center">
+					<div class="col-lg-2">
+						<div class="radio">
+							<label class="text-info" for="workday">Work day <input
+								type="radio" name="type" id="workday" checked />
+							</label>
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<div class="radio">
+							<label class="text-info" for="Bankholiday">Bank holiday <input
+								type="radio" name="type" id="bankholiday" checked />
+							</label>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row justify-content-center">
+					<div>
+						<button class="btn btn-info" type="submit" id="saveSpecialday">Save</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</section>
+</body>
+</html>
