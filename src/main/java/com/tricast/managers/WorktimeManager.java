@@ -20,5 +20,5 @@ public interface WorktimeManager {
 
 	void deleteAllWorkTimesById(long id);
 
-	WorkTimeStatByIdResponse WorkTimeStatByIdResponse(long id,int year);
+	WorkTimeStatByIdResponse workTimeStatByIdResponse(long id,int year);
 }

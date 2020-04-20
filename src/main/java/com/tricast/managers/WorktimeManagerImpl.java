@@ -47,7 +47,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	@Override
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
-		Workday newWorkday = RequestWorkdayMapper(workdayCreationRequest);
+		Workday newWorkday = requestWorkdayMapper(workdayCreationRequest);
 		Workday createdWorkday = workdayRepository.save(newWorkday);
 
         // AKOS COMMENT: használjunk long id-kat a request/responsokon is
@@ -58,23 +58,20 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 		List <Worktime> createdWorktimes = worktimeRepository.saveAll(newWorktime);
 
-		WorkdayCreationResponse responseWorkday = ResponsenewWorkday(createdWorkday);
-		List <WorktimeCreationResponse> worktimeCreationResponse = ResponsenewWorktimes(createdWorktimes);
-		return ResponsenNewWorkdayWithWorktimes(responseWorkday,worktimeCreationResponse);
+		WorkdayCreationResponse responseWorkday = responsenewWorkday(createdWorkday);
+		List <WorktimeCreationResponse> worktimeCreationResponse = responsenewWorktimes(createdWorktimes);
+		return responsenNewWorkdayWithWorktimes(responseWorkday,worktimeCreationResponse);
 
 	}
 
-    // AKOS COMMENT: a konvenciókra figyeljünk oda:
-    // nagybetűvel az oesztálynevek kezdődnek
-    // kisbetűvel a metódus és változó nevek
-	private Workday RequestWorkdayMapper(WorkdayCreationRequest workdayCreationRequest) {
+	private Workday requestWorkdayMapper(WorkdayCreationRequest workdayCreationRequest) {
 		Workday newWorkDay = new Workday();
 		newWorkDay.setDate(workdayCreationRequest.getDate());
 		newWorkDay.setUserId(workdayCreationRequest.getUserId());
 		return newWorkDay;
 	}
 
-	private WorkdayCreationResponse ResponsenewWorkday(Workday createdWorkday) {
+	private WorkdayCreationResponse responsenewWorkday(Workday createdWorkday) {
 		WorkdayCreationResponse workdayCreationResponse = new WorkdayCreationResponse();
 		workdayCreationResponse.setDate(createdWorkday.getDate());
 		workdayCreationResponse.setId(createdWorkday.getId());
@@ -82,7 +79,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return workdayCreationResponse;
 	}
 
-	private List<WorktimeCreationResponse> ResponsenewWorktimes(List <Worktime> createdWorktimes) {
+	private List<WorktimeCreationResponse> responsenewWorktimes(List <Worktime> createdWorktimes) {
 
 		List<WorktimeCreationResponse> responseWorktimes = new LinkedList<>();
 		WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
@@ -100,7 +97,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return responseWorktimes;
 	}
 
-	private WorkdayCreationResponse ResponsenNewWorkdayWithWorktimes(WorkdayCreationResponse responseWorkday, List<WorktimeCreationResponse> createdWorktimes) {
+	private WorkdayCreationResponse responsenNewWorkdayWithWorktimes(WorkdayCreationResponse responseWorkday, List<WorktimeCreationResponse> createdWorktimes) {
 		 responseWorkday.setWorktimesCreatioenResponse(createdWorktimes);
 		 return responseWorkday;
 	}
@@ -192,12 +189,11 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		for (Worktime worktime : WorktimesinTheRepository) {
 			onlyWorktimesId.add(worktime.getId());
 		}
-		ifIdDidNotExistDelete(updatedWorktimes,onlyWorktimesId);
+		deleteifIdNotExist(updatedWorktimes,onlyWorktimesId);
 
 	}
 
-    // AKOS COMMENT: én úgy írnám hogy deleteifIdNotExist és akkor kapásból látszik az első szóból mi ez
-	private void ifIdDidNotExistDelete(List<Worktime> updatedWorktimes,List<Long> onlyWorktimesId) {
+	private void deleteifIdNotExist(List<Worktime> updatedWorktimes,List<Long> onlyWorktimesId) {
 		for (Worktime worktime : updatedWorktimes) {
 				onlyWorktimesId.removeIf(n -> (n == worktime.getId()));
 		}
@@ -205,8 +201,6 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		for (Long id : onlyWorktimesId) {
 			worktimeRepository.deleteById(id);
 		}
-
-
 	}
 
 	@Override
@@ -218,16 +212,11 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 
 	@Override
-	public WorkTimeStatByIdResponse WorkTimeStatByIdResponse(long id,int year) {
-		return checkTheID(id,year);
+	public WorkTimeStatByIdResponse workTimeStatByIdResponse(long id,int year) {
+		return loadWorkTimeStat(id,year);
 	}
 
-    // AKOS COMMENT: a metódus névnek inkább a teljes célt kénr visszaadnia
-    // értem hogy ez a konkrét metódus tényleg csak annyit csinál hogy checkeli az ID-t
-    // de ha valaki használni akarja vagy csak ránéz a WorkTimeStatByIdResponse metódusra
-    // nem tudja mi történik szóval én olyan nevet adnék neki, hogy pl
-    // loadWorkTimeStat
-	private WorkTimeStatByIdResponse checkTheID(long userId,int year) {
+	private WorkTimeStatByIdResponse loadWorkTimeStat(long userId,int year) {
 		if (userId!=0) {
 			return needOneWorkerDatas(userId,year);
 		} else {
@@ -312,7 +301,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		workTimeStatByIdResponse.setWorktimesOfTheWeeks(weeksOfTheYear);
 		int workhours= sumWorkhours(weeksOfTheYear);
 		workTimeStatByIdResponse.setWorktimehours(workhours);
-		workTimeStatByIdResponse.setOvertimes(DoWorkerHaveOvertimes(workhours));
+		workTimeStatByIdResponse.setOvertimes(doWorkerHaveOvertimes(workhours));
 		return workTimeStatByIdResponse;
 
 	}
@@ -321,7 +310,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
 	}
 
-	private int DoWorkerHaveOvertimes(int workhours) {
+	private int doWorkerHaveOvertimes(int workhours) {
         // AKOS COMMENT: itt is az 1920 egy magic number
 		if (workhours>=1920) {
 			return 1920-workhours;

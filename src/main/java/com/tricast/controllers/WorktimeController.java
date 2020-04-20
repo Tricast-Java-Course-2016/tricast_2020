@@ -46,6 +46,6 @@ public class WorktimeController {
 	
 	@GetMapping(path = "/Stats/{year}/{id}")
 	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("id") long id,@PathVariable("year") int year){
-		return worktimeManager.WorkTimeStatByIdResponse(id,year);
+		return worktimeManager.workTimeStatByIdResponse(id,year);
 	}
 }
