@@ -45,7 +45,6 @@ function displaySpecialdays(data) {
 }
 
 function saveSpecialday() {
-
 	
 	let dateValue = document.getElementById("inputDate").value;
 	console.log(dateValue);
