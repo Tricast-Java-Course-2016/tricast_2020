@@ -46,17 +46,19 @@ function displaySpecialdays(data) {
 
 function saveSpecialday() {
 
-	var d = new Date();
-	var n = d.getTimezoneOffset();
-
+	
+	let dateValue = document.getElementById("inputDate").value;
+	console.log(dateValue);
+	let selectedDate = new Date(dateValue.substring(0, 4),dateValue.substring(5, 7)-1,dateValue.substring(8, 10));
+	
 	let requestObejct = {
-		date : $("#date").val(),
+		'date' : selectedDate
 	};
 
 	let data = SB.Utils.readFormData($('#postSpecialday'));
 
-	$.post("/workinghours/rest/specialdays", JSON.stringify(data),
-			function(data) {
+	$.post("/workinghours/rest/specialdays", JSON.stringify(requestObejct),
+			function(requestObejct) {
 				//
 				alert('OK');
 			});
