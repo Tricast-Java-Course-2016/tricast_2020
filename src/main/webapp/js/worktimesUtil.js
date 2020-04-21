@@ -17,7 +17,7 @@ window.SB.Utils = {
     readWorktimesFormDataList : function readFormDataList($form){
     	let dataList = [];
     	let data = {};
-    	const worktimeInputFieldsCount = 4;
+    	const worktimeInputFieldsCount = 5;
     	let nthInputField = 0;
     	
     	for(let val of (new FormData($form.get(0))).entries()) {
