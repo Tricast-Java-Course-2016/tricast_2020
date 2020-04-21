@@ -1,16 +1,38 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Required meta tags, viewport needed for Bootstrap -->
-<meta charset="utf-8">
-<meta name="viewport"
+	<!-- Required meta tags, viewport needed for Bootstrap -->
+	<meta charset="utf-8">
+	<meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
-<!-- jquery is not required yet -->
-<!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+	<!-- jquery is not required yet -->
+	<!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+	<script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
+    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
+	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/stat.js"></script>
+	
+	<script id="stats-row-template" type="text/x-handlebars-template">
+		{{#with this}}
+        	<tr>
+					<td>Workday:</td>
+					<td name="countWorkday">{{numberOfworkday}}</td>
+				</tr>
+				<tr>
+					<td>Work hours:</td>
+					<td name="countWorkhours">{{worktimehours}}</td>
+				</tr>
+				<tr>
+					<td>Overtime:</td>
+					<td name="countOvertimes">{{overtimes}}</td>
+				</tr>
+        {{/with}}
+	</script>
 
 <title>WStat</title>
 </head>
@@ -41,18 +63,18 @@
 		<h3>statistics of emloyes</h3>
 		<!--Table-->
 		<table class="table table-sm">
-			<tbody>
+			<tbody id="statsSummary-table">
 				<tr>
 					<td>Workday:</td>
-					<td>Count workday</td>
+					<td name="countWorkday">Count workday</td>
 				</tr>
 				<tr>
 					<td>Work hours:</td>
-					<td>Count workhours</td>
+					<td name="countWorkhours">Count workhours</td>
 				</tr>
 				<tr>
 					<td>Overtime:</td>
-					<td>Count overtimes</td>
+					<td name="countOvertimes">Count overtimes</td>
 				</tr>
 			</tbody>
 		</table>

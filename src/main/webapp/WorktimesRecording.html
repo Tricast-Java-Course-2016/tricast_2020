@@ -27,17 +27,17 @@
 		{{#with this}}
 			
             	<div class="row mb-3">
-					<div class="col-2 themed-grid-col"><input type="text" class="form-control" value="{{startTime}}" placeholder="Start time"></div>
-					<div class="col-2 themed-grid-col"><input type="text" class="form-control" value="{{endTime}}" placeholder="End time"></div>
+					<div class="col-2 themed-grid-col"><input type="time" class="form-control" value="{{startTime}}" placeholder="Start time" name="startTime"></div>
+					<div class="col-2 themed-grid-col"><input type="time" class="form-control" value="{{endTime}}" placeholder="End time" name="endTime"></div>
 					<div class="col-3 themed-grid-col">
-						<select type="text" class="form-control" id="workingTypes">
+						<select type="text" class="form-control" id="workingTypes" name="type">
 							<option value="OFFICE">Office</option>
 							<option value="HOMEOFFICE">Home Office</option>
 							<option value="DELEGACY">Delegacy</option>
 						</select>
 					</div>
-					<div class="col-3 themed-grid-col"><input type="text" class="form-control" value="{{comment}}" placeholder="Description"></div>
-					<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+					<div class="col-3 themed-grid-col"><input type="text" class="form-control" value="{{comment}}" placeholder="Description" name="comment"></div>
+					<div class="col-2 themed-grid-col"><a class="btn btn-close" onclick="deleteWorktime()" id="deleteWorktime" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
 				</div>
             
 		{{/with}}
@@ -58,7 +58,7 @@
 					<div class="col-6 themed-grid-col" id="workdayDate">
 						<div class="col-last">
 							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline"></ion-icon></a>
-							<div class="content-date">2020.04.10</div>
+							<div class="content-date" id="currentDate">2020.04.10</div>
 							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline"></ion-icon></a>
 						</div>
 					</div>
@@ -75,8 +75,8 @@
 				
 				<div id="worktimes-table">
 					<div class="row mb-3">
-						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time" name="startTime"></div>
-						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time" name="endTime"></div>
+						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="Start time" name="startTime"></div>
+						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="End time" name="endTime"></div>
 						<div class="col-3 themed-grid-col">
 							<select type="text" class="form-control" id="workingTypes" name="type">
 								<option value="OFFICE">Office</option>
@@ -85,12 +85,12 @@
 							</select>
 						</div>
 						<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description" name="comment"></div>
-						<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+						<div class="col-2 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
 					</div>
 					
 					<div class="row mb-3">
-						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="Start time" name="startTime"></div>
-						<div class="col-2 themed-grid-col"><input type="text" class="form-control" placeholder="End time" name="endTime"></div>
+						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="Start time" name="startTime"></div>
+						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="End time" name="endTime"></div>
 						<div class="col-3 themed-grid-col">
 							<select type="text" class="form-control" id="workingTypes" name="type">
 								<option value="OFFICE">Office</option>
@@ -99,7 +99,7 @@
 							</select>
 						</div>
 						<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description" name="comment"></div>
-						<div class="col-2 themed-grid-col"><a class="btn btn-close" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
+						<div class="col-2 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
 					</div>
 				</div>
 
