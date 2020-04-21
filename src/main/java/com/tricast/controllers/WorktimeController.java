@@ -17,6 +17,7 @@ import com.tricast.api.requests.WorkTimeUpdateListRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkdayCreationResponse;
+import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
 
@@ -40,7 +41,7 @@ public class WorktimeController {
 	}
 	
 	@PutMapping(path = "/{workdayId}")
-	public List<Worktime> saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("workdayId") long workdayId) {
+	public WorktimesUpdateResponse saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("workdayId") long workdayId) {
 		return worktimeManager.saveModified(worktimesListRequest,workdayId);
 	}
 	
