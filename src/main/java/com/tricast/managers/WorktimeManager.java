@@ -10,7 +10,7 @@ import com.tricast.api.responses.WorkTimeStatByIdResponse;
 
 public interface WorktimeManager {
 	
-	List<Worktime> getAllWorktimeByWorktimeId(long id);
+	List<Worktime> getAllWorktimeByWorktimeId(long workdayId);
 	
 	List<Worktime> saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid);
 	
