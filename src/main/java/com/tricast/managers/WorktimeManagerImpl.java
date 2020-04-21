@@ -20,6 +20,7 @@ import com.tricast.api.requests.WorktimeCreationRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
@@ -123,30 +124,30 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 
 	@Override
-	public List<Worktime> saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
+	public WorktimesUpdateResponse saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
 		if(!worktimesListRequest.getDatasList().isEmpty()) {
-			List<Worktime> updatedWorktimes = updateWorkTimesRequestMapper(worktimesListRequest,workDayid);
-			List<Worktime> responseWorktimes = createdNewWorktimesAndUpdateOlds(updatedWorktimes);
-			deleteRemovedWorktimes(updatedWorktimes,workDayid);
-			return responseWorktimes;
+			List<Worktime> updatedWorktimes = updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(worktimesListRequest);
+			List<Worktime> responseWorktimes = updateTheDatabase(updatedWorktimes);
+			int numberOfDeletedRows = deleteRemovedWorktimes(updatedWorktimes,workDayid);
+            return updateWorktimesResponseMapper(responseWorktimes,numberOfDeletedRows);
 		}
 		else {
-			deleteAllWorkTimesById(workDayid);
-			return null;
+			int numberOfDeletedRows = deleteAllWorkTimesById(workDayid);
+            return deletedAllWorktimesMapper(numberOfDeletedRows);
 		}
 	}
 
-	private List<Worktime> updateWorkTimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest,long workDayid) {
+	private List<Worktime> updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest) {
 		List<Worktime> updatedWorktimes = new LinkedList<>();
 		List<WorkTimeUpdateRequest> worktimesList =worktimesListRequest.getDatasList();
 
 		for (WorkTimeUpdateRequest updateDatas : worktimesList) {
 			Worktime updateWorktimesWorktime = new Worktime();
-			long workId = updateDatas.getId();
-			if(!isNewWorktime(workId)) {
-				updateWorktimesWorktime = isModifiedTheStartTimeAndEndTime(updateDatas,workId);
+			long worktimeId = updateDatas.getId();
+			if(!isNewWorktime(worktimeId)) {
+				updateWorktimesWorktime = isModifiedTheStartTimeAndEndTime(updateDatas,worktimeId);
 			}
-			updateWorktimesWorktime.setId(updateDatas.getId());
+			updateWorktimesWorktime.setId(worktimeId);
 			updateWorktimesWorktime.setComment(updateDatas.getComment());
 			updateWorktimesWorktime.setEndTime(updateDatas.getEndTime());
 			updateWorktimesWorktime.setStartTime(updateDatas.getStartTime());
@@ -177,36 +178,42 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return updateWorktime.get();
 	}
 
-
-	private List<Worktime> createdNewWorktimesAndUpdateOlds(List<Worktime> updatedWorktimes) {
+	private List<Worktime> updateTheDatabase(List<Worktime> updatedWorktimes) {
 			return (List<Worktime>) worktimeRepository.saveAll(updatedWorktimes);
 	}
 
-	private void deleteRemovedWorktimes(List<Worktime> updatedWorktimes,long workDayid) {
-		List<Worktime> WorktimesinTheRepository = worktimeRepository.findAllByWorkdayId(workDayid);
-		List<Long> onlyWorktimesId = new LinkedList<>();
-		for (Worktime worktime : WorktimesinTheRepository) {
-			onlyWorktimesId.add(worktime.getId());
-		}
-		deleteifIdNotExist(updatedWorktimes,onlyWorktimesId);
-
+	private int deleteRemovedWorktimes(List<Worktime> updatedWorktimes,long workDayid) {
+		List<Worktime> worktimesinTheRepository = worktimeRepository.findAllByWorkdayId(workDayid);
+		return deleteifIdNotExist(updatedWorktimes,worktimesinTheRepository);
 	}
 
-	private void deleteifIdNotExist(List<Worktime> updatedWorktimes,List<Long> onlyWorktimesId) {
-		for (Worktime worktime : updatedWorktimes) {
-				onlyWorktimesId.removeIf(n -> (n == worktime.getId()));
+	private int deleteifIdNotExist(List<Worktime> updatedWorktimes,List<Worktime> worktimesinTheRepository) {
+		for (Worktime updatedWorktime : updatedWorktimes) {
+            worktimesinTheRepository.removeIf(workTimeInDB -> (workTimeInDB.getId() == updatedWorktime.getId()));
 		}
-
-		for (Long id : onlyWorktimesId) {
-			worktimeRepository.deleteById(id);
-		}
+        worktimeRepository.deleteAll(worktimesinTheRepository);
+        return worktimesinTheRepository.size();
 	}
 
+    private WorktimesUpdateResponse deletedAllWorktimesMapper(int numberOfDeletedRows){
+        WorktimesUpdateResponse deletedAllWorktimes = new WorktimesUpdateResponse();
+        deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
+        return deletedAllWorktimes;
+    }
+    
+    private WorktimesUpdateResponse updateWorktimesResponseMapper(List<Worktime> savedWorktimes ,int numberOfDeletedRows){
+        WorktimesUpdateResponse deletedAllWorktimes = new WorktimesUpdateResponse();
+        deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
+        deletedAllWorktimes.setUpdatedWorkTimes(savedWorktimes);
+        return deletedAllWorktimes;
+    }
+    
 	@Override
-	public void deleteAllWorkTimesById(long id) {
+	public int deleteAllWorkTimesById(long id) {
 		List<Worktime> deleteWorkdays = worktimeRepository.findAllByWorkdayId(id);
 		worktimeRepository.deleteAll(deleteWorkdays);
-		workdayRepository.deleteById(id);
+		workdayRepository.deleteById(id); //nem itt a helye
+        return deleteWorkdays.size();
 	}
 
 
