@@ -49,18 +49,18 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
 		Workday newWorkday = requestWorkdayMapper(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday);
+		Workday createdWorkday = workdayRepository.save(newWorkday); // ezt nem itt kéne
         // AKOS COMMENT: használjunk long id-kat a request/responsokon is
         // az entityken is long van
         // ha túl nagy a long akkor így visszakasztolni amúgy is veszélyes
-		int WorkdayId = (int) createdWorkday.getId();
-		List<Worktime> newWorktime = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,WorkdayId);
+		int newWorkdayId = (int) createdWorkday.getId();
+		List<Worktime> newWorktimes = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,newWorkdayId);
 
-		List<Worktime> createdWorktimes =  (List<Worktime>)worktimeRepository.saveAll(newWorktime);
+		List<Worktime> createdWorktimes =  (List<Worktime>)worktimeRepository.saveAll(newWorktimes);
 
-		WorkdayCreationResponse responseWorkday = responsenewWorkday(createdWorkday);
-		List <WorktimeCreationResponse> worktimeCreationResponse = responsenewWorktimes(createdWorktimes);
-		return responsenNewWorkdayWithWorktimes(responseWorkday,worktimeCreationResponse);
+		WorkdayCreationResponse responseNewWorkday = responseNewWorkdayMapper(createdWorkday);
+		List <WorktimeCreationResponse> worktimeCreationResponse = responseNewWorktimesMapper(createdWorktimes);
+		return responseNewWorkdayWithNewWorktimes(responseNewWorkday,worktimeCreationResponse);
 
 	}
 
@@ -71,7 +71,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return newWorkDay;
 	}
 
-	private WorkdayCreationResponse responsenewWorkday(Workday createdWorkday) {
+	private WorkdayCreationResponse responseNewWorkdayMapper(Workday createdWorkday) {
 		WorkdayCreationResponse workdayCreationResponse = new WorkdayCreationResponse();
 		workdayCreationResponse.setDate(createdWorkday.getDate());
 		workdayCreationResponse.setId(createdWorkday.getId());
@@ -79,9 +79,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return workdayCreationResponse;
 	}
 
-	private List<WorktimeCreationResponse> responsenewWorktimes(List <Worktime> createdWorktimes) {
+	private List<WorktimeCreationResponse> responseNewWorktimesMapper(List <Worktime> createdWorktimes) {
 
-		List<WorktimeCreationResponse> responseWorktimes = new LinkedList<>();
+		List<WorktimeCreationResponse> mappedWorktimesList = new LinkedList<>();
 		WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
 
 		for (Worktime newWorktimes : createdWorktimes) {
@@ -92,12 +92,12 @@ public class WorktimeManagerImpl implements WorktimeManager{
 			worktimeCreationResponse.setModifiedBy(newWorktimes.getModifiedBy());
 			worktimeCreationResponse.setType(newWorktimes.getType());
 			worktimeCreationResponse.setWorkdayId(newWorktimes.getWorkdayId());
-			responseWorktimes.add(worktimeCreationResponse);
+			mappedWorktimesList.add(worktimeCreationResponse);
 		}
-		return responseWorktimes;
+		return mappedWorktimesList;
 	}
 
-	private WorkdayCreationResponse responsenNewWorkdayWithWorktimes(WorkdayCreationResponse responseWorkday, List<WorktimeCreationResponse> createdWorktimes) {
+	private WorkdayCreationResponse responseNewWorkdayWithNewWorktimes(WorkdayCreationResponse responseWorkday, List<WorktimeCreationResponse> createdWorktimes) {
 		 responseWorkday.setWorktimesCreatioenResponse(createdWorktimes);
 		 return responseWorkday;
 	}
