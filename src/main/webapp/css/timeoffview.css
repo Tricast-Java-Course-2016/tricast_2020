@@ -6,6 +6,19 @@ a {
   color: #777;
 }
 
+.main-color {
+  color: #f7931e;
+}
+
+.branding-effect {
+  font-weight: 700;
+  color: #f7931e;
+}
+
+.branding-logo {
+  padding: 3rem;
+}
+
 .center {
   text-align: center;
 }
@@ -73,4 +86,61 @@ a {
 
 .bottom-profile img {
   width: 75px;
+}
+
+.btn-primary {
+  font-weight: 500;
+  background-color: #f7931e;
+  border-color: #f7931e;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active {
+  background-color: #da7908 !important;
+  border-color: #da7908 !important;
+}
+
+.offday-img {
+  display: block;
+  margin: 0 auto;
+  height: 250px;
+}
+
+.modal label,
+.modal-title,
+.card-header  {
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.request img {
+  width: 100px;
+}
+
+.request h6 {
+  margin-bottom: 2px;
+}
+
+.request p {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+.offday-calc {
+  font-weight: 700;
+  color: #f7931e;
+}
+
+.hide {
+  display: none;
+}
+
+@media (max-width: 1375px) {
+  .branding-logo { padding: 2rem; }
+}
+
+@media (max-width: 992px) { 
+  .branding-logo { padding: 1rem; }
 }

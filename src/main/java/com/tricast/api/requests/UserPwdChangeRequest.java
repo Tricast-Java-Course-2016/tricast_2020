@@ -5,6 +5,7 @@ public class UserPwdChangeRequest {
 
 	private String userId;
 	private String newPassword;
+	private String oldPassword;
 
 	public String getUserId() {
 		return userId;
@@ -25,12 +26,22 @@ public class UserPwdChangeRequest {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+
+	public String getOldPassword() {
+		return oldPassword;
+	}
+
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((newPassword == null) ? 0 : newPassword.hashCode());
+		result = prime * result + ((oldPassword == null) ? 0 : oldPassword.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
 	}
@@ -49,6 +60,11 @@ public class UserPwdChangeRequest {
 				return false;
 		} else if (!newPassword.equals(other.newPassword))
 			return false;
+		if (oldPassword == null) {
+			if (other.oldPassword != null)
+				return false;
+		} else if (!oldPassword.equals(other.oldPassword))
+			return false;
 		if (userId == null) {
 			if (other.userId != null)
 				return false;
@@ -56,5 +72,13 @@ public class UserPwdChangeRequest {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "UserPwdChangeRequest [userId=" + userId + ", newPassword=" + newPassword + ", oldPassword="
+				+ oldPassword + "]";
+	}
+
+	
 
 }

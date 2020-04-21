@@ -7,7 +7,13 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+<script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/login.js"></script>
 
 <!-- jquery is not required yet -->
 <!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
@@ -18,18 +24,18 @@
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-4">
-				<form id="login">
+				<form id="loginUser">
 					<h2 class="text-info">Login</h2>
 					<label class="text-info" for="userName">User name</label>
 					<div class="form-group">
-						<input id="userName" class="form-control input-lg" type="text" placeholder="User name" required autofocus autocomplete="off">
+						<input id="userName" class="form-control input-lg" type="text" placeholder="User name" name="userName" required autofocus autocomplete="off">
 					</div>
 					<label class="text-info" for="password">Password</label>
 					<div class="form-group">
-						<input id="password" class="form-control input-lg" type="password" placeholder="Password">
+						<input id="password" class="form-control input-lg" type="password" placeholder="Password" name="password">
 					</div>
 					<div id="loginControls">
-						<button class="btn btn-info" type="submit" id="loginSubmit">Log in</button>
+						<button class="btn btn-info" type="button" id="loginSubmit">Log in</button>
 					</div>
 				</form>
 			</div>
