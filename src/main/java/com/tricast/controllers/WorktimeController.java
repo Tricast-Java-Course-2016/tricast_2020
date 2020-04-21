@@ -17,6 +17,7 @@ import com.tricast.api.requests.WorkTimeUpdateListRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkdayCreationResponse;
+import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
 
@@ -28,9 +29,9 @@ public class WorktimeController {
 	private WorktimeManager worktimeManager;
 	
 	
-	@GetMapping(path = "/{id}")
-	public List<Worktime> getAllWorktimeByWorktimeId(@PathVariable("id") long id){
-		return worktimeManager.getAllWorktimeByWorktimeId(id);
+	@GetMapping(path = "/{workdayId}")
+	public List<Worktime> getAllWorktimeByWorktimeId(@PathVariable("workdayId") long workdayId){
+		return worktimeManager.getAllWorktimeByWorktimeId(workdayId);
 	}
 	
 	
@@ -39,13 +40,13 @@ public class WorktimeController {
 		return worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest);
 	}
 	
-	@PutMapping(path = "/{id}")
-	public List<Worktime> saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("id") long id) {
-		return worktimeManager.saveModified(worktimesListRequest,id);
+	@PutMapping(path = "/{workdayId}")
+	public WorktimesUpdateResponse saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("workdayId") long workdayId) {
+		return worktimeManager.saveModified(worktimesListRequest,workdayId);
 	}
 	
-	@GetMapping(path = "/Stats/{year}/{id}")
-	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("id") long id,@PathVariable("year") int year){
-		return worktimeManager.WorkTimeStatByIdResponse(id,year);
+	@GetMapping(path = "/Stats/{year}/{userId}")
+	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("userId") long id,@PathVariable("year") int year){
+		return worktimeManager.workTimeStatByIdResponse(id,year);
 	}
 }

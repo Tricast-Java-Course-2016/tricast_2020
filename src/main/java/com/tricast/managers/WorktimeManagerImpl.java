@@ -20,6 +20,7 @@ import com.tricast.api.requests.WorktimeCreationRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
@@ -30,6 +31,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private WorktimeRepository worktimeRepository;
 	private WorkdayRepository workdayRepository;
+    private static final int allWorkhoursOfYear = 1920;
 
 	@Autowired
 	public WorktimeManagerImpl(WorktimeRepository worktimeRepository, WorkdayRepository workdayRepository) {
@@ -47,35 +49,30 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	@Override
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
-		Workday newWorkday = RequestWorkdayMapper(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday);
-
+		Workday newWorkday = requestWorkdayMapper(workdayCreationRequest);
+		Workday createdWorkday = workdayRepository.save(newWorkday); // ezt nem itt kéne
         // AKOS COMMENT: használjunk long id-kat a request/responsokon is
         // az entityken is long van
         // ha túl nagy a long akkor így visszakasztolni amúgy is veszélyes
-		int WorkdayId = (int) createdWorkday.getId();
-		List<Worktime> newWorktime = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,WorkdayId);
+		int newWorkdayId = (int) createdWorkday.getId();
+		List<Worktime> newWorktimes = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,newWorkdayId);
 
-        // AKOS COMMENT: itt a kasztolás elhagyható, nem kell a (List<Worktime>)
-		List <Worktime> createdWorktimes = (List<Worktime>) worktimeRepository.saveAll(newWorktime);
+		List<Worktime> createdWorktimes =  (List<Worktime>)worktimeRepository.saveAll(newWorktimes);
 
-		WorkdayCreationResponse responseWorkday = ResponsenewWorkday(createdWorkday);
-		List <WorktimeCreationResponse> worktimeCreationResponse = ResponsenewWorktimes(createdWorktimes);
-		return ResponsenNewWorkdayWithWorktimes(responseWorkday,worktimeCreationResponse);
+		WorkdayCreationResponse responseNewWorkday = responseNewWorkdayMapper(createdWorkday);
+		List <WorktimeCreationResponse> worktimeCreationResponse = responseNewWorktimesMapper(createdWorktimes);
+		return responseNewWorkdayWithNewWorktimes(responseNewWorkday,worktimeCreationResponse);
 
 	}
 
-    // AKOS COMMENT: a konvenciókra figyeljünk oda:
-    // nagybetűvel az oesztálynevek kezdődnek
-    // kisbetűvel a metódus és változó nevek
-	private Workday RequestWorkdayMapper(WorkdayCreationRequest workdayCreationRequest) {
+	private Workday requestWorkdayMapper(WorkdayCreationRequest workdayCreationRequest) {
 		Workday newWorkDay = new Workday();
 		newWorkDay.setDate(workdayCreationRequest.getDate());
 		newWorkDay.setUserId(workdayCreationRequest.getUserId());
 		return newWorkDay;
 	}
 
-	private WorkdayCreationResponse ResponsenewWorkday(Workday createdWorkday) {
+	private WorkdayCreationResponse responseNewWorkdayMapper(Workday createdWorkday) {
 		WorkdayCreationResponse workdayCreationResponse = new WorkdayCreationResponse();
 		workdayCreationResponse.setDate(createdWorkday.getDate());
 		workdayCreationResponse.setId(createdWorkday.getId());
@@ -83,9 +80,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return workdayCreationResponse;
 	}
 
-	private List<WorktimeCreationResponse> ResponsenewWorktimes(List <Worktime> createdWorktimes) {
+	private List<WorktimeCreationResponse> responseNewWorktimesMapper(List <Worktime> createdWorktimes) {
 
-		List<WorktimeCreationResponse> responseWorktimes = new LinkedList<>();
+		List<WorktimeCreationResponse> mappedWorktimesList = new LinkedList<>();
 		WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
 
 		for (Worktime newWorktimes : createdWorktimes) {
@@ -96,12 +93,12 @@ public class WorktimeManagerImpl implements WorktimeManager{
 			worktimeCreationResponse.setModifiedBy(newWorktimes.getModifiedBy());
 			worktimeCreationResponse.setType(newWorktimes.getType());
 			worktimeCreationResponse.setWorkdayId(newWorktimes.getWorkdayId());
-			responseWorktimes.add(worktimeCreationResponse);
+			mappedWorktimesList.add(worktimeCreationResponse);
 		}
-		return responseWorktimes;
+		return mappedWorktimesList;
 	}
 
-	private WorkdayCreationResponse ResponsenNewWorkdayWithWorktimes(WorkdayCreationResponse responseWorkday, List<WorktimeCreationResponse> createdWorktimes) {
+	private WorkdayCreationResponse responseNewWorkdayWithNewWorktimes(WorkdayCreationResponse responseWorkday, List<WorktimeCreationResponse> createdWorktimes) {
 		 responseWorkday.setWorktimesCreatioenResponse(createdWorktimes);
 		 return responseWorkday;
 	}
@@ -127,30 +124,30 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 
 	@Override
-	public List<Worktime> saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
+	public WorktimesUpdateResponse saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
 		if(!worktimesListRequest.getDatasList().isEmpty()) {
-			List<Worktime> updatedWorktimes = updateWorkTimesRequestMapper(worktimesListRequest,workDayid);
-			List<Worktime> responseWorktimes = createdNewWorktimesAndUpdateOlds(updatedWorktimes);
-			deleteRemovedWorktimes(updatedWorktimes,workDayid);
-			return responseWorktimes;
+			List<Worktime> updatedWorktimes = updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(worktimesListRequest);
+			List<Worktime> responseWorktimes = updateTheDatabase(updatedWorktimes);
+			int numberOfDeletedRows = deleteRemovedWorktimes(updatedWorktimes,workDayid);
+            return updateWorktimesResponseMapper(responseWorktimes,numberOfDeletedRows);
 		}
 		else {
-			deleteAllWorkTimesById(workDayid);
-			return null;
+			int numberOfDeletedRows = deleteAllWorkTimesById(workDayid);
+            return deletedAllWorktimesMapper(numberOfDeletedRows);
 		}
 	}
 
-	private List<Worktime> updateWorkTimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest,long workDayid) {
+	private List<Worktime> updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest) {
 		List<Worktime> updatedWorktimes = new LinkedList<>();
 		List<WorkTimeUpdateRequest> worktimesList =worktimesListRequest.getDatasList();
 
 		for (WorkTimeUpdateRequest updateDatas : worktimesList) {
 			Worktime updateWorktimesWorktime = new Worktime();
-			long workId = updateDatas.getId();
-			if(!isNewWorktime(workId)) {
-				updateWorktimesWorktime = isModifiedTheStartTimeAndEndTime(updateDatas,workId);
+			long worktimeId = updateDatas.getId();
+			if(!isNewWorktime(worktimeId)) {
+				updateWorktimesWorktime = isModifiedTheStartTimeAndEndTime(updateDatas,worktimeId);
 			}
-			updateWorktimesWorktime.setId(updateDatas.getId());
+			updateWorktimesWorktime.setId(worktimeId);
 			updateWorktimesWorktime.setComment(updateDatas.getComment());
 			updateWorktimesWorktime.setEndTime(updateDatas.getEndTime());
 			updateWorktimesWorktime.setStartTime(updateDatas.getStartTime());
@@ -173,62 +170,59 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private Worktime isModifiedTheStartTimeAndEndTime(WorkTimeUpdateRequest updateDatas,long worktimeId) {
 		Optional<Worktime> updateWorktime =  worktimeRepository.findById(worktimeId);
-		// AKOS COMMENT: itt lehet hogy ZoneDateTime equals helyett inkább az isEqual() -t kéne használni
-        if (updateWorktime.get().getStartTime().equals(updateDatas.getStartTime())
-                && updateWorktime.get().getEndTime().equals(updateDatas.getEndTime())) {
+        if (!(updateWorktime.get().getStartTime().isEqual(updateDatas.getStartTime())
+                && updateWorktime.get().getEndTime().isEqual(updateDatas.getEndTime()))) {
 			updateWorktime.get().setModifiedStartTime(updateWorktime.get().getStartTime());
 			updateWorktime.get().setModifiedEndTime(updateWorktime.get().getEndTime());
 		}
 		return updateWorktime.get();
 	}
 
-
-	private List<Worktime> createdNewWorktimesAndUpdateOlds(List<Worktime> updatedWorktimes) {
+	private List<Worktime> updateTheDatabase(List<Worktime> updatedWorktimes) {
 			return (List<Worktime>) worktimeRepository.saveAll(updatedWorktimes);
 	}
 
-	private void deleteRemovedWorktimes(List<Worktime> updatedWorktimes,long workDayid) {
-		List<Worktime> WorktimesinTheRepository = worktimeRepository.findAllByWorkdayId(workDayid);
-		List<Long> onlyWorktimesId = new LinkedList<>();
-		for (Worktime worktime : WorktimesinTheRepository) {
-			onlyWorktimesId.add(worktime.getId());
-		}
-		ifIdDidNotExistDelete(updatedWorktimes,onlyWorktimesId);
-
+	private int deleteRemovedWorktimes(List<Worktime> updatedWorktimes,long workDayid) {
+		List<Worktime> worktimesinTheRepository = worktimeRepository.findAllByWorkdayId(workDayid);
+		return deleteifIdNotExist(updatedWorktimes,worktimesinTheRepository);
 	}
 
-    // AKOS COMMENT: én úgy írnám hogy deleteifIdNotExist és akkor kapásból látszik az első szóból mi ez
-	private void ifIdDidNotExistDelete(List<Worktime> updatedWorktimes,List<Long> onlyWorktimesId) {
-		for (Worktime worktime : updatedWorktimes) {
-				onlyWorktimesId.removeIf(n -> (n == worktime.getId()));
+	private int deleteifIdNotExist(List<Worktime> updatedWorktimes,List<Worktime> worktimesinTheRepository) {
+		for (Worktime updatedWorktime : updatedWorktimes) {
+            worktimesinTheRepository.removeIf(workTimeInDB -> (workTimeInDB.getId() == updatedWorktime.getId()));
 		}
-
-		for (Long id : onlyWorktimesId) {
-			worktimeRepository.deleteById(id);
-		}
-
-
+        worktimeRepository.deleteAll(worktimesinTheRepository);
+        return worktimesinTheRepository.size();
 	}
 
+    private WorktimesUpdateResponse deletedAllWorktimesMapper(int numberOfDeletedRows){
+        WorktimesUpdateResponse deletedAllWorktimes = new WorktimesUpdateResponse();
+        deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
+        return deletedAllWorktimes;
+    }
+    
+    private WorktimesUpdateResponse updateWorktimesResponseMapper(List<Worktime> savedWorktimes ,int numberOfDeletedRows){
+        WorktimesUpdateResponse deletedAllWorktimes = new WorktimesUpdateResponse();
+        deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
+        deletedAllWorktimes.setUpdatedWorkTimes(savedWorktimes);
+        return deletedAllWorktimes;
+    }
+    
 	@Override
-	public void deleteAllWorkTimesById(long id) {
+	public int deleteAllWorkTimesById(long id) {
 		List<Worktime> deleteWorkdays = worktimeRepository.findAllByWorkdayId(id);
 		worktimeRepository.deleteAll(deleteWorkdays);
-		workdayRepository.deleteById(id);
+		workdayRepository.deleteById(id); //nem itt a helye
+        return deleteWorkdays.size();
 	}
 
 
 	@Override
-	public WorkTimeStatByIdResponse WorkTimeStatByIdResponse(long id,int year) {
-		return checkTheID(id,year);
+	public WorkTimeStatByIdResponse workTimeStatByIdResponse(long id,int year) {
+		return loadWorkTimeStat(id,year);
 	}
 
-    // AKOS COMMENT: a metódus névnek inkább a teljes célt kénr visszaadnia
-    // értem hogy ez a konkrét metódus tényleg csak annyit csinál hogy checkeli az ID-t
-    // de ha valaki használni akarja vagy csak ránéz a WorkTimeStatByIdResponse metódusra
-    // nem tudja mi történik szóval én olyan nevet adnék neki, hogy pl
-    // loadWorkTimeStat
-	private WorkTimeStatByIdResponse checkTheID(long userId,int year) {
+	private WorkTimeStatByIdResponse loadWorkTimeStat(long userId,int year) {
 		if (userId!=0) {
 			return needOneWorkerDatas(userId,year);
 		} else {
@@ -313,7 +307,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		workTimeStatByIdResponse.setWorktimesOfTheWeeks(weeksOfTheYear);
 		int workhours= sumWorkhours(weeksOfTheYear);
 		workTimeStatByIdResponse.setWorktimehours(workhours);
-		workTimeStatByIdResponse.setOvertimes(DoWorkerHaveOvertimes(workhours));
+		workTimeStatByIdResponse.setOvertimes(howManyWorkhoursHaveTheEmployee(workhours));
 		return workTimeStatByIdResponse;
 
 	}
@@ -322,10 +316,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
 	}
 
-	private int DoWorkerHaveOvertimes(int workhours) {
-        // AKOS COMMENT: itt is az 1920 egy magic number
-		if (workhours>=1920) {
-			return 1920-workhours;
+	private int howManyWorkhoursHaveTheEmployee(int theWorkersAllWorkhours) {
+		if (theWorkersAllWorkhours>=allWorkhoursOfYear) {
+			return allWorkhoursOfYear-theWorkersAllWorkhours;
 		}
 		else {
 			return 0;

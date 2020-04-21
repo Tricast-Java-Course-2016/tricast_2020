@@ -30,15 +30,15 @@ public class WorkdayController {
 	@Autowired
 	private WorkdayManager workdayManager;	
 	
-	@GetMapping(path = "/workedhours/{id}")
-	public WorkdayWithWorkHoursStatsGetResponse getAllWorkdaysByIdAndMonth(@PathVariable("id") int id){
-		return workdayManager.getAllWorkdayByUserIdAndMonth(id);
+	@GetMapping(path = "/workedhours/{userId}")
+	public WorkdayWithWorkHoursStatsGetResponse getAllWorkdaysByIdAndMonth(@PathVariable("userId") int userId){
+		return workdayManager.getAllWorkdayByUserIdAndMonth(userId);
 	}
 
 	
-	@DeleteMapping(path = "/{id}")
-	public void deleteWorkday(@PathVariable("id") long id){
-		workdayManager.deleteById(id);
+	@DeleteMapping(path = "/{wordayId}")
+	public void deleteWorkday(@PathVariable("wordayId") long wordayId){
+		workdayManager.deleteById(wordayId);
 	}
 	
 }
