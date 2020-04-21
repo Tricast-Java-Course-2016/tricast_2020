@@ -55,12 +55,12 @@ class emptyWorktimesToDisplay {
 }
 
 //Delete field
-//Now just delete the dirst element from the list, then display the modified list
 function deleteWorktime(rowId){
-	workdayWorktimesList = workdayWorktimesList.filter(worktime => worktime.rowId !== rowId);
-	refreshToDisplayWorktimes(workdayWorktimesList);
-	console.log("Deleted one: " , workdayWorktimesList);
-	console.log("RowId: ", rowId);
+	let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
+	//dataFromWorktimesForm = dataFromWorktimesForm.filter(worktime => worktime.rowId !== rowId);
+	dataFromWorktimesForm.pop();
+	refreshToDisplayWorktimes(dataFromWorktimesForm);
+
 }
 
 
@@ -73,12 +73,19 @@ function refreshToDisplayWorktimes(worktimesList) {
 //Add an empty worktime row
 function addWorktime(){
 	
-	workdayWorktimesList.push(new emptyWorktimesToDisplay());
+	//Switch???
+	//workdayWorktimesList.push(new emptyWorktimesToDisplay());
+	let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
+	console.log(dataFromWorktimesForm);
+	
+	dataFromWorktimesForm.push(new emptyWorktimesToDisplay());
+	
 	
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
-		workdayWorktimes : workdayWorktimesList
+		workdayWorktimes : dataFromWorktimesForm
     }));
-	console.log("Add one: " , workdayWorktimesList);
+	workdayWorktimesList = dataFromWorktimesForm;
+	console.log("Add Worktime: ", dataFromWorktimesForm);
 }
 
 
@@ -102,7 +109,6 @@ function saveWorktimes(){
 	
 	if(workdayWorktimesList.length != 0)
 	{
-		
 		//Go through the input fields and push them into a List
 		let selectedDate = getSelectedWorkdayDate();
 		
@@ -110,13 +116,15 @@ function saveWorktimes(){
 		let workdayCreationRequest = {};
 		let worktime;
 		let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
+		//console.log("dataFromWorktimesForm: ", dataFromWorktimesForm);
 		dataFromWorktimesForm.forEach(e => {
 			worktime = new WorktimeRequestFromFormData(e, selectedDate);
 			
 			worktimesCreationRequest.push(worktime);
-			workdayWorktimesList = worktimesCreationRequest;
+			
 		});
-		console.log(worktimesCreationRequest);
+		workdayWorktimesList = worktimesCreationRequest;
+		console.log("saveWorktimes: ", workdayWorktimesList);
 		
 		
 		
@@ -192,7 +200,7 @@ function displayWorktimes(data){
         workdayWorktimes : loadedListForAsyncronousWorking
     }));
 	workdayWorktimesList = loadedListForAsyncronousWorking;
-	console.log(workdayWorktimesList);
+	console.log("DisplayWorktimes: " , workdayWorktimesList);
 }
 
 
