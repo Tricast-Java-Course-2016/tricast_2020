@@ -17,6 +17,7 @@ window.SB.Utils = {
     readWorktimesFormDataList : function readFormDataList($form){
     	let dataList = [];
     	let data = {};
+    	//The 5th field is hidden -> rowId
     	const worktimeInputFieldsCount = 5;
     	let nthInputField = 0;
     	
