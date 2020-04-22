@@ -2,7 +2,6 @@
 //LoggedInUser Hardcoded
 const loggedInUser = 2;
 //Use a list for store Workday's Worktimes
-let workdayWorktimesList = [];
 
 let rowId = 0;
 
@@ -55,12 +54,10 @@ class emptyWorktimesToDisplay {
 }
 
 //Delete field
-function deleteWorktime(rowId){
+function deleteWorktime(rowIds){
 	let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
-	//dataFromWorktimesForm = dataFromWorktimesForm.filter(worktime => worktime.rowId !== rowId);
-	dataFromWorktimesForm.pop();
+	dataFromWorktimesForm = dataFromWorktimesForm.filter(worktime => parseInt(worktime.rowId) !== rowIds);
 	refreshToDisplayWorktimes(dataFromWorktimesForm);
-
 }
 
 
@@ -73,19 +70,11 @@ function refreshToDisplayWorktimes(worktimesList) {
 //Add an empty worktime row
 function addWorktime(){
 	
-	//Switch???
-	//workdayWorktimesList.push(new emptyWorktimesToDisplay());
 	let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
-	console.log(dataFromWorktimesForm);
-	
 	dataFromWorktimesForm.push(new emptyWorktimesToDisplay());
-	
-	
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
 		workdayWorktimes : dataFromWorktimesForm
     }));
-	workdayWorktimesList = dataFromWorktimesForm;
-	console.log("Add Worktime: ", dataFromWorktimesForm);
 }
 
 
@@ -106,8 +95,8 @@ function UpdateWorktimes(){
 
 //Save a not existing workday
 function saveWorktimes(){
-	
-	if(workdayWorktimesList.length != 0)
+	let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
+	if(dataFromWorktimesForm.length != 0)
 	{
 		//Go through the input fields and push them into a List
 		let selectedDate = getSelectedWorkdayDate();
@@ -115,28 +104,15 @@ function saveWorktimes(){
 		let worktimesCreationRequest = [];
 		let workdayCreationRequest = {};
 		let worktime;
-		let dataFromWorktimesForm = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
-		//console.log("dataFromWorktimesForm: ", dataFromWorktimesForm);
+		
 		dataFromWorktimesForm.forEach(e => {
-			worktime = new WorktimeRequestFromFormData(e, selectedDate);
-			
+			worktime = new WorktimeRequestFromFormData(e);
 			worktimesCreationRequest.push(worktime);
-			
 		});
-		workdayWorktimesList = worktimesCreationRequest;
-		console.log("saveWorktimes: ", workdayWorktimesList);
-		
-		
-		
-		workdayCreationRequest = {
-				'date' :  selectedDate,
-				'userId' : loggedInUser,
-				"worktimesCreationRequest" : worktimesCreationRequest
-		}
+		workdayCreationRequest = new WorkdayCreationRequest(selectedDate, loggedInUser, worktimesCreationRequest);
 		
 		$.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
 			console.log('Saved Worktime');
-			//alert('OK');
 		});
 	} else {
 		console.log("Cannot save empty list");
@@ -144,25 +120,43 @@ function saveWorktimes(){
 	
 }
 
+class WorkdayCreationRequest {
+	constructor(date,userId,worktimesCreationRequest){
+		this.date = date;
+		this.userId = userId;
+		this.worktimesCreationRequest = worktimesCreationRequest;
+	}
+}
+
 function getSelectedWorkdayDate(){
 	let dateTextFromCurrentHtmlElement = document.getElementById("currentDate").textContent;
-	let selectedDate = new Date(dateTextFromCurrentHtmlElement.substring(0, 4),dateTextFromCurrentHtmlElement.substring(5, 7),dateTextFromCurrentHtmlElement.substring(8, 10));
-	
+	const yearMonthDay = convertStringToYearMonthDay(dateTextFromCurrentHtmlElement);
+	let selectedDate = new Date(yearMonthDay[0], yearMonthDay[1], yearMonthDay[2]);
 	return selectedDate;
+}
+//Example: 2020.04.10 => 2020, 5-1, 10
+function convertStringToYearMonthDay(currentDayString){
+	const yearMonthDay = [
+		currentDayString.substring(0, 4),
+		parseInt(currentDayString.substring(5, 7))-1,
+		currentDayString.substring(8, 10)
+	];
+	return yearMonthDay;
 }
 
 class WorktimeRequestFromFormData {
-	constructor(e, selectedDate){
+	constructor(e){
 		//Modifie the start- and end-Time to the correct format which can be save as ZonedDateTime
-		let startTimeInCorrectForm = selectedDate;
-		let endTimeInCorrectForm = selectedDate;
-		//We cut the ":" from '08:00' and set the hour and it's minutes
-		startTimeInCorrectForm.setHours(e.startTime.substring(0, 2), e.startTime.substring(3,5))
+		let startTimeInCorrectForm = getSelectedWorkdayDate();
+		let endTimeInCorrectForm = getSelectedWorkdayDate();
+		
+		//Cut the ":" from '08:00' and set the hour and it's minutes
 		endTimeInCorrectForm.setHours(e.endTime.substring(0, 2), e.endTime.substring(3,5));
+		startTimeInCorrectForm.setHours(e.startTime.substring(0, 2), e.startTime.substring(3,5));
+		
 		//Use the value which has been set before
 		this.startTime = startTimeInCorrectForm;
 		this.endTime = endTimeInCorrectForm;
-		
 		this.type = e.type;
 		this.comment = e.comment;
 		this.modifiedBy = loggedInUser;
@@ -173,7 +167,7 @@ class WorktimeRequestFromFormData {
 //Get Workday's Worktimes
 function loadWorktimes(){
 
-	
+	///workinghours/rest/worktimes/{workdayId}
 	let url = "/workinghours/rest/worktimes/2";
 	
 	$.getJSON(url).done(function(data){
@@ -189,9 +183,7 @@ function loadWorktimes(){
 }
 
 function displayWorktimes(data){
-	//let workdayWorktimesList = SB.Utils.readWorktimesFormDataList($('#WorktimesForm'));
 	let loadedListForAsyncronousWorking = [];
-	//let workdayWorktimesList = [];
 	data.forEach(function(entry) {
 		worktime = new WorktimeResponseToDisplay(entry);
 		loadedListForAsyncronousWorking.push(worktime);
@@ -199,12 +191,7 @@ function displayWorktimes(data){
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
         workdayWorktimes : loadedListForAsyncronousWorking
     }));
-	workdayWorktimesList = loadedListForAsyncronousWorking;
-	console.log("DisplayWorktimes: " , workdayWorktimesList);
 }
-
-
-
 
 //The loaded Worktime Format from request
 class WorktimeResponseToDisplay {
