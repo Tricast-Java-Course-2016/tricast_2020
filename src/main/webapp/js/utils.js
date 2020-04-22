@@ -1,6 +1,34 @@
 window.SB = window.SB || {};
 
+const userId = "WH_USER_ID";
+const userName = "WH_USER_NAME";
+const userToken = "WH_USER_TOKEN";
+const userRole = "WH_USER_ROLE";
+
 window.SB.Utils = {
+        
+    saveUserData : function saveUserData(token, id, accountUsername, role) {
+        localStorage.setItem(userToken, token);
+        localStorage.setItem(userId, id);
+        localStorage.setItem(userName, accountUsername);
+        localStorage.setItem(userRole, role);
+    }, 
+        
+    getUserId : function getUserId() {
+        return localStorage.getItem(userId);
+    },
+        
+    getUsername : function getUsername() {
+        return localStorage.getItem(userName);
+    },
+        
+    getToken : function getToken() {
+        return localStorage.getItem(userToken);
+    },
+        
+    getUserRole : function getUserRole() {
+        return localStorage.getItem(userRole);
+    },
     
     readFormData : function readFormData($form) {
         // The FormData interface provides a way to easily construct a set of key/value pairs representing form fields
@@ -31,7 +59,9 @@ window.SB.Utils = {
             dataType : 'json',
             contentType : "application/json;charset=utf-8",
             timeout : 20000,
-            error : SB.Utils.defaultErrorHandling
+            error : SB.Utils.defaultErrorHandling,
+            beforeSend: function(xhr){ xhr.setRequestHeader("Authorization", SB.Utils.getToken()); }
         });
     }
+    
 };

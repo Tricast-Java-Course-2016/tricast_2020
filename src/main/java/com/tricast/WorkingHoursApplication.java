@@ -39,12 +39,12 @@ public class WorkingHoursApplication {
                 .paths(PathSelectors.any()).build();
     }
 
-//    @Bean
-//    public FilterRegistrationBean<AuthenticationFilter> authenticationFilter() {
-//        final FilterRegistrationBean<AuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
-//        registrationBean.setFilter(new AuthenticationFilter());
-//        registrationBean.addUrlPatterns("/rest/*");
-//
-//        return registrationBean;
-//    }
+    @Bean
+    public FilterRegistrationBean<AuthenticationFilter> authenticationFilter() {
+        final FilterRegistrationBean<AuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new AuthenticationFilter());
+        registrationBean.addUrlPatterns("/rest/*");
+
+        return registrationBean;
+    }
 }
