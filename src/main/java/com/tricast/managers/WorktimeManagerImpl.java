@@ -33,6 +33,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	private WorktimeRepository worktimeRepository;
 	private WorkdayRepository workdayRepository;
     private static final int allWorkhoursOfYear = 1920;
+    private static final int theNumberOfWeeksInTheYear= 53;
 
 	@Autowired
 	public WorktimeManagerImpl(WorktimeRepository worktimeRepository, WorkdayRepository workdayRepository) {
