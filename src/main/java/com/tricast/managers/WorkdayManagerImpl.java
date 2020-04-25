@@ -1,10 +1,7 @@
 package com.tricast.managers;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +14,8 @@ import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
 import com.tricast.repositories.entities.Worktime;
+import com.tricast.repositories.models.TheCurrentMonthOfTheYear;
+import com.tricast.repositories.models.WorkDaysStatManager;
 
 @Component
 public class WorkdayManagerImpl implements WorkdayManager{
@@ -34,7 +33,6 @@ public class WorkdayManagerImpl implements WorkdayManager{
 		this.worktimeRepository = worktimeRepository;
 	}
 
-	////////
 	@Override
 	public void deleteById(long id) {
 		worktimeManager.deleteAllWorkTimesById(id);
@@ -42,46 +40,28 @@ public class WorkdayManagerImpl implements WorkdayManager{
 
 	@Override
     public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId) {
-        // AKOS COMMENT: nehezen olvasható ez a módszer
-        // mindig tudnod kell hogy a lista melyik eleme mit reprezentá amit te lehet tudsz (most még)
-        // de valaki aki olvassa a kódot sok metóduson kell átmennie mire ez kiderül.
-        // Ilyen esetkben inkább ha tényleg szükséges, inlább hozz létre egy megfelelően elnevezett osztályt
-        // az adatok tárolására. Akkor a nevekből már nyilvánvaló lesz mi is történik, egy getCurrentDay() többet mond
-        // mint list.get(0)
-        List<Integer> dataParams = getWithCurrentYearAndCurrentMonthAndCurrentDayofMonth();
-		List<Workday> allWorkdays = workdayRepository.findByUserIdAndDateBetween(userId, CurrentFirstDayOfMonth(dataParams), CurrentLastDayOfMonth(dataParams));
-		List<Integer> workhoursIntegers =sumWorkhoursInCurrentWeekAndPreviousWeek(userId);
-		return WorkdayWithWorkHoursStatsGetResponseMapper(workdayResponseMapper(allWorkdays),workhoursIntegers);
+        TheCurrentMonthOfTheYear CurrentMonthOfTheYear = new TheCurrentMonthOfTheYear();
+		List<Workday> allWorkdaysAtMonth = workdayRepository.findByUserIdAndDateBetween(userId, CurrentMonthOfTheYear.getFirstDayOfCurrentMonth(), CurrentMonthOfTheYear.getLastDayOfCurrentMonth());
+		List<Long> onlyCurrentMonthWorkDayIds = getOnlyWorkdayId(allWorkdaysAtMonth);
+        List<Worktime> allWorktimesAtMonthBySpecifiedUser = worktimeRepository.findAllByWorkdayIdIn(onlyCurrentMonthWorkDayIds);
+        WorkDaysStatManager workDaysStatManager = new WorkDaysStatManager(allWorkdaysAtMonth, allWorktimesAtMonthBySpecifiedUser, getDateWithFirstDayOfCurrentWeek());
+        return WorkdayWithWorkHoursStatsGetResponseMapper(allWorkdaysAtMonth,workDaysStatManager);
 	}
-
-	private WorkdayWithWorkHoursStatsGetResponse WorkdayWithWorkHoursStatsGetResponseMapper(List<WorkdayGetResponse> workdaysGetResponse, List<Integer> workHoursInMinutes) {
-		WorkdayWithWorkHoursStatsGetResponse response = new WorkdayWithWorkHoursStatsGetResponse();
-		response.setWorkdaysGetResponse(workdaysGetResponse);
-		return sumWorkhoursAndWorkMinutes(response,workHoursInMinutes);
-	}
-
-	private WorkdayWithWorkHoursStatsGetResponse sumWorkhoursAndWorkMinutes(WorkdayWithWorkHoursStatsGetResponse response, List<Integer> workHoursInMinutes) {
-		int workHours=workHoursInMinutes.get(0)/60;
-		response.setWorkhoursCurrentWeek(workHours);
-		response.setWorkminutesCurrentWeek(workHoursInMinutes.get(0)-workHours*60);
-		workHours=workHoursInMinutes.get(1)/60;
-		response.setWorkhoursPreviouseWeek(workHours);
-		response.setWorkminutesPreviouseWeek(workHoursInMinutes.get(1)-workHours*60);
-		return response;
-	}
-
-	private List<Integer> sumWorkhoursInCurrentWeekAndPreviousWeek(int userId) {
-		ZonedDateTime dateWithFirstDayOfCurrentWeek = getDateWithFirstDayOfCurrentWeek();
-        // AKOS COMMENT: az adatbázis lekérdezés egy drága művelet és célszerű a spórolásra törekedni velük
-		List<Workday> worktimeAtCurrentWeek = workdayRepository.findByUserIdAndDateBetween(userId,dateWithFirstDayOfCurrentWeek,dateWithFirstDayOfCurrentWeek.plusDays(6));
-		List<Workday> worktimeAtPreviouseWeek = workdayRepository.findByUserIdAndDateBetween(userId,dateWithFirstDayOfCurrentWeek.minusWeeks(1),dateWithFirstDayOfCurrentWeek.minusWeeks(1).plusDays(6));
-		int workMinutesInCurrentWeek = sumWorktimesGiveToMinutes(getOnlyWorkdayId(worktimeAtCurrentWeek));
-		int workMinutesInPreviousWeek = sumWorktimesGiveToMinutes(getOnlyWorkdayId(worktimeAtPreviouseWeek));
-		return Arrays.asList(workMinutesInCurrentWeek, workMinutesInPreviousWeek);
+    
+    private WorkdayWithWorkHoursStatsGetResponse WorkdayWithWorkHoursStatsGetResponseMapper(List<Workday> allWorkdays, WorkDaysStatManager workDaysStatManager) {
+        WorkdayWithWorkHoursStatsGetResponse response = new WorkdayWithWorkHoursStatsGetResponse();
+        response.setWorkdaysGetResponse(workdayResponseMapper(allWorkdays,workDaysStatManager));
+        response.setWorkhoursCurrentWeek(workDaysStatManager.getCurrentWeekWorkTimes());
+        response.setWorkhoursPreviouseWeek(workDaysStatManager.getPreviousWeekWorkTimes());
+        return response;
 	}
 
 	private ZonedDateTime getDateWithFirstDayOfCurrentWeek() {
         ZonedDateTime lt  = ZonedDateTime.now();
+        lt.minusHours(lt.getHour());
+        lt.minusMinutes(lt.getMinute());
+        lt.minusSeconds(lt.getSecond());
+        lt.minusNanos(lt.getNano());
         return lt.minusDays(lt.getDayOfWeek().getValue()-1);
 	}
 
@@ -93,40 +73,19 @@ public class WorkdayManagerImpl implements WorkdayManager{
 		return onlyWorkdayIds;
 	}
 
-	private int sumWorktimesGiveToMinutes(List<Long> workdayIds) {
-		int hour=0;
-		int min=0;
-		List<Worktime> getWorktimesOfweek = worktimeRepository.findAllByWorkdayIdIn(workdayIds);
-		for (Worktime worktime : getWorktimesOfweek) {
-			hour = hour + (worktime.getEndTime().getHour() - worktime.getStartTime().getHour());
-			min = min + (worktime.getEndTime().getMinute() - worktime.getStartTime().getMinute());
-		}
-		return min = min + hour * 60;
-	}
-
-	private List<Integer> getWithCurrentYearAndCurrentMonthAndCurrentDayofMonth() {
-		List<Integer> dataParams = new LinkedList<>();
-		dataParams.add(ZonedDateTime.now().getYear());
-		dataParams.add(ZonedDateTime.now().getMonthValue());
-		dataParams.add(Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
-		return dataParams;
-	}
-
-	private ZonedDateTime CurrentFirstDayOfMonth(List<Integer> dateParam) {
-		return  ZonedDateTime.of(dateParam.get(0), dateParam.get(1), 1, 0, 0, 0, 000, ZoneId.systemDefault());
-	}
-
-	private ZonedDateTime CurrentLastDayOfMonth(List<Integer> dateParam) {
-		return  ZonedDateTime.of(dateParam.get(0), dateParam.get(1), dateParam.get(2), 0, 0, 0, 000, ZoneId.systemDefault());
-	}
-
-	private List<WorkdayGetResponse> workdayResponseMapper(List<Workday> allWorkdays){
+	private List<WorkdayGetResponse> workdayResponseMapper(List<Workday> allWorkdays,WorkDaysStatManager workDaysStatManager){
 		List<WorkdayGetResponse> allWorkdaysGetResponse = new ArrayList<>();
 		for (Workday workDay : allWorkdays) {
 				WorkdayGetResponse response = new WorkdayGetResponse();
 				response.setId(workDay.getId());
 				response.setDate(workDay.getDate());
 				response.setUserId(workDay.getUserId());
+                try {
+                    response.setWorkhours(workDaysStatManager.getWorkedHours().get(workDay.getId())/60);
+                } catch (Exception e) {
+                    response.setWorkhours(0);
+                }
+                
 				allWorkdaysGetResponse.add(response);
 		}
 		return allWorkdaysGetResponse;
