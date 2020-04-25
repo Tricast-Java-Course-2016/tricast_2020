@@ -280,10 +280,6 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private Map<Integer, Integer> declareMap(){
 		Map<Integer, Integer> newMap = new HashMap<>();
-        // AKOS COMMENT: kerüljük a mágikus számokat
-        // a kód olvasója számára egyáltalán nem tiszta mi is az az 54
-        // ilyen esetben célszerű egy constansba kiszervezni az osztály elejére
-        // egy megfelelő névvel ellátva
 		for(int i = 1; i <= theNumberOfWeeksInTheYear; i++) {
 			newMap.put(i, 0);
 		}
