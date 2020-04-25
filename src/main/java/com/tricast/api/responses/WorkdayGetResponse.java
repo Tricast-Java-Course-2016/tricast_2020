@@ -8,6 +8,19 @@ public class WorkdayGetResponse {
 	
 	private long id;
 
+    private int workhours;
+	
+	private ZonedDateTime date;
+
+	private int userId;
+
+    public int getWorkhours() {
+        return workhours;
+    }
+
+    public void setWorkhours(int workhours) {
+        this.workhours = workhours;
+    }
 	
 	public long getId() {
 		return id;
@@ -16,11 +29,7 @@ public class WorkdayGetResponse {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
-	private ZonedDateTime date;
-
-	private int userId;
-
+    
 	public ZonedDateTime getDate() {
 		return date;
 	}
