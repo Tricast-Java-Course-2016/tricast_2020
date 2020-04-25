@@ -25,6 +25,7 @@ import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
 import com.tricast.repositories.entities.Worktime;
+import com.tricast.repositories.models.DateManager;
 
 @Component
 public class WorktimeManagerImpl implements WorktimeManager{
@@ -218,53 +219,49 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 
 	@Override
-	public WorkTimeStatByIdResponse workTimeStatByIdResponse(long id,int year) {
-		return loadWorkTimeStat(id,year);
+	public WorkTimeStatByIdResponse workTimeStatByIdResponse(long userId,int year) {
+		return loadWorkTimeStat(userId,year);
 	}
 
 	private WorkTimeStatByIdResponse loadWorkTimeStat(long userId,int year) {
 		if (userId!=0) {
-			return needOneWorkerDatas(userId,year);
+			return oneWorkerDatas(userId,year);
 		} else {
-			return needAllWorkerDatas(userId,year);
+			return allWorkerDatas(userId,year);
 		}
 	}
 
-	private WorkTimeStatByIdResponse needOneWorkerDatas(long userId,int year) {
+	private WorkTimeStatByIdResponse oneWorkerDatas(long userId,int year) {
 		List<Long> WorkdayIds =getOnlyWorkdayId(getAllUsersWorkData(userId,year));
-		List<Worktime> worktimes = getWorkTimeByIDInSearchListYear(WorkdayIds);
-		List<Integer> weeksOfTheYear = new ArrayList<>(selectitonAndSumWorkhoursWeeksofTheYear(worktimes).values());
-		return worktimeStatsResponseMapper(userId,weeksOfTheYear,WorkdayIds.size());
+		return worktimeStatsResponseMapper(userId,sumWorktimesByWorkid(WorkdayIds),WorkdayIds.size());
 	}
 
-	private WorkTimeStatByIdResponse needAllWorkerDatas(long userId,int year) {
+	private WorkTimeStatByIdResponse allWorkerDatas(long userId,int year) {
 		List<Long> WorkdayIds =getOnlyWorkdayId(getAllWorkData(year));
-		List<Worktime> worktimes = getWorkTimeByIDInSearchListYear(WorkdayIds);
-		List<Integer> weeksOfTheYear = new ArrayList<>(selectitonAndSumWorkhoursWeeksofTheYear(worktimes).values());
-		return worktimeStatsResponseMapper(userId,weeksOfTheYear,WorkdayIds.size());
+		return worktimeStatsResponseMapper(userId,sumWorktimesByWorkid(WorkdayIds),WorkdayIds.size());
 	}
+    
+    private List<Integer> sumWorktimesByWorkid(List<Long> WorkdayIds){
+        List<Worktime> worktimes = getWorkTimeByIDInSearchListYear(WorkdayIds);
+		List<Integer> weeksOfTheYear = new ArrayList<>(selectitonAndSumWorkhoursWeeksofTheYear(worktimes).values());
+        return weeksOfTheYear;
+    }
 
 	private List<Workday> getAllUsersWorkData(long userId,int year) {
-		return workdayRepository.findByUserIdAndDateBetween((int) userId, createFirstDayofTheYear(year), createLastDayofTheYear(year));
+       DateManager date = new DateManager(year);
+       return workdayRepository.findByUserIdAndDateBetween((int) userId, date.getStartDate(), date.getFinishDate());
 	}
 
 	private List<Workday> getAllWorkData(int year) {
-		return workdayRepository.findByDateBetween(createFirstDayofTheYear(year), createLastDayofTheYear(year));
-	}
-
-	private ZonedDateTime createFirstDayofTheYear(int year) {
-		return ZonedDateTime.of(year, 1, 1, 0, 0, 0, 000, ZoneId.systemDefault());
-	}
-
-	private ZonedDateTime createLastDayofTheYear(int year) {
-		return ZonedDateTime.of(year, 12, 31, 0, 0, 0, 000, ZoneId.systemDefault());
+        DateManager date = new DateManager(year);
+		return workdayRepository.findByDateBetween(date.getStartDate(), date.getFinishDate());
 	}
 
 	private List<Long> getOnlyWorkdayId(List<Workday> workdays){
 		List<Long> onlyWorkIDList = new LinkedList<>();
-		for (Workday workday : workdays) {
-			onlyWorkIDList.add(workday.getId());
-		}
+        workdays.forEach((workday) -> {
+            onlyWorkIDList.add(workday.getId());
+        });
 		return onlyWorkIDList;
 	}
 
@@ -274,9 +271,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private Map<Integer, Integer> selectitonAndSumWorkhoursWeeksofTheYear(List<Worktime> worktimes) {
 		Map<Integer, Integer> weeksOfTheYearWithWorkhoursInWeekMap = declareMap();
-		for (Worktime worktime : worktimes) {
-			addParametersTomap(worktime,weeksOfTheYearWithWorkhoursInWeekMap);
-		}
+        worktimes.forEach((worktime) -> {
+            addParametersTomap(worktime,weeksOfTheYearWithWorkhoursInWeekMap);
+        });
 		return weeksOfTheYearWithWorkhoursInWeekMap;
 	}
 
@@ -286,7 +283,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
         // a kód olvasója számára egyáltalán nem tiszta mi is az az 54
         // ilyen esetben célszerű egy constansba kiszervezni az osztály elejére
         // egy megfelelő névvel ellátva
-		for(int i =1 ;i<54;i++) {
+		for(int i = 1; i <= theNumberOfWeeksInTheYear; i++) {
 			newMap.put(i, 0);
 		}
 		return newMap;
