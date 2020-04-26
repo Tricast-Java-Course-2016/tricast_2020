@@ -20,6 +20,10 @@ import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
+import com.tricast.repositories.entities.enums.Role;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 @RestController
 @RequestMapping(path = "rest/worktimes")
@@ -36,17 +40,39 @@ public class WorktimeController {
 	
 	
 	@PostMapping(path = "/create")
-	 WorkdayCreationResponse createWorkdayWithWorktime(@RequestBody WorkdayCreationRequest workdayCreationRequest) {
-		return worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest);
+	public ResponseEntity<?> createWorkdayWithWorktime(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody WorkdayCreationRequest workdayCreationRequest) {
+		if(userCheck(roleId, loggedInUser, workdayCreationRequest.getUserId())){
+            try {
+                 return ResponseEntity.ok(worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+        }
 	}
 	
 	@PutMapping(path = "/{workdayId}")
-	public WorktimesUpdateResponse saveWorktimesAndModified(@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("workdayId") long workdayId) {
-		return worktimeManager.saveModified(worktimesListRequest,workdayId);
+	public ResponseEntity<?> saveWorktimesAndModified(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("workdayId") long workdayId) {
+		if(userCheck(roleId, loggedInUser, worktimesListRequest.getUserId())){
+            try {
+                return ResponseEntity.ok(worktimeManager.saveModified(worktimesListRequest,workdayId));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+        }
 	}
 	
 	@GetMapping(path = "/Stats/{year}/{userId}")
 	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("userId") long id,@PathVariable("year") int year){
 		return worktimeManager.workTimeStatByIdResponse(id,year);
 	}
+    
+    private boolean userCheck(int roleId,int loggedInUser,int inRequestUserID){
+        return Role.ADMIN == Role.getById(roleId) || loggedInUser ==inRequestUserID;
+    }
 }
