@@ -22,6 +22,10 @@ import com.tricast.managers.WorkdayManager;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Workday;
 import com.tricast.repositories.entities.Worktime;
+import com.tricast.repositories.entities.enums.Role;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 @RestController
 @RequestMapping(path = "rest/workdays")
@@ -31,14 +35,23 @@ public class WorkdayController {
 	private WorkdayManager workdayManager;	
 	
 	@GetMapping(path = "/workedhours/{userId}")
-	public WorkdayWithWorkHoursStatsGetResponse getAllWorkdaysByIdAndMonth(@PathVariable("userId") int userId){
-		return workdayManager.getAllWorkdayByUserIdAndMonth(userId);
+	public ResponseEntity<?> getAllWorkdaysByIdAndMonth(@RequestAttribute("authentication.roleId")int roleId ,@PathVariable("userId") int userId){
+        try {
+            return ResponseEntity.ok(workdayManager.getAllWorkdayByUserIdAndMonth(userId,roleId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 	}
 
 	
 	@DeleteMapping(path = "/{wordayId}")
-	public void deleteWorkday(@PathVariable("wordayId") long wordayId){
-		workdayManager.deleteById(wordayId);
+	public ResponseEntity<?> deleteWorkday(@PathVariable("wordayId") long wordayId){
+        try {
+            workdayManager.deleteById(wordayId);
+            return ResponseEntity.ok("DELETE SUCCESSFUL");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 	}
 	
 }
