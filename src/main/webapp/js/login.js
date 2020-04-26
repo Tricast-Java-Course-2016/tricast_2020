@@ -18,5 +18,6 @@ function loginUser() {
         let token = xhr.getResponseHeader('Authorization');
         SB.Utils.saveUserData(token, data.id, data.userName, data.roleId);
         alert('OK login');
+        window.location.href = "/workinghours/WorktimesRecording.html";
     });
 }
