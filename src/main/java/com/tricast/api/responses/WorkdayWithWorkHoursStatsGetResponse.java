@@ -1,6 +1,7 @@
 package com.tricast.api.responses;
 
 import java.util.List;
+import java.util.Map;
 
 public class WorkdayWithWorkHoursStatsGetResponse {
 
@@ -13,6 +14,8 @@ public class WorkdayWithWorkHoursStatsGetResponse {
 	private int workminutesCurrentWeek;
 	
 	private int workminutesPreviouseWeek;
+    
+    private Map<Long,String> userList;
 
 	public int getWorkminutesCurrentWeek() {
 		return workminutesCurrentWeek;
@@ -53,6 +56,12 @@ public class WorkdayWithWorkHoursStatsGetResponse {
 	public void setWorkhoursPreviouseWeek(int workhoursPreviouseWeek) {
 		this.workhoursPreviouseWeek = workhoursPreviouseWeek;
 	}
-	
-	
+
+    public Map<Long, String> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(Map<Long, String> userList) {
+        this.userList = userList;
+    }
 }
