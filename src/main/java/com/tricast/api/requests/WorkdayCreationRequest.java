@@ -16,7 +16,7 @@ public class WorkdayCreationRequest {
 
 	private Integer userId;
 	
-	List<WorktimeCreationRequest> worktimesCreationRequest = new ArrayList<WorktimeCreationRequest>();
+	List<WorktimeCreationRequest> worktimesCreationRequest;
 	
 	public ZonedDateTime getDate() {
 		return date;
@@ -38,17 +38,12 @@ public class WorkdayCreationRequest {
 		this.userId = userId;
 	}
 
-	public List<WorktimeCreationRequest> getWorktimesCreationRequest() {
-		return worktimesCreationRequest;
-	}
+    public List<WorktimeCreationRequest> getWorktimesCreationRequest() {
+        return worktimesCreationRequest;
+    }
 
-	public void setWrktimesCreationRequest(List<WorktimeCreationRequest> worktimesCreationRequest) {
-		this.worktimesCreationRequest = worktimesCreationRequest;
-	}
-
-	
-
-	
-	
+    public void setWorktimesCreationRequest(List<WorktimeCreationRequest> worktimesCreationRequest) {
+        this.worktimesCreationRequest = worktimesCreationRequest;
+    }
 	
 }
