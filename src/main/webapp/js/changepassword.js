@@ -25,7 +25,7 @@ function changePassword() {
 				alert('OK pwd changed');
 			},
 			error : function(response) {
-				alert("User name or pwd is not correct");
+				alert("Old password is not correct");
 			},
 			data : JSON.stringify(data)
 		});
