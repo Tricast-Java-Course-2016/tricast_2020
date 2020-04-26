@@ -1,41 +1,79 @@
-<!doctype html>
-<html lang="en">
-<head>
-<!-- Required meta tags, viewport needed for Bootstrap -->
-<meta charset="utf-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Required meta tags, viewport needed for Bootstrap -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/worktimeRecording.css">
+		<!-- Fonts -->
+	    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,300italic' rel='stylesheet' type='text/css'>
+	    
+	    <!-- jquery is not required yet -->
+	    <!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
+	    <script type="text/javascript" src="assets/js/jquery-3.5.0.min.js"></script>
+	    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+	    <script type="text/javascript" src="assets/js/handlebars-v4.7.6.js"></script>
+	    <script type="text/javascript" src="js/utils.js"></script>
+	    <script type="text/javascript" src="js/worktimesUtil.js"></script>
+	    <script type="text/javascript" src="js/workday.js"></script>
+	    
+	    <script id="workdays-row-template" type="text/x-handlebars-template">
+		{{#each workdays}}
+		{{#with this}}
+			<div id="workdays-table">
+				<div class="row mb-1">
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{date}}" disabled></div>
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{workedHours}}" disabled></div>
+					<div class="col-4 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="construct-outline"></ion-icon></a></div>
+				</div>
+			</div>
+		{{/with}}
+		{{/each}}
+    </script>
 
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
-<!-- jquery is not required yet -->
-<!-- <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>  -->
-
-<title>Workdays</title>
 </head>
 <body>
-	<h1>Workdays</h1>
-	<div class="w-100 p-3" style="height: 100%;">
-		 <div class="h-100 d-inline-block" style="width: 15%; height: 100%;">Side bar</div>
-			 <div class="h-80 d-inline-block" style="width: 55%; height: 100%; ">Calendar</div>
-			 <div class="h-80 d-inline-block" style="width: 25%; height: 100%;">
-				<h3>Stats</h3>
-				<!--Table-->
-				<table id="Worked hours" class="table table-sm" style="width:70%">
-					<tbody>
-						<tr>
-							<td width="70%">In the previous week:</td>
-							<td width="30%">Worked hour</td>
-						</tr>
-						<tr>
-							<td>In the current week:</td>
-							<td>Worked hour</td>
-						</tr>
-					</tbody>
-				</table>
+	<section class="container container-workday">
+		<form>
+			<div class="row mb-5 header">
+				<div class="col-12 themed-grid-col"><h1>Workdays</h1></div>
 			</div>
-		</div>
-		<div class="container"><button type="button" class="btn btn-primary" style="float: right;">Back</button></div>
-</body>
+			<div class="row mb-3 input-name">
+				<div class="col-4 themed-grid-col">Day</div>
+				<div class="col-4 themed-grid-col">Worked hours</div>
+				<div class="col-4 themed-grid-col">Edit</div>
+			</div>
+			
+			<hr class="mb-4">
+			
+			<div id="workdays-table">
+				<div class="row mb-1">
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="1" disabled></div>
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="1" disabled></div>
+					<div class="col-4 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="construct-outline"></ion-icon></a></div>
+				</div>
+			</div>
+			
+			<hr class="mb-4">
+			
+			<div id="workdays-summary">
+				<div class="row mb-3">
+					<div class="col-8 themed-grid-col"><span>Workked hours current week</span></div>
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="1" disabled></div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-8 themed-grid-col"><span>Workked hours previous week</span></div>
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="1" disabled></div>
+				</div>
+			</div>
+		</form>
+		
+			
+		
+	</section>
+	<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+	</body>
 </html>
