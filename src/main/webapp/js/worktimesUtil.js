@@ -1,6 +1,6 @@
-window.SB = window.SB || {};
+window.WT = window.WT || {};
 
-window.SB.Utils = {
+window.WT.WorktimeUtils = {
 		//EXAMPLE
 	    readFormData : function readFormData($form) {
 	        // The FormData interface provides a way to easily construct a set of key/value pairs representing form fields
@@ -50,7 +50,19 @@ window.SB.Utils = {
             dataType : 'json',
             contentType : "application/json;charset=utf-8",
             timeout : 20000,
-            error : SB.Utils.defaultErrorHandling
+            error : WT.WorktimeUtils.defaultErrorHandling,
+            beforeSend: function(xhr){ xhr.setRequestHeader("Authorization", SB.Utils.getToken()); }
         });
+        /*$.ajax({
+            url: '/workinghours/rest/worktimes/2',
+            type: 'PUT',
+            contentType: 'application/json;charset=utf-8',
+            success: function(result) {
+                console.log("PUT SUCCESS");
+            },
+            error: function(request,msg,error) {
+            	console.log("PUT FAILURE", error);
+            }
+        });*/
     }
 };
