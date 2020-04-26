@@ -11,7 +11,14 @@ function bindListeners() {
 	$("#saveChangesSubmit").click(function(e) {
 		saveChangesSubmit();
 	});
+//	$("#backTo").click(function(e) {
+//		backTo();
+//	});
 }
+
+//function backTo() {
+//	window.location.href = "/workinghours/WorktimesRecording.html";
+//}
 
 function searchUserSubmit() {
 	let user = $('#searchedUser').val();
@@ -59,14 +66,22 @@ function saveChangesSubmit() {
 			headers : {
 				"X-HTTP-Method-Override" : "PUT"
 			},
+			success : function(response) {
+				alert('OK! Changes saved!');
+			},
+			error : function(response) {
+				
+				alert("Wrong input format!");
+			},
 			data : JSON.stringify(data)
 		});
-		alert('OK Updated');
+		
 
 	} else {
 		$.post("/workinghours/rest/users/create", JSON.stringify(data),
 				function(data) {
-					alert('OK Saved');
+					alert('OK! New user saved!');
+					
 				});
 	}
 	
