@@ -48,7 +48,7 @@ BEGIN
 	  lastName VARCHAR(60) NOT NULL,
 	  dob VARCHAR(11) NOT NULL,
 	  userName VARCHAR(30) NOT NULL,
-	  password VARCHAR(30) NOT NULL,
+	  password VARCHAR(60) NOT NULL,
 	  gender VARCHAR(6) NOT NULL,
 	  email VARCHAR(100) NOT NULL,
 	  address VARCHAR(300) NOT NULL,

@@ -1,10 +1,17 @@
 package com.tricast.managers;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.tricast.api.requests.UserCreationRequest;
@@ -21,9 +28,23 @@ public class UserManagerImpl implements UserManager {
 
 	private UserRepository userRepository;
 
+	private static final Logger LOG = LogManager.getLogger(UserManagerImpl.class);
+
+	public static final int STRING_LENGTH_60 = 60;
+	public static final int STRING_LENGTH_30 = 30;
+	public static final int STRING_LENGTH_100 = 100;
+	public static final int STRING_LENGTH_300 = 300;
+	public static final int STRING_LENGTH_6 = 6;
+	public static final int STRING_LENGTH_12 = 12;
+	public static final int STRING_LENGTH_50 = 50;
+	public static final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+
+	private final BCryptPasswordEncoder encoder;
+
 	@Autowired
 	public UserManagerImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
+		this.encoder = new BCryptPasswordEncoder();
 	}
 
 	@Override
@@ -34,20 +55,91 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public UserResponse createUserFromRequest(UserCreationRequest userCreationRequest) {
 		User newUser = mapUserCreationRequestToUser(userCreationRequest);
-		User createdUser = userRepository.save(newUser);
-		return mapUserToUserResponse(createdUser);
+
+		boolean validUser = validateUser(newUser);
+		if (validUser) {
+			newUser.setPassword(encoder.encode(userCreationRequest.getPassword()));
+			User createdUser = userRepository.save(newUser);
+			return mapUserToUserResponse(createdUser);
+		} else
+			return null;
+	}
+
+	private boolean validateDateOfBirth(String dobToValidate) {
+		String dateFormatPattern = "yyyy-MM-dd";
+		DateTimeFormatter fmt = DateTimeFormatter.ofPattern(dateFormatPattern);
+
+		try {
+			LocalDate.parse(dobToValidate, fmt);
+			return true;
+		} catch (DateTimeParseException e) {
+			return false;
+		}
+	}
+
+	private boolean validateUser(User userToValidate) {
+		boolean validUser = true;
+		if (userToValidate.getFirstName().length() > STRING_LENGTH_60) {
+			validUser = false;
+
+		} else if (userToValidate.getMiddleName().length() > STRING_LENGTH_60) {
+			validUser = false;
+
+		} else if (userToValidate.getLastName().length() > STRING_LENGTH_60) {
+			validUser = false;
+
+		} else if (validateDateOfBirth(userToValidate.getDob()) == false) {
+			validUser = false;
+
+		} else if (userToValidate.getUserName().length() > STRING_LENGTH_30) {
+			validUser = false;
+
+			// TODO gender validation
+
+		} else if (userToValidate.getEmail().matches(EMAIL_REGEX) == false) {
+			validUser = false;
+
+		} else if (userToValidate.getEmail().length() > STRING_LENGTH_100) {
+			validUser = false;
+
+		} else if (userToValidate.getAddress().length() > STRING_LENGTH_300) {
+			validUser = false;
+
+		} else if (userToValidate.getPostcode().length() > STRING_LENGTH_6) {
+			validUser = false;
+
+		} else if (userToValidate.getPhone().length() > STRING_LENGTH_12) {
+			validUser = false;
+
+		} else if (userToValidate.getCompanyName().length() > STRING_LENGTH_50) {
+			validUser = false;
+
+		} else if (userToValidate.getPassword().length() > STRING_LENGTH_60
+				|| userToValidate.getPassword().length() == 0) {
+			validUser = false;
+		}
+
+		LOG.info("validateUser:" + validUser);
+		return validUser;
 	}
 
 	@Override
 	public UserResponse updateUserFromRequest(UserUpdateRequest UserUpdateRequest) {
 
 		User userToUpdate = mapUserUpdateRequestToUser(UserUpdateRequest);
-		UserResponse userResponse = null;
-		if (userToUpdate != null) {
-			User updatedUser = userRepository.save(userToUpdate);
-			userResponse = mapUserToUserResponse(updatedUser);
-		}
-		return userResponse;
+		boolean validUser = validateUser(userToUpdate);
+		if (validUser) {
+			userToUpdate.setPassword(encoder.encode(UserUpdateRequest.getPassword()));
+			UserResponse userResponse = null;
+			if (userToUpdate != null) {
+				User updatedUser = userRepository.save(userToUpdate);
+				userResponse = mapUserToUserResponse(updatedUser);
+			}
+			return userResponse;
+
+		} else
+			return null;
+
 	}
 
 	@Override
@@ -72,6 +164,7 @@ public class UserManagerImpl implements UserManager {
 		newUser.setPostcode(userCreationRequest.getPostcode());
 		newUser.setRoleId(userCreationRequest.getRoleId());
 		newUser.setUserName(userCreationRequest.getUserName());
+
 		return newUser;
 	}
 
@@ -126,13 +219,20 @@ public class UserManagerImpl implements UserManager {
 
 	@Override
 	public UserResponse loginUserFromRequest(UserLoginRequest userLoginRequest) {
-		// TODO titkositas jon majd ide
-		List<User> userList = userRepository.findByUserNameAndPassword(userLoginRequest.getUserName(),
-				userLoginRequest.getPassword());
+		LOG.info("loginUserFromRequest: user name - " + userLoginRequest.getUserName());
 
+		List<User> userList = userRepository.findByUserName(userLoginRequest.getUserName());
 		if (userList != null && userList.size() == 1) {
 			User responseUser = userList.get(0);
-			return mapUserToUserResponse(responseUser);
+
+			boolean passWordMatch = encoder.matches(userLoginRequest.getPassword(), responseUser.getPassword());
+
+			if (passWordMatch) {
+				responseUser.setLastLogin(ZonedDateTime.now());
+				userRepository.save(responseUser);
+				return mapUserToUserResponse(responseUser);
+			}
+
 		}
 
 		return null;
@@ -155,12 +255,12 @@ public class UserManagerImpl implements UserManager {
 		Optional<User> userToUpdateOptional = userRepository.findById(Long.parseLong(userPwdChangeRequest.getUserId()));
 		User userToUpdate = null;
 		if (userToUpdateOptional.isPresent()) {
-
 			userToUpdate = userToUpdateOptional.get();
-			if (userPwdChangeRequest.getOldPassword() != null
-					&& userPwdChangeRequest.getOldPassword().equals(userToUpdate.getPassword())) {
-				// TODO titkositas jon majd ide
-				userToUpdate.setPassword(userPwdChangeRequest.getNewPassword());
+
+			boolean passWordMatch = encoder.matches(userPwdChangeRequest.getOldPassword(), userToUpdate.getPassword());
+
+			if (passWordMatch) {
+				userToUpdate.setPassword(encoder.encode(userPwdChangeRequest.getNewPassword()));
 				User updatedUser = userRepository.save(userToUpdate);
 				return mapUserToUserResponse(updatedUser);
 			}
