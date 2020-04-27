@@ -34,8 +34,17 @@ public class WorktimeController {
 	
 	
 	@GetMapping(path = "/{workdayId}")
-	public List<Worktime> getAllWorktimeByWorktimeId(@PathVariable("workdayId") long workdayId){
-		return worktimeManager.getAllWorktimeByWorktimeId(workdayId);
+	public List<Worktime> getAllWorktimeByWorktimeId(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@PathVariable("workdayId") long workdayId) throws Exception{
+		if(Role.getById(roleId) == Role.ADMIN){
+            return worktimeManager.getAllWorktimeByWorktimeId(workdayId);
+        }
+        else{
+            try {
+                return worktimeManager.getAllWorktimeByWorktimeId(loggedInUser,workdayId);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
 	}
 	
 	
