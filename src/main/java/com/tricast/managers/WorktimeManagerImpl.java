@@ -21,6 +21,7 @@ import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
 import com.tricast.api.responses.WorktimesUpdateResponse;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
@@ -42,12 +43,27 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	}
 
 	@Override
-	public List<Worktime> getAllWorktimeByWorktimeId(long id){
-		return worktimeRepository.findAllByWorkdayId(id);
+	public List<Worktime> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception{
+        try {
+            userCheck(loggedInUser, workdayId);
+            return worktimeRepository.findAllByWorkdayId(workdayId);
+        } catch (IllegalAccessException e) {
+            throw e;
+        }
 	}
-
-
-
+    
+    private void userCheck(long loggedInUser, long workdayId)throws Exception{
+        Optional<Workday> theRequestedWorkday = workdayRepository.findById(workdayId);
+        if(theRequestedWorkday.get().getUserId().intValue() !=loggedInUser)
+                throw new IllegalAccessException("Permission denied");
+    }
+    
+    @Override
+	public List<Worktime> getAllWorktimeByWorktimeId(long workdayId){
+		return worktimeRepository.findAllByWorkdayId(workdayId);
+	}
+    
+    
 	@Override
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
