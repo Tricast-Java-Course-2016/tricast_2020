@@ -1,6 +1,23 @@
 window.WT = window.WT || {};
 
+const workdayId = "WH_WORKDAY_ID";
+const workdayDate = "WH_WORKDAY_DATE";
+
 window.WT.WorktimeUtils = {
+	
+	saveWorkdayData : function saveWorkdayData(id, date){
+		localStorage.setItem(workdayId, id);
+		localStorage.setItem(workdayDate, date);
+	},	
+	
+	getWorkdayId : function getWorkdayId() {
+		return localStorage.getItem(workdayId);
+	},
+	
+	getWorkdayDate : function getWorkdayDate() {
+		return localStorage.getItem(workdayDate);
+	},
+	
 		//EXAMPLE
 	    readFormData : function readFormData($form) {
 	        // The FormData interface provides a way to easily construct a set of key/value pairs representing form fields
