@@ -23,6 +23,20 @@
     <script type="text/javascript" src="js/worktimesUtil.js"></script>
     <script type="text/javascript" src="js/worktimes.js"></script>
     
+    <script id="worktimes-row-first-template" type="text/x-handlebars-template">
+		{{#with rowFirst}}
+            <div class="col-6 themed-grid-col" id="user"><div class="content-name">{{username}}</div></div>
+				<div class="col-6 themed-grid-col" id="workdayDate">
+					<div class="col-last">
+						<a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline"></ion-icon></a>
+						<div class="content-date" id="currentDate">{{date}}</div>
+						<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline"></ion-icon></a>
+					</div>
+				</div>
+			</div>
+		{{/with}}
+	</script>
+    
     <script id="worktimes-row-template" type="text/x-handlebars-template">
 		{{#each workdayWorktimes}}
 		{{#with this}}
@@ -59,7 +73,7 @@
 					<div class="col-12 themed-grid-col"><h1>Workday</h1></div>
 				</div>
 				
-				<div class="row mb-3 row-first">
+				<div class="row mb-3 row-first" id="row-first-table">
 					<div class="col-6 themed-grid-col" id="user"><div class="content-name">Juhász Kristóf</div></div>
 					<div class="col-6 themed-grid-col" id="workdayDate">
 						<div class="col-last">
