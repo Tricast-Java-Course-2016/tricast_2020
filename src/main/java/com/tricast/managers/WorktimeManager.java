@@ -11,7 +11,9 @@ import com.tricast.api.responses.WorktimesUpdateResponse;
 
 public interface WorktimeManager {
 	
-	List<Worktime> getAllWorktimeByWorktimeId(long workdayId);
+	List<Worktime> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception;
+    
+    List<Worktime> getAllWorktimeByWorktimeId(long workdayId);
 	
 	WorktimesUpdateResponse saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid);
 	
