@@ -12,10 +12,12 @@ INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (3, 1
 INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (4, 2, 2);
 INSERT INTO timeoffcal.rolepermissionset (id, roleid, permissionid)	VALUES (5, 3, 2);
 
+-- original password to username 'kbgy75'is'123123123'
+-- original password to username'szkv88'is'951753654'
+INSERT INTO timeoffcal.users (i d, firstname, middlename, lastname, dob, username, password, gender, email, address, postcode, phone, isactive, companyname, lastlogin, accountcreated, roleid)
+	VALUES (1, 'Béla', 'Gyula', 'Kovács', '1975-02-26', 'kbgy75', '$2a$10$jb8VgXdituhO1QUR/8vxwOfNtiT2SR/kPJ2dGATeFgZVrel2K4t.K', 'MALE', 'bela@kovacs.hu', 'Pécs, Petőfi utca 47,', '7621', '+36307964223', 'true', 'Gyula cége', '2020-03-06 8:30:00', '2020-02-29 12:30:00', 1);
 INSERT INTO timeoffcal.users (id, firstname, middlename, lastname, dob, username, password, gender, email, address, postcode, phone, isactive, companyname, lastlogin, accountcreated, roleid)
-	VALUES (1, 'Béla', 'Gyula', 'Kovács', '1975-02-26', 'kbgy75', '123123123', 'MALE', 'bela@kovacs.hu', 'Pécs, Petőfi utca 47,', '7621', '+36307964223', 'true', 'Gyula cége', '2020-03-06 8:30:00', '2020-02-29 12:30:00', 1);
-INSERT INTO timeoffcal.users (id, firstname, middlename, lastname, dob, username, password, gender, email, address, postcode, phone, isactive, companyname, lastlogin, accountcreated, roleid)
-	VALUES (2, 'Kata', 'Viktória', 'Szabó', '1988-10-21', 'szkv88', '951753654', 'FEMALE', 'kataviki@freemail.hu', 'Győr, Kossuth utca 8.', '9023', '+36201237854', 'false', 'Gyula cége', '2020-03-07 8:13:00', '2020-03-04 11:42:00', 2);
+	VALUES (2, 'Kata', 'Viktória', 'Szabó', '1988-10-21', 'szkv88', '$2a$10$v4xte7exIKTaaR3ORw5v9O.tB4mLD5uUyRxs190NoFYOEvzsZKYxO', 'FEMALE', 'kataviki@freemail.hu', 'Győr, Kossuth utca 8.', '9023', '+36201237854', 'false', 'Gyula cége', '2020-03-07 8:13:00', '2020-03-04 11:42:00', 2);
 	
 INSERT INTO timeoffcal.workdays (id, userid, date)	VALUES (1, 1, '2020-03-05');
 INSERT INTO timeoffcal.workdays (id, userid, date)	VALUES (2, 1, '2020-03-06');

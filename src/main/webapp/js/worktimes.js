@@ -1,24 +1,26 @@
 
 //LoggedInUser Hardcoded
-const loggedInUser = 2;
+let loggedInUser = null;
 //Every row has an unique identifier for delete method
 let rowId = 0;
 //False if day not exists yet, with current user
 let newDay = false;
-
-const workdayId = 2;
+const newDayId = -1;
+let currentWorkdayId = newDayId;
+//const workdayId = 2;
 
 window.onload = function() {
 	WT.WorktimeUtils.initAjax();
     bindListeners();
+    loggedInUser = SB.Utils.getUserId();
+    currentWorkdayId = WT.WorktimeUtils.getWorkdayId();
     loadWorktimes();
 };
 
 function bindListeners() {
 	
     $("#saveWorkdayWorktimes").click(function(e) {
-    	//UpdateWorkday();
-    	saveWorkday();
+    	acceptWorktimes();
     });
     //New worktime added
     $("#addNewWorktime").click(function(e) {
@@ -26,10 +28,6 @@ function bindListeners() {
     });
 
 }
-
-
-
-
 
 //Delete field
 function deleteWorktime(rowIds){
@@ -55,8 +53,11 @@ function addWorktime(){
 }
 
 
-function aceptWorktimes(){
-	if (newDay === false){
+function acceptWorktimes(){
+	console.log("currentWorkdayId", currentWorkdayId);
+	console.log("newDayId", newDayId);
+	if (currentWorkdayId === newDayId.toString()){
+		console.log("save");
 		saveWorkday();
 	} else {
 		UpdateWorkday();
@@ -75,16 +76,18 @@ function UpdateWorkday(){
 		worktime = new WorktimeRequestFromFormData(e);
 		worktimesUpdateRequest.push(worktime);
 	});
-	console.log("worktimesCreationRequest", worktimesUpdateRequest);
+	console.log("worktimesUpdateRequest", worktimesUpdateRequest);
 	workdayUpdateRequest = new WorkdayUpdateRequest(worktimesUpdateRequest);
 	console.log("workdayUpdateRequest", workdayUpdateRequest);
-	/*
+	
+	
 	$.ajax({
 	    type: 'PUT',
-	    url: '/workinghours/rest/worktimes/2',
+	    url: '/workinghours/rest/worktimes/' + currentWorkdayId,
 	    contentType: 'application/json;charset=utf-8',
+	    data: worktimesUpdateRequest,
 	    //workdayUpdateRequest: JSON.stringify(workdayUpdateRequest), // access in body
-	    workdayUpdateRequest : {
+	    /*workdayUpdateRequest : {
 	    	  "datasList": [
 	    		    {
 	    		      "comment": "Happy Pipe",
@@ -96,7 +99,7 @@ function UpdateWorkday(){
 	    		      "workdayId": 2
 	    		    }
 	    		  ]
-	    		}
+	    		}*/
 	}).done(function () {
 	    console.log('SUCCESS');
 	}).fail(function (msg) {
@@ -105,7 +108,7 @@ function UpdateWorkday(){
 	    console.log('ALWAYS');
 	});
 	
-	*/
+	
 	/*$.ajax({
 		/*type : 'PUT',
 		dataType : 'json',
@@ -163,9 +166,12 @@ function saveWorkday(){
 		});
 		workdayCreationRequest = new WorkdayCreationRequest(selectedDate, loggedInUser, worktimesCreationRequest);
 		
-		$.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
+		let response = $.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
+			WT.WorktimeUtils.saveWorkdayData(response.responseJSON.id, WT.WorktimeUtils.getWorkdayDate());
 			console.log('Saved Worktime');
+			//location.reload();
 		});
+		
 	} else {
 		console.log("Cannot save an empty list");
 	}
@@ -212,7 +218,7 @@ class WorktimeRequestFromFormData {
 		this.type = e.type;
 		this.comment = e.comment;
 		this.modifiedBy = loggedInUser;
-		
+		//this.modifiedBy = SB.Utils.getUserId();
 		//Modified
 		this.workdayId = workdayId;
 	}
@@ -222,11 +228,13 @@ class WorktimeRequestFromFormData {
 function loadWorktimes(){
 
 	///workinghours/rest/worktimes/{workdayId}
-	let url = "/workinghours/rest/worktimes/2";
+	//let url = "/workinghours/rest/worktimes/" + WT.WorktimeUtils.getWorkdayId();
+	let url = "/workinghours/rest/worktimes/" + currentWorkdayId
+	//let url = "/workinghours/rest/worktimes/2";
 	
 	$.getJSON(url).done(function(data){
 		displayWorktimes(data);
-		
+		displayUsernameAndWorkdayDate();
 	}).fail(function(jqXHR, textStatus, errorThrown){
 		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
     }).always(function() {
@@ -238,6 +246,18 @@ function loadWorktimes(){
 /********************************
  * Display Worktimes
  *******************************/
+
+//Display Username and Workday's date
+function displayUsernameAndWorkdayDate(){
+	const userNameAndWorkdayDate = {
+		username : SB.Utils.getUsername(),
+		date : WT.WorktimeUtils.getWorkdayDate()
+	};
+	$('#row-first-table').html(Handlebars.compile($('#worktimes-row-first-template').html())({
+		rowFirst : userNameAndWorkdayDate
+    }));
+}
+
 function displayWorktimes(data){
 	if (data.length !== 0){
 		displayExistingDayWorktimes(data);
@@ -280,6 +300,7 @@ class emptyWorktimesToDisplay {
 		this.type = "HOMEOFFICE";
 		this.comment = "Happy time";
 		this.modifiedBy = loggedInUser;
+		//this.modifiedBy = SB.Utils.getUserId();
 		this.rowId = rowId++;
 	}
 }

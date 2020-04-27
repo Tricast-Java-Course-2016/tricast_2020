@@ -36,7 +36,7 @@ import com.tricast.repositories.entities.User;
 @RequestMapping(path = "rest/users")
 public class UserController {
 
-    private static final Logger LOG = LogManager.getLogger(UserController.class);
+	private static final Logger LOG = LogManager.getLogger(UserController.class);
 
 	@Autowired
 	private UserManager userManager;
@@ -60,69 +60,74 @@ public class UserController {
 	}
 
 	@GetMapping(path = "/search")
-    public ResponseEntity<?> searchUser(@RequestParam("userName") String userName) {
+	public ResponseEntity<?> searchUser(@RequestParam("userName") String userName) {
 
-        try {
-            return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
-        } catch (WorkingHoursException e) {
-            return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
-        } catch (Exception e) {
-            LOG.error("Excetion at searchUser: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+		try {
+			return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
+		} catch (WorkingHoursException e) {
+			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Exception at searchUser: ", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
-    // AKOS
-    // @GetMapping(path = "/search")
-    // public ResponseEntity<?> searchUser(@RequestAttribute("authentication.roleId") int roleId,
-    // @RequestParam("userName") String userName) {
-    //
-    // if (Role.getById(roleId) != Role.ADMIN) {
-    // return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
-    // }
-    //
-    // try {
-    // return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
-    // } catch (WorkingHoursException e) {
-    // return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
-    // } catch (Exception e) {
-    // LOG.error("Excetion at searchUser: ", e);
-    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    // }
-    // }
+	// AKOS
+	// @GetMapping(path = "/search")
+	// public ResponseEntity<?>
+	// searchUser(@RequestAttribute("authentication.roleId") int roleId,
+	// @RequestParam("userName") String userName) {
+	//
+	// if (Role.getById(roleId) != Role.ADMIN) {
+	// return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+	// }
+	//
+	// try {
+	// return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
+	// } catch (WorkingHoursException e) {
+	// return
+	// ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+	// } catch (Exception e) {
+	// LOG.error("Excetion at searchUser: ", e);
+	// return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	// }
+	// }
 
 	@PostMapping(path = "/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
-		LOG.info("userLoginRequest:" + userLoginRequest.toString());
+	public ResponseEntity<?> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+		UserResponse response = userManager.loginUserFromRequest(userLoginRequest);
+		if (response == null)
+			return null;
 
-        UserResponse response = userManager.loginUserFromRequest(userLoginRequest);
+		String token = issueToken(response.getId(), response.getUserName(), response.getRoleId());
+		HttpHeaders header = buildAuthorizationHeader(token);
 
-        String token = issueToken(response.getId(), response.getUserName(), response.getRoleId());
-        HttpHeaders header = buildAuthorizationHeader(token);
-
-        return ResponseEntity.ok().headers(header).body(response);
+		return ResponseEntity.ok().headers(header).body(response);
 	}
 
-    private HttpHeaders buildAuthorizationHeader(String token) {
-        HttpHeaders header = new HttpHeaders();
-        header.add("Authorization", "Bearer " + token);
-        return header;
-    }
+	private HttpHeaders buildAuthorizationHeader(String token) {
+		HttpHeaders header = new HttpHeaders();
+		header.add("Authorization", "Bearer " + token);
+		return header;
+	}
 
-    private String issueToken(long userId, String username, long roleId) {
-        OffsetDateTime exp = OffsetDateTime.now().plusHours(AuthenticationSettings.TOKEN_EXPIRE_TIME_IN_HOURS);
-        Algorithm algorithm = Algorithm.HMAC256(AuthenticationSettings.SECRET_KEY);
+	private String issueToken(long userId, String username, long roleId) {
+		OffsetDateTime exp = OffsetDateTime.now().plusHours(AuthenticationSettings.TOKEN_EXPIRE_TIME_IN_HOURS);
+		Algorithm algorithm = Algorithm.HMAC256(AuthenticationSettings.SECRET_KEY);
 
-        return JWT.create().withIssuer(AuthenticationSettings.ISSUER).withExpiresAt(Date.from(exp.toInstant()))
-                .withClaim(AuthenticationSettings.CLAIM_USER_IDENTIFIER, userId)
-                .withClaim(AuthenticationSettings.CLAIM_USERNAME_IDENTIFIER, username)
-                .withClaim(AuthenticationSettings.CLAIM_ROLE_IDENTIFIER, roleId).sign(algorithm);
-    }
+		return JWT.create().withIssuer(AuthenticationSettings.ISSUER).withExpiresAt(Date.from(exp.toInstant()))
+				.withClaim(AuthenticationSettings.CLAIM_USER_IDENTIFIER, userId)
+				.withClaim(AuthenticationSettings.CLAIM_USERNAME_IDENTIFIER, username)
+				.withClaim(AuthenticationSettings.CLAIM_ROLE_IDENTIFIER, roleId).sign(algorithm);
+	}
 
 	@PutMapping(path = "/pwdc")
 	public UserResponse pwdChangeUser(@RequestBody UserPwdChangeRequest userPwdChangeRequest) {
 		LOG.info("UserPwdChangeRequest:" + userPwdChangeRequest.toString());
-		return userManager.pwdChangeUserFromRequest(userPwdChangeRequest);
+
+		UserResponse userResponse = userManager.pwdChangeUserFromRequest(userPwdChangeRequest);
+		LOG.info("UserPwdChangeRequest response:" + userResponse);
+		return userResponse;
 	}
 
 }
