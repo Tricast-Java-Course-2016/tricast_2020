@@ -47,9 +47,11 @@
 					<div class="col-2 themed-grid-col"><input type="time" class="form-control" value="{{endTime}}" placeholder="End time" name="endTime"></div>
 					<div class="col-3 themed-grid-col">
 						<select type="text" class="form-control" id="workingTypes" name="type">
+							{{#select status}}
 							<option value="OFFICE">Office</option>
 							<option value="HOMEOFFICE">Home Office</option>
 							<option value="DELEGACY">Delegacy</option>
+							{{/select}}
 						</select>
 					</div>
 					<div class="col-3 themed-grid-col"><input type="text" class="form-control" value="{{comment}}" placeholder="Description" name="comment"></div>
@@ -132,7 +134,7 @@
 					<div class="col-3 themed-grid-col"></div>
 					<div class="col-3 themed-grid-col"></div>
 					<div class="col-6 themed-grid-col col-last">
-						<a class="btn btn-secondary" href="#">Back</a>
+						<a class="btn btn-secondary" href="workday.html">Back</a>
 						<a class="btn btn-primary" id="saveWorkdayWorktimes" href="#">Accept</a>
 					</div>
 				</div>
