@@ -16,6 +16,12 @@ window.onload = function() {
     currentWorkdayId = WT.WorktimeUtils.getWorkdayId();
     loadWorktimes();
 };
+/* Soon display the worktime's worktype*/
+window.Handlebars.registerHelper('select', function( value, options ){
+    var $el = $('<select />').html( options.fn(this) );
+    $el.find('[value="' + value + '"]').attr({'selected':'selected'});
+    return $el.html();
+});
 
 function bindListeners() {
 	
@@ -54,8 +60,6 @@ function addWorktime(){
 
 
 function acceptWorktimes(){
-	console.log("currentWorkdayId", currentWorkdayId);
-	console.log("newDayId", newDayId);
 	if (currentWorkdayId === newDayId.toString()){
 		console.log("save");
 		saveWorkday();
@@ -68,82 +72,38 @@ function acceptWorktimes(){
 //Update
 function UpdateWorkday(){
 	let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList($('#WorktimesForm'));
-	console.log("dataFromWorktimesForm", dataFromWorktimesForm);
+	//console.log("dataFromWorktimesForm", dataFromWorktimesForm);
 	let worktimesUpdateRequest = [];
 	let workdayUpdateRequest = {};
 	let worktime;
+
+	let notCorrectWorktimes = false;
+	
 	dataFromWorktimesForm.forEach(e => {
 		worktime = new WorktimeRequestFromFormData(e);
 		worktimesUpdateRequest.push(worktime);
+		//if((check.getTime() <= to.getTime() && check.getTime() >= from.getTime())) 
 	});
-	console.log("worktimesUpdateRequest", worktimesUpdateRequest);
-	workdayUpdateRequest = new WorkdayUpdateRequest(worktimesUpdateRequest);
-	console.log("workdayUpdateRequest", workdayUpdateRequest);
 	
+	//console.log("worktimesUpdateRequest", worktimesUpdateRequest);
+	workdayUpdateRequest = new WorkdayUpdateRequest(worktimesUpdateRequest);
+	//console.log("workdayUpdateRequest", workdayUpdateRequest);
 	
 	$.ajax({
-	    type: 'PUT',
-	    url: '/workinghours/rest/worktimes/' + currentWorkdayId,
-	    contentType: 'application/json;charset=utf-8',
-	    data: worktimesUpdateRequest,
-	    //workdayUpdateRequest: JSON.stringify(workdayUpdateRequest), // access in body
-	    /*workdayUpdateRequest : {
-	    	  "datasList": [
-	    		    {
-	    		      "comment": "Happy Pipe",
-	    		      "endTime": "2020-04-25T13:00:28.473Z",
-	    		      "modifiedBy": 1,
-	    		      "id": 221,
-	    		      "startTime": "2020-04-25T09:00:28.473Z",
-	    		      "type": "OFFICE",
-	    		      "workdayId": 2
-	    		    }
-	    		  ]
-	    		}*/
-	}).done(function () {
-	    console.log('SUCCESS');
-	}).fail(function (msg) {
-	    console.log('FAIL');
-	}).always(function (msg) {
-	    console.log('ALWAYS');
-	});
-	
-	
-	/*$.ajax({
-		/*type : 'PUT',
+		type : 'PUT',
 		dataType : 'json',
-		url : "/workinghours/rest/worktimes/2",
+		url : "/workinghours/rest/worktimes/" + currentWorkdayId,
 		headers : {
 			"X-HTTP-Method-Override" : "PUT"
-
 		},
-		success : function(response) {
-			console.log("Workday has been changed");
-		},
-		error : function(response) {
-			alert("Workday update failure.", response);
-		},
-		//workdayWorktimes : JSON.stringify(workdayUpdateRequest)
-		workdayWorktimes : JSON.stringify(workdayUpdateRequest)
-	});*/
-	
-	/*
-	dataFromWorktimesForm.forEach(e => {
-		worktime = new WorktimeRequestFromFormData(e);
-		worktimesCreationRequest.push(worktime);
+		data : JSON.stringify(workdayUpdateRequest)
 	});
-
-	$.put("/workinghours/rest/worktimes/2", JSON.stringify(workdayCreationRequest), function(worktimesCreationRequest){
-		console.log('Updated Worktime');
-	});*/
-	
-	
-	
 }
 
 class WorkdayUpdateRequest {
 	constructor(worktimeUpdatedListRequest){
 		this.datasList = worktimeUpdatedListRequest;
+		this.userId = loggedInUser;
 	}
 }
 
@@ -160,9 +120,12 @@ function saveWorkday(){
 		let workdayCreationRequest = {};
 		let worktime;
 		
+
+		
 		dataFromWorktimesForm.forEach(e => {
 			worktime = new WorktimeRequestFromFormData(e);
 			worktimesCreationRequest.push(worktime);
+			
 		});
 		workdayCreationRequest = new WorkdayCreationRequest(selectedDate, loggedInUser, worktimesCreationRequest);
 		
@@ -175,6 +138,10 @@ function saveWorkday(){
 	} else {
 		console.log("Cannot save an empty list");
 	}
+	
+}
+
+function checkStartAndEndTime(startTimes, endTimes){
 	
 }
 
@@ -220,7 +187,8 @@ class WorktimeRequestFromFormData {
 		this.modifiedBy = loggedInUser;
 		//this.modifiedBy = SB.Utils.getUserId();
 		//Modified
-		this.workdayId = workdayId;
+		//this.workdayId = parseInt(workdayId);
+		this.workdayId = currentWorkdayId;
 	}
 }
 
@@ -256,6 +224,7 @@ function displayUsernameAndWorkdayDate(){
 	$('#row-first-table').html(Handlebars.compile($('#worktimes-row-first-template').html())({
 		rowFirst : userNameAndWorkdayDate
     }));
+	
 }
 
 function displayWorktimes(data){
@@ -272,6 +241,8 @@ function displayExistingDayWorktimes(data){
 	data.forEach(function(entry) {
 		worktime = new WorktimeResponseToDisplay(entry);
 		loadedListForAsyncronousWorking.push(worktime);
+		
+
 	});
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
         workdayWorktimes : loadedListForAsyncronousWorking
