@@ -23,16 +23,27 @@
 	    <script id="workdays-row-template" type="text/x-handlebars-template">
 		{{#each workdays}}
 		{{#with this}}
-			<div id="workdays-table">
 				<div class="row mb-1">
 					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{date}}" disabled></div>
-					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{workedHours}}" disabled></div>
-					<div class="col-4 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="construct-outline"></ion-icon></a></div>
+					<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{workhours}}" disabled></div>
+					<div class="col-4 themed-grid-col"><a class="btn btn-add" id="deleteWorktime" onclick="modifyWorktimes({{id}}, '{{date}}')" href="WorktimesRecording.html"><ion-icon name="construct-outline"></ion-icon></a></div>
 				</div>
-			</div>
 		{{/with}}
 		{{/each}}
-    </script>
+    	</script>
+    	
+    	<script id="workdays-summary-row-template" type="text/x-handlebars-template">
+		{{#with summary}}
+			<div class="row mb-3">
+				<div class="col-8 themed-grid-col"><span>Workked hours current week</span></div>
+				<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{workhoursCurrentWeek}}" disabled></div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-8 themed-grid-col"><span>Workked hours previous week</span></div>
+				<div class="col-4 themed-grid-col"><input type="text" class="form-control" value="{{workhoursPreviouseWeek}}" disabled></div>
+			</div>
+		{{/with}}
+    	</script>
 
 </head>
 <body>
