@@ -20,6 +20,21 @@
 	    <script type="text/javascript" src="js/worktimesUtil.js"></script>
 	    <script type="text/javascript" src="js/workday.js"></script>
 	    
+	    
+	    <script id="users-list-template" type="text/x-handlebars-template">
+				<div class="row mb-3">
+					<div class="col-4">
+						<select type="text" class="form-control">
+							{{#each users}}
+							{{#with this}}
+								<option onClick="loadSelectedUser({{userId}})" value="{{userId}}">{{userName}}</option>
+							{{/with}}
+							{{/each}}
+						</select>
+					</div>
+				</div>
+	    </script>
+	    
 	    <script id="workdays-row-template" type="text/x-handlebars-template">
 		{{#each workdays}}
 		{{#with this}}
@@ -51,6 +66,9 @@
 		<form>
 			<div class="row mb-5 header">
 				<div class="col-12 themed-grid-col"><h1>Workdays</h1></div>
+			</div>
+			<div id="users-table">
+			
 			</div>
 			<div class="row mb-3 input-name">
 				<div class="col-4 themed-grid-col">Day</div>
