@@ -1,5 +1,6 @@
 package com.tricast.controllers;
 
+import com.tricast.controllers.constants.WorkingHoursConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tricast.managers.WorkdayManager;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.enums.Role;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -26,7 +29,7 @@ public class WorkdayController {
             try {
                 return ResponseEntity.ok(workdayManager.getAllWorkdayByUserIdAndMonth(userId, roleId));
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             }
         }
         else{
@@ -35,12 +38,14 @@ public class WorkdayController {
     }
 
     @DeleteMapping(path = "/{wordayId}")
-    public ResponseEntity<?> deleteWorkday(@PathVariable("wordayId") long wordayId) {
+    public ResponseEntity<?> deleteWorkday(@PathVariable("wordayId") long wordayId) throws WorkingHoursException {
         try {
             workdayManager.deleteById(wordayId);
             return ResponseEntity.ok("DELETE SUCCESSFUL");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }catch (EmptyResultDataAccessException e) {
+             return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body( e.getMessage());
         }
     }
 
