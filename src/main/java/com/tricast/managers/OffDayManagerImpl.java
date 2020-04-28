@@ -49,7 +49,6 @@ public class OffDayManagerImpl implements OffDayManager {
 			if (o.getId() == leaveId) {
 				offDayRepository.deleteById(o.getId());
 			}
-			offDayRepository.deleteById(leaveId);
 		}
 	}
 	

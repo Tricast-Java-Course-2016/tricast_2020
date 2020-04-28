@@ -9,21 +9,12 @@ public class OffDayResponse implements Serializable{
 	
 	private static final long serialVersionUID =4L;
 	
-	private long id;
 	private long userId;
 	private String lastName;
 	private String fromDay;
 	private String toDay;
 	private long actualDayCount;
 	private OffDayType type;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public long getuserId() {
 		return userId;
@@ -72,6 +63,8 @@ public class OffDayResponse implements Serializable{
 	public void setType(OffDayType type) {
 		this.type = type;
 	}
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -81,7 +74,6 @@ public class OffDayResponse implements Serializable{
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + (int) (actualDayCount ^ (actualDayCount >>> 32));
 		result = prime * result + ((fromDay == null) ? 0 : fromDay.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((toDay == null) ? 0 : toDay.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -89,7 +81,7 @@ public class OffDayResponse implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "OffDayResponse [id=" + id + ", accountId=" + userId + ", accountRealName=" + lastName
+		return "OffDayResponse [accountId=" + userId + ", accountRealName=" + lastName
 				+ ", fromDay=" + fromDay + ", toDay=" + toDay + ", actualDayCount=" + actualDayCount + "]";
 	}
 	

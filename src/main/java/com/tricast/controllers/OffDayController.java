@@ -39,7 +39,7 @@ public class OffDayController {
 	public Offday createOffday(@RequestBody Offday offdayRequest) throws SQLException {
 		return offdayManager.createOffday(offdayRequest);
 	}
-
+	
 	@PutMapping
 	public Offday updateOffday(@RequestBody Offday offdayRequest ) {
 		return offdayManager.updateOffday(offdayRequest);

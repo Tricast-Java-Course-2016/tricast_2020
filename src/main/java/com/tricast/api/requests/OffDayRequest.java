@@ -9,25 +9,16 @@ public class OffDayRequest implements Serializable{
 	
 	private static final long serialVersionUID =4L;
 	
-	private Long id;
 	private Long userId;
 	private ZonedDateTime fromDay;
 	private ZonedDateTime toDay;
 	private OffDayType type;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getusertId() {
+	public Long getuserId() {
 		return userId;
 	}
 
-	public void setAccountId(Long accountId) {
+	public void setuserId(Long userID) {
 		this.userId = userId;
 	}
 
@@ -57,7 +48,7 @@ public class OffDayRequest implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "OffDayRequest [id=" + id + ", userId=" + userId + ", fromDay=" + fromDay + ", toDay=" + toDay
+		return "OffDayRequest [ userId=" + userId + ", fromDay=" + fromDay + ", toDay=" + toDay
 				+ ", type=" + type + "]";
 	}
 	
@@ -67,7 +58,6 @@ public class OffDayRequest implements Serializable{
 		int result = 1;
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		result = prime * result + ((fromDay == null) ? 0 : fromDay.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((toDay == null) ? 0 : toDay.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
