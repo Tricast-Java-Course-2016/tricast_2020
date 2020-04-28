@@ -21,6 +21,7 @@ import com.tricast.repositories.models.TheCurrentMonthOfTheYear;
 import com.tricast.repositories.models.WorkDaysStatManager;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 @Component
 public class WorkdayManagerImpl implements WorkdayManager{
@@ -42,7 +43,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	}
 
 	@Override
-	public void deleteById(long id) {
+	public void deleteById(long id) throws EmptyResultDataAccessException{
 		worktimeManager.deleteAllWorkTimesById(id);
 	}
 
