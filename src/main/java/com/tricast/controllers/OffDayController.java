@@ -5,18 +5,24 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.api.requests.OffDayRequest;
+import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.OffDayResponse;
 import com.tricast.managers.OffDayManager;
 import com.tricast.repositories.entities.Offday;
+import com.tricast.repositories.entities.enums.Role;
 
 @RestController
 @RequestMapping(path = "rest/offdays")
@@ -26,29 +32,43 @@ public class OffDayController {
 	private OffDayManager offdayManager;
 	
 	@GetMapping
-	public List<Offday> getoffdays() {
-		return offdayManager.getAlloffDays();
+	public List<Offday> getAllOffDayByOffDayId(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@PathVariable("workdayId") long offdayID) throws Exception{
+		if(Role.getById(roleId) == Role.ADMIN){
+            return offdayManager.getAllOffDayByOffDayId(offdayID);
+        }
+        else{
+            try {
+                return offdayManager.getAllOffDayByOffDayId(loggedInUser,offdayID);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
 	}	
 	
-	@GetMapping("/{id}")
-	public Optional<Offday> getById(@PathVariable("id") long id) {
-		return offdayManager.getById(id);
-	}
-
 	@PostMapping
-	public Offday createOffday(@RequestBody Offday offdayRequest) throws SQLException {
-		return offdayManager.createOffday(offdayRequest);
+	public ResponseEntity<?> createOffday(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody OffDayRequest offdayCreationRequest) {
+		if(userCheck(roleId, loggedInUser, offdayCreationRequest.getuserId())){
+            try {
+                 return ResponseEntity.ok(offdayManager.createOffday(offdayCreationRequest));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+        }
 	}
 	
-	@PutMapping
-	public Offday updateOffday(@RequestBody Offday offdayRequest ) {
-		return offdayManager.updateOffday(offdayRequest);
-	}
-
-	@DeleteMapping("/{id}")
-	public Boolean deleteOffday(@PathVariable("id") long id) {
-		offdayManager.deleteOffday(id);
-		return true;
+	public ResponseEntity<?> deleteOffdayById(@PathVariable("offdayId") long offdayId) {
+		try {
+            offdayManager.deleteOffday(offdayId);
+            return ResponseEntity.ok("DELETE SUCCESSFUL");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 	}
 	
+	private boolean userCheck(int roleId,int loggedInUser,Long getuserId){
+        return Role.ADMIN == Role.getById(roleId) || loggedInUser ==getuserId;
+    }
 }
