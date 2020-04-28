@@ -1,19 +1,25 @@
 let loggedInUser = null;
 let currMonth = null;
 let currYear = null;
+let selectedUser = null;
 const newDayId = -1;
 window.onload = function() {
 	WT.WorktimeUtils.initAjax();
     bindListeners();
     init();
-    loadWorkdays();
+    loadLoggedInUserWorkdays();
 
 };
+
+
+
 
 function init(){
 	loggedInUser = SB.Utils.getUserId();
     currMonth = new Date().getMonth();
     currYear = new Date().getFullYear();
+    selectedUser = loggedInUser;
+    WT.WorktimeUtils.setSelectedUserId(loggedInUser);
 }
 
 /*
@@ -30,21 +36,54 @@ function modifyWorktimes(workdayId, date){
 	WT.WorktimeUtils.saveWorkdayData(workdayId,date);
 }
 
-function loadWorkdays(){
+function loadLoggedInUserWorkdays(){
 	//let url = "/workinghours/rest/workdays/workedhours/2";
 	let url = "/workinghours/rest/workdays/workedhours/" + loggedInUser;
-	
-	$.getJSON(url).done(function(data){
+	let response = $.getJSON(url).done(function(data){
+		SB.Utils.getUserRole() == 1 ? loadSelectionList(response.responseJSON.userList)
+				: console.log("Don't have permission for userSelection");
 		displayWorkdays(data);
-		
 	}).fail(function(jqXHR, textStatus, errorThrown){
 		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
     }).always(function() {
         // Run always
-        //console.log("completed Worktimes");
+        console.log("onLoadWorkdays completed");
+    });
+	
+}
+
+function loadSelectedUser(userId){
+	let url = "/workinghours/rest/workdays/workedhours/" + userId;
+	//let userList
+	let response = $.getJSON(url).done(function(data){
+		displayWorkdays(data);
+		WT.WorktimeUtils.setSelectedUserId(userId);
+		console.log("setSelectedUserId",userId);
+	}).fail(function(jqXHR, textStatus, errorThrown){
+		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
+    }).always(function() {
+        // Run always
+        console.log("loadSelectedUser completed");
     });
 }
 
+function loadSelectionList(usersList){
+	let userSelectionList = [];
+	const [idList, userList]  = createUserLists(usersList);
+	
+	idList.forEach((userId, index) => {
+		userSelectionList.push({"userId" : userId, "userName" : userList[index]});
+	});
+	$('#users-table').html(Handlebars.compile($('#users-list-template').html())({
+		users : userSelectionList
+    }));
+}
+
+function createUserLists(object){
+	const idList = Object.keys(object);
+	const userList = Object.values(object);
+	return [idList, userList];
+}
 
 function displayWorkdays(data){
 	let workdayFromDataList = [];
@@ -52,11 +91,7 @@ function displayWorkdays(data){
 	workdaysSummary.workdaysGetResponse.forEach(element => {
 		workdayFromDataList.push(new WorkdayFromData(element));
 	});
-
-
-	
 	let daysInMonth = getDaysInMonth(currMonth,currYear);
-	
 	let workdayToDisplayList = createWorkdayListToDisplay(daysInMonth,workdayFromDataList);
 	
 	$('#workdays-table').html(Handlebars.compile($('#workdays-row-template').html())({
@@ -141,11 +176,7 @@ function convertUTCSToZonedDateTimeString(dateString){
 	return year + "-" + monthNumber + "-" + day;
 }
 
-/*
-function modifieDateFormat(date){
-	date = console.log();
-}
-*/
+
 class WorkdayFromData {
 	constructor(entry) {
 		this.id = entry.id;
