@@ -13,7 +13,7 @@ public interface WorktimeManager {
 	
 	List<Worktime> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception;
     
-    List<Worktime> getAllWorktimeByWorktimeId(long workdayId);
+    List<Worktime> getAllWorktimeByWorktimeId(long workdayId)throws Exception;
 	
 	WorktimesUpdateResponse saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid);
 	

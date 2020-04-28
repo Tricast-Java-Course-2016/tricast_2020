@@ -56,7 +56,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
     }
     
     @Override
-	public List<Worktime> getAllWorktimeByWorktimeId(long workdayId){
+	public List<Worktime> getAllWorktimeByWorktimeId(long workdayId)throws Exception{
 		return worktimeRepository.findAllByWorkdayId(workdayId);
 	}
     
