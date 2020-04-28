@@ -33,8 +33,8 @@ function displaySpecialdays(data) {
 	let specialdayList = [];
 	data.forEach(function(entry) {
 		specialdayList.push({
-			'id' : entry.id,
 			'date' : entry.date,
+			'type' : entry.type
 		});
 	});
 

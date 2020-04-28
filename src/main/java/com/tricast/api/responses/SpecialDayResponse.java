@@ -2,7 +2,12 @@ package com.tricast.api.responses;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import com.tricast.managers.SpecialDayManager;
+import com.tricast.managers.SpecialDayManagerImpl;
+import com.tricast.repositories.SpecialdayRepository;
 
 public class SpecialDayResponse {
 
@@ -10,7 +15,12 @@ public class SpecialDayResponse {
 	
 	private ZonedDateTime date;
 	
+	private String type;
+	
+	private SpecialDayManagerImpl sdmi = new SpecialDayManagerImpl();
+	
 	List<SpecialDayResponse> specialDays = new ArrayList<SpecialDayResponse>();
+	
 	
 	public List<SpecialDayResponse> getSpecialDays() {
 		return specialDays;
@@ -30,5 +40,11 @@ public class SpecialDayResponse {
 	
 	public void setDate(ZonedDateTime date) {
 		this.date = date;
+	}
+	
+	public String getType() {
+		Date inputDate = Date.from(date.toInstant());
+		type = sdmi.getSpecialdayType(inputDate);
+		return type;
 	}
 }
