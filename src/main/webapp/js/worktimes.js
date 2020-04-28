@@ -32,7 +32,6 @@ function bindListeners() {
     $("#addNewWorktime").click(function(e) {
     	addWorktime();
     });
-
 }
 
 //Delete field
@@ -61,7 +60,6 @@ function addWorktime(){
 
 function acceptWorktimes(){
 	if (currentWorkdayId === newDayId.toString()){
-		console.log("save");
 		saveWorkday();
 	} else {
 		UpdateWorkday();
@@ -76,28 +74,58 @@ function UpdateWorkday(){
 	let worktimesUpdateRequest = [];
 	let workdayUpdateRequest = {};
 	let worktime;
-
-	let notCorrectWorktimes = false;
+	
+	//Check Worktimes
+	let startTimes = [];
+	let endTimes = [];
+	let isCorrectWorktimes = false;
 	
 	dataFromWorktimesForm.forEach(e => {
 		worktime = new WorktimeRequestFromFormData(e);
 		worktimesUpdateRequest.push(worktime);
-		//if((check.getTime() <= to.getTime() && check.getTime() >= from.getTime())) 
+		startTimes.push(worktime.startTime);
+		endTimes.push(worktime.endTime);
 	});
+	console.log("startTimes", startTimes);
+	console.log("endTimes", endTimes);
+	isCorrectWorktimes = checkWorktimes(startTimes, endTimes);
 	
-	//console.log("worktimesUpdateRequest", worktimesUpdateRequest);
+	console.log(isCorrectWorktimes);
 	workdayUpdateRequest = new WorkdayUpdateRequest(worktimesUpdateRequest);
-	//console.log("workdayUpdateRequest", workdayUpdateRequest);
-	
-	$.ajax({
-		type : 'PUT',
-		dataType : 'json',
-		url : "/workinghours/rest/worktimes/" + currentWorkdayId,
-		headers : {
-			"X-HTTP-Method-Override" : "PUT"
-		},
-		data : JSON.stringify(workdayUpdateRequest)
+	if (!isCorrectWorktimes){
+		$.ajax({
+			type : 'PUT',
+			dataType : 'json',
+			url : "/workinghours/rest/worktimes/" + currentWorkdayId,
+			headers : {
+				"X-HTTP-Method-Override" : "PUT"
+			},
+			data : JSON.stringify(workdayUpdateRequest)
+		});
+		console.log("Worktimes has been updated.");
+
+	} else {
+		console.log("The worktimes are not correct", workdayUpdateRequest);
+		alert("The worktimes are not correct");
+	}
+}
+
+
+function checkWorktimes(startTimes, endTimes){
+	let wrongWorktimes = false;
+	startTimes.forEach((start, startIndex) => {
+		//If any startTime has a bigger value than it's endTime 
+		if (start.getTime() >= endTimes[startIndex].getTime())
+			return wrongWorktimes = true;
+		//Check if startTime is between any given time intervallum
+		endTimes.forEach((end, endIndex) => {
+			if ((startIndex !== endIndex) && 
+					(start.getTime() < end.getTime() && start.getTime() > startTimes[endIndex].getTime())){
+				return wrongWorktimes = true;
+			}
+		});
 	});
+	return wrongWorktimes;
 }
 
 class WorkdayUpdateRequest {
@@ -119,21 +147,33 @@ function saveWorkday(){
 		let worktimesCreationRequest = [];
 		let workdayCreationRequest = {};
 		let worktime;
-		
-
+		//Check Worktimes
+		let startTimes = [];
+		let endTimes = [];
+		let isCorrectWorktimes = false;
 		
 		dataFromWorktimesForm.forEach(e => {
 			worktime = new WorktimeRequestFromFormData(e);
 			worktimesCreationRequest.push(worktime);
-			
+			startTimes.push(worktime.startTime);
+			endTimes.push(worktime.endTime);
 		});
-		workdayCreationRequest = new WorkdayCreationRequest(selectedDate, loggedInUser, worktimesCreationRequest);
+		isCorrectWorktimes = checkWorktimes(startTimes, endTimes);
+		//ADMIN MODIFICATIO loggedInUser switched to parseInt(WT.WorktimeUtils.getSelectedUserId())
+		workdayCreationRequest = new WorkdayCreationRequest(selectedDate, 
+				parseInt(WT.WorktimeUtils.getSelectedUserId()), worktimesCreationRequest);
 		
-		let response = $.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
-			WT.WorktimeUtils.saveWorkdayData(response.responseJSON.id, WT.WorktimeUtils.getWorkdayDate());
-			console.log('Saved Worktime');
-			//location.reload();
-		});
+		if(!isCorrectWorktimes){
+			let response = $.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
+				WT.WorktimeUtils.saveWorkdayData(response.responseJSON.id, WT.WorktimeUtils.getWorkdayDate());
+				console.log('Saved Worktime');
+				//location.reload();
+			});
+		} else{
+			console.log("The worktimes are not correct", workdayCreationRequest);
+			alert("The worktimes are not correct");
+		}
+
 		
 	} else {
 		console.log("Cannot save an empty list");
@@ -196,9 +236,7 @@ class WorktimeRequestFromFormData {
 function loadWorktimes(){
 
 	///workinghours/rest/worktimes/{workdayId}
-	//let url = "/workinghours/rest/worktimes/" + WT.WorktimeUtils.getWorkdayId();
 	let url = "/workinghours/rest/worktimes/" + currentWorkdayId
-	//let url = "/workinghours/rest/worktimes/2";
 	
 	$.getJSON(url).done(function(data){
 		displayWorktimes(data);
@@ -206,8 +244,7 @@ function loadWorktimes(){
 	}).fail(function(jqXHR, textStatus, errorThrown){
 		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
     }).always(function() {
-        // Run always
-        //console.log("completed Worktimes");
+        console.log("Worktimes Loaded");
     });
 	
 }
@@ -257,7 +294,6 @@ function displayNotExistingDayEmptyWorktimes() {
 		workdayWorktimesList.push(new emptyWorktimesToDisplay());
 	}
 	
-	//console.log(workdayWorktimesList);
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
       workdayWorktimes : workdayWorktimesList
   }));
