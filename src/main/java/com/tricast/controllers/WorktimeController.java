@@ -21,6 +21,7 @@ import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.repositories.entities.Worktime;
 import com.tricast.repositories.entities.enums.Role;
+import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -28,60 +29,61 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 @RestController
 @RequestMapping(path = "rest/worktimes")
 public class WorktimeController {
-	
-	@Autowired
-	private WorktimeManager worktimeManager;
-	
-	
-	@GetMapping(path = "/{workdayId}")
-	public List<Worktime> getAllWorktimeByWorktimeId(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@PathVariable("workdayId") long workdayId) throws Exception{
-		if(Role.getById(roleId) == Role.ADMIN){
-            return worktimeManager.getAllWorktimeByWorktimeId(workdayId);
-        }
-        else{
-            try {
-                return worktimeManager.getAllWorktimeByWorktimeId(loggedInUser,workdayId);
-            } catch (Exception e) {
-                throw e;
+
+    @Autowired
+    private WorktimeManager worktimeManager;
+
+    @GetMapping(path = "/{workdayId}")
+    public ResponseEntity<?> getAllWorktimeByWorktimeId(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @PathVariable("workdayId") long workdayId) throws Exception {
+        try {
+            if (Role.getById(roleId) == Role.ADMIN) {
+                return ResponseEntity.ok(worktimeManager.getAllWorktimeByWorktimeId(workdayId));
+            } else {
+                return ResponseEntity.ok(worktimeManager.getAllWorktimeByWorktimeId(loggedInUser, workdayId));
             }
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-	}
-	
-	
-	@PostMapping(path = "/create")
-	public ResponseEntity<?> createWorkdayWithWorktime(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody WorkdayCreationRequest workdayCreationRequest) {
-		if(userCheck(roleId, loggedInUser, workdayCreationRequest.getUserId())){
+        catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/create")
+    public ResponseEntity<?> createWorkdayWithWorktime(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @RequestBody WorkdayCreationRequest workdayCreationRequest) {
+        if (userCheck(roleId, loggedInUser, workdayCreationRequest.getUserId())) {
             try {
-                 return ResponseEntity.ok(worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest));
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        }
-        else{
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
-        }
-	}
-	
-	@PutMapping(path = "/{workdayId}")
-	public ResponseEntity<?> saveWorktimesAndModified(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody WorkTimeUpdateListRequest worktimesListRequest,@PathVariable("workdayId") long workdayId) {
-		if(userCheck(roleId, loggedInUser, worktimesListRequest.getUserId())){
-            try {
-                return ResponseEntity.ok(worktimeManager.saveModified(worktimesListRequest,workdayId));
+                return ResponseEntity.ok(worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
         }
-	}
-	
-	@GetMapping(path = "/Stats/{year}/{userId}")
-	public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("userId") long id,@PathVariable("year") int year){
-		return worktimeManager.workTimeStatByIdResponse(id,year);
-	}
-    
-    private boolean userCheck(int roleId,int loggedInUser,int inRequestUserID){
-        return Role.ADMIN == Role.getById(roleId) || loggedInUser ==inRequestUserID;
+    }
+
+    @PutMapping(path = "/{workdayId}")
+    public ResponseEntity<?> saveWorktimesAndModified(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @RequestBody WorkTimeUpdateListRequest worktimesListRequest, @PathVariable("workdayId") long workdayId) {
+        if (userCheck(roleId, loggedInUser, worktimesListRequest.getUserId())) {
+            try {
+                return ResponseEntity.ok(worktimeManager.saveModified(worktimesListRequest, workdayId));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+        }
+    }
+
+    @GetMapping(path = "/Stats/{year}/{userId}")
+    public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("userId") long id, @PathVariable("year") int year) {
+        return worktimeManager.workTimeStatByIdResponse(id, year);
+    }
+
+    private boolean userCheck(int roleId, int loggedInUser, int inRequestUserID) {
+        return Role.ADMIN == Role.getById(roleId) || loggedInUser == inRequestUserID;
     }
 }
