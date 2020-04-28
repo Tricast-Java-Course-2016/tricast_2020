@@ -1,7 +1,5 @@
 package com.tricast.managers;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +19,6 @@ import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
 import com.tricast.api.responses.WorktimesUpdateResponse;
-import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
