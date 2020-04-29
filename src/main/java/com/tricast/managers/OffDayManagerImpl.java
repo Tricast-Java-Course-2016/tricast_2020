@@ -10,7 +10,6 @@ import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayResponse;
 import com.tricast.repositories.OffDayRepository;
 import com.tricast.repositories.entities.Offday;
-import com.tricast.repositories.entities.Worktime;
 
 @Component
 public class OffDayManagerImpl implements OffDayManager {
@@ -22,19 +21,29 @@ public class OffDayManagerImpl implements OffDayManager {
 		this.offDayRepository = offDayRepository;
 	}
 
-	@Override
-	public Offday createOffday(Offday offDayRequest) {
-		return offDayRepository.save(offDayRequest);
-	}
+    @Override
+    public List<OffDayResponse> getAllOffDayByOffDayId(long offdayId) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Offday updateOffday(Offday offDayRequest) {
-		return offDayRepository.save(offDayRequest);
-	}
+
+    @Override
+    public List<OffDayResponse> getAllOffDayByOffDayId(int loggedInUser, long offdayId) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public OffDayResponse createOffDayRequest(OffDayRequest offdayRequest) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 	@Override
 	public List<Offday> getAlloffDays() {
-		return (List<Offday>) offDayRepository.findAll();
+		return offDayRepository.findAll();
 	}
 
 	@Override
@@ -44,14 +53,14 @@ public class OffDayManagerImpl implements OffDayManager {
 
 	@Override
 	public void deleteOffday(long leaveId) {
-		List<Offday> offdays = (List<Offday>) offDayRepository.findAll();
+		List<Offday> offdays = offDayRepository.findAll();
 		for (Offday o : offdays) {
 			if (o.getId() == leaveId) {
 				offDayRepository.deleteById(o.getId());
 			}
 		}
 	}
-	
+
 	private Offday mapOffDayRequestToOffday(OffDayRequest offDayRequest) {
 		Offday newOffday = new Offday();
 		newOffday.setStarTtime(offDayRequest.getFromDay());
@@ -59,4 +68,5 @@ public class OffDayManagerImpl implements OffDayManager {
 		newOffday.setType(offDayRequest.getType());
 		return newOffday;
 	}
+
 }

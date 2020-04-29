@@ -6,9 +6,9 @@ import java.time.ZonedDateTime;
 import com.tricast.repositories.entities.enums.OffDayType;
 
 public class OffDayRequest implements Serializable{
-	
+
 	private static final long serialVersionUID =4L;
-	
+
 	private Long userId;
 	private ZonedDateTime fromDay;
 	private ZonedDateTime toDay;
@@ -18,7 +18,7 @@ public class OffDayRequest implements Serializable{
 		return userId;
 	}
 
-	public void setuserId(Long userID) {
+    public void setuserId(Long userId) {
 		this.userId = userId;
 	}
 
@@ -45,13 +45,13 @@ public class OffDayRequest implements Serializable{
 	public void setType(OffDayType type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "OffDayRequest [ userId=" + userId + ", fromDay=" + fromDay + ", toDay=" + toDay
 				+ ", type=" + type + "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
