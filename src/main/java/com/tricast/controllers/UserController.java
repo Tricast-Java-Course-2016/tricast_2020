@@ -56,6 +56,9 @@ public class UserController {
 	@PutMapping(path = "/update")
 	public UserResponse updateUser(@RequestBody UserUpdateRequest UserUpdateRequest) {
 		LOG.info("UserUpdateRequest:" + UserUpdateRequest.toString());
+        // ORSI
+        // Most egy üres null response-t adsz vissza 200-as response code-dal ha sikertelen a user request validálás,
+        // ehelyett jobb lenne egy error response-al visszatérni, ami tartalmaz egy megfelelő hibaüzenetet.
 		return userManager.updateUserFromRequest(UserUpdateRequest);
 	}
 
@@ -73,31 +76,30 @@ public class UserController {
 	}
 
 	// AKOS
-	// @GetMapping(path = "/search")
-	// public ResponseEntity<?>
-	// searchUser(@RequestAttribute("authentication.roleId") int roleId,
-	// @RequestParam("userName") String userName) {
-	//
-	// if (Role.getById(roleId) != Role.ADMIN) {
-	// return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
-	// }
-	//
-	// try {
-	// return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
-	// } catch (WorkingHoursException e) {
-	// return
-	// ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
-	// } catch (Exception e) {
-	// LOG.error("Excetion at searchUser: ", e);
-	// return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	// }
-	// }
+    // @GetMapping(path = "/search")
+    // public ResponseEntity<?> searchUser(@RequestAttribute("authentication.roleId") int roleId,
+    // @RequestParam("userName") String userName) {
+    //
+    // if (Role.getById(roleId) != Role.ADMIN) {
+    // return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+    // }
+    //
+    // try {
+    // return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
+    // } catch (WorkingHoursException e) {
+    // return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+    // } catch (Exception e) {
+    // LOG.error("Excetion at searchUser: ", e);
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    // }
+    // }
 
 	@PostMapping(path = "/login")
 	public ResponseEntity<?> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
 		UserResponse response = userManager.loginUserFromRequest(userLoginRequest);
-		if (response == null)
-			return null;
+		if (response == null) {
+            return null;
+        }
 
 		String token = issueToken(response.getId(), response.getUserName(), response.getRoleId());
 		HttpHeaders header = buildAuthorizationHeader(token);

@@ -16,6 +16,8 @@ import com.tricast.repositories.entities.Specialday;
 public class SpecialDayManagerImpl implements SpecialDayManager {
 
 	private SpecialdayRepository specialdayRepository;
+    // ORSI
+    // Ez ne legyen a manager osztályváltozója, a type a SpecialDaysResponse objektumhoz tartozik
 	private String type;
 
 	@Autowired
@@ -23,7 +25,7 @@ public class SpecialDayManagerImpl implements SpecialDayManager {
 		this.specialdayRepository = specialdayRepository;
 	}
 	public SpecialDayManagerImpl() {
-		
+
 	}
 
 	@Override
@@ -46,6 +48,10 @@ public class SpecialDayManagerImpl implements SpecialDayManager {
 					getTheYearFinalDay(getTheCurrentYear()));
 		}
 
+        // ORSI
+        // Itt kellene a Specialday listából egy SpecialDayResponse listát csinálni. Hasonlóan mint ahogy a
+        // UserManagerImpl.mapUserToUserResponse() metódusban láthatod.
+        // A response építése közben kellene meghívnod a getSpecialdayType() metódust is, innen a manager osztályból.
 	}
 
 	private int getTheCurrentYear() {
@@ -72,11 +78,13 @@ public class SpecialDayManagerImpl implements SpecialDayManager {
 	@Override
 	public String getSpecialdayType(Date date) {
 		String day = date.toString();
+        // ORSI
+        // Legyen itt egy lokális változó a type-nak és adjuk vissza azt
 		if (day.substring(0, 3) == "Sat") {
-			this.type = "WORKDAY";
+            this.type = "WORKDAY";
 		} else {
-			this.type = "HOLIDAY";
+            this.type = "HOLIDAY";
 		}
-		return this.type;
+        return this.type;
 	}
 }

@@ -1,6 +1,5 @@
 package com.tricast.controllers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,32 +17,34 @@ import com.tricast.repositories.entities.Specialday;
 @RestController
 @RequestMapping(path = "rest/specialdays")
 public class SpecialDayController {
-	
+
 
 	@Autowired
 	private SpecialDayManager specialDayManager;
-	
+
 	@GetMapping
 	public List<Specialday> getAllSpecialdays() {
 		return specialDayManager.getAllSpecialdays();
 	}
-	
+
 	/*@GetMapping
 	public List<Specialday> getSpecialDaysInTheYear(){
 		return specialDayManager.getSpecialDaysInTheYear(null);
 	}*/
-	
+
 	@GetMapping(path = "/{year}")
-	public List<Specialday> getSpecialDaysInTheYear(@PathVariable("year") String yearRequest){
+    public List<Specialday> getSpecialDaysInTheYear(@PathVariable("year") String yearRequest) {
+        // ORSI
+        // Itt a Specialday entity helyett a SpecialDayResponse class-t kéne visszaadni
 		return specialDayManager.getSpecialDaysInTheYear(yearRequest);
 	}
-	
-	
+
+
 	@PostMapping
 	public Specialday saveSpecialday(@RequestBody Specialday specialdayRequest) {
 		return specialDayManager.createSpecialday(specialdayRequest);
 	}
-	
+
 	@DeleteMapping(path = "/{id}")
 	public void deleteSpecialday(@PathVariable("id") int id) {
 		specialDayManager.deleteSpecialday(id);

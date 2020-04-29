@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -61,8 +60,9 @@ public class UserManagerImpl implements UserManager {
 			newUser.setPassword(encoder.encode(userCreationRequest.getPassword()));
 			User createdUser = userRepository.save(newUser);
 			return mapUserToUserResponse(createdUser);
-		} else
-			return null;
+		} else {
+            return null;
+        }
 	}
 
 	private boolean validateDateOfBirth(String dobToValidate) {
@@ -77,10 +77,14 @@ public class UserManagerImpl implements UserManager {
 		}
 	}
 
-	private boolean validateUser(User userToValidate) {
+    private boolean validateUser(User userToValidate) {
 		boolean validUser = true;
+        // ORSI
+        // Ebből a metódusból eldobhatnál egy WorkingHoursException-t, hasonlóan mint ahogy a search metódusnál
+        // csináltuk. Itt akár minden ághoz tudnál megadni külön hibaüzenetet és akkor lehetne tudni a kliens oldalon,
+        // hogy melyik mezővel votl a gond.
 		if (userToValidate.getFirstName().length() > STRING_LENGTH_60) {
-			validUser = false;
+            validUser = false;
 
 		} else if (userToValidate.getMiddleName().length() > STRING_LENGTH_60) {
 			validUser = false;
@@ -124,7 +128,7 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public UserResponse updateUserFromRequest(UserUpdateRequest UserUpdateRequest) {
+    public UserResponse updateUserFromRequest(UserUpdateRequest UserUpdateRequest) {
 
 		User userToUpdate = mapUserUpdateRequestToUser(UserUpdateRequest);
 		boolean validUser = validateUser(userToUpdate);
@@ -137,8 +141,9 @@ public class UserManagerImpl implements UserManager {
 			}
 			return userResponse;
 
-		} else
-			return null;
+		} else {
+            return null;
+        }
 
 	}
 
