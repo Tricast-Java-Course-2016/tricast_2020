@@ -30,6 +30,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private WorktimeRepository worktimeRepository;
 	private WorkdayRepository workdayRepository;
+    // AKOS2: tényleg apróság de a konstansokat nagybetűvel írva és alulvonással elválasztva szokás java-ban megadni
+    // mint: ALL_WORKHOURS_OF_YEAR
     private static final int allWorkhoursOfYear = 1920;
     private static final int theNumberOfWeeksInTheYear= 53;
 
@@ -48,19 +50,19 @@ public class WorktimeManagerImpl implements WorktimeManager{
             throw e;
         }
 	}
-    
+
     private void userCheck(long loggedInUser, long workdayId)throws Exception{
         Optional<Workday> theRequestedWorkday = workdayRepository.findById(workdayId);
-        if(theRequestedWorkday.get().getUserId().intValue() !=loggedInUser)
-                throw new IllegalAccessException("Permission denied");
+        if(theRequestedWorkday.get().getUserId().intValue() !=loggedInUser) {
+            throw new IllegalAccessException("Permission denied");
+        }
     }
-    
+
     @Override
-	public List<Worktime> getAllWorktimeByWorktimeId(long workdayId)throws Exception{
-		return worktimeRepository.findAllByWorkdayId(workdayId);
-	}
-    
-    
+    public List<Worktime> getAllWorktimeByWorktimeId(long workdayId) throws Exception {
+        return worktimeRepository.findAllByWorkdayId(workdayId);
+    }
+
 	@Override
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
@@ -215,14 +217,14 @@ public class WorktimeManagerImpl implements WorktimeManager{
         deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
         return deletedAllWorktimes;
     }
-    
+
     private WorktimesUpdateResponse updateWorktimesResponseMapper(List<Worktime> savedWorktimes ,int numberOfDeletedRows){
         WorktimesUpdateResponse deletedAllWorktimes = new WorktimesUpdateResponse();
         deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
         deletedAllWorktimes.setUpdatedWorkTimes(savedWorktimes);
         return deletedAllWorktimes;
     }
-    
+
 	@Override
 	public int deleteAllWorkTimesById(long id) {
 		List<Worktime> deleteWorkdays = worktimeRepository.findAllByWorkdayId(id);
@@ -254,7 +256,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		List<Long> WorkdayIds =getOnlyWorkdayId(getAllWorkData(year));
 		return worktimeStatsResponseMapper(userId,sumWorktimesByWorkid(WorkdayIds),WorkdayIds.size());
 	}
-    
+
     private List<Integer> sumWorktimesByWorkid(List<Long> WorkdayIds){
         List<Worktime> worktimes = getWorkTimeByIDInSearchListYear(WorkdayIds);
 		List<Integer> weeksOfTheYear = new ArrayList<>(selectitonAndSumWorkhoursWeeksofTheYear(worktimes).values());
@@ -323,6 +325,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
 	}
 
+    // AKOS2: csak név javasolat: calculateWorkedHours
 	private int howManyWorkhoursHaveTheEmployee(int theWorkersAllWorkhours) {
 		if (theWorkersAllWorkhours>=allWorkhoursOfYear) {
 			return allWorkhoursOfYear-theWorkersAllWorkhours;

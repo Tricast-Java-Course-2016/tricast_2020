@@ -5,18 +5,25 @@
  */
 package com.tricast.repositories.models;
 
-import com.tricast.repositories.entities.Workday;
-import com.tricast.repositories.entities.Worktime;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.tricast.repositories.entities.Workday;
+import com.tricast.repositories.entities.Worktime;
 
 /**
  *
  * @author Dell
  */
+// AKOS2: ezt nem neveznám managernek mivel az az elnevézis itt már foglalt a tényleges "manager" layer számára
+// lehet simán WorkDaysStat is jó név
+// valamint package szinten szerintem nem a legjobb helyen van
+// valahova a manager szintre kéne tenni
+// ott esetleg valami subpackagebe
+// mondjuk pl. com.tricast.managers.workdays
+// (ugyan ez igaz a másik 2 class-ra ebben a packageben)
 public class WorkDaysStatManager {
     private List<Workday> workDays;
     private List<Worktime> workTimes;
@@ -32,15 +39,15 @@ public class WorkDaysStatManager {
         this.firstDayOfcurrentWeekDateTime = firstDayOfcurrentWeekDateTime;
         countsAllWorkedHoursByWorkDayIds();
         this.currentWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime,workTimes)/60;
-        this.previousWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime.minusWeeks(1L),workTimes)/60;        
+        this.previousWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime.minusWeeks(1L),workTimes)/60;
     }
-    
+
     private void countsAllWorkedHoursByWorkDayIds(){
         workTimes.forEach(worktime ->{
         addNewValueOrModifiedOldValue(worktime);
         });
     }
-    
+
     private void addNewValueOrModifiedOldValue(Worktime workTime){
         Long workTimeId = workTime.getId();
         if(workedHours.containsKey(workTimeId)){
@@ -50,7 +57,7 @@ public class WorkDaysStatManager {
             workedHours.put(workTime.getWorkdayId(),calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime()));
         }
     }
-    
+
     private int calculatedWorkdHours(ZonedDateTime start, ZonedDateTime finish){
         int hours=0;
         int minutes=0;
@@ -58,7 +65,7 @@ public class WorkDaysStatManager {
         minutes = finish.getMinute()-start.getMinute();
         return hours*60 + minutes;
     }
-    
+
     private int getWorkMinutesAtAWeek(ZonedDateTime firstDayOfweek, List<Worktime> worktimes ){
         int workedMinutes=0;
         for (Worktime worktime : worktimes) {
@@ -84,5 +91,5 @@ public class WorkDaysStatManager {
     public ZonedDateTime getFirstDayOfcurrentWeekDateTime() {
         return firstDayOfcurrentWeekDateTime;
     }
-    
+
 }

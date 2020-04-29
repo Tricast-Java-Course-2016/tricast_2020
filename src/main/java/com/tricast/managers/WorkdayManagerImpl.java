@@ -2,10 +2,13 @@ package com.tricast.managers;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import com.tricast.api.responses.WorkdayGetResponse;
@@ -19,9 +22,6 @@ import com.tricast.repositories.entities.Worktime;
 import com.tricast.repositories.entities.enums.Role;
 import com.tricast.repositories.models.TheCurrentMonthOfTheYear;
 import com.tricast.repositories.models.WorkDaysStatManager;
-import java.util.HashMap;
-import java.util.Map;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 @Component
 public class WorkdayManagerImpl implements WorkdayManager{
@@ -31,7 +31,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	private WorktimeRepository worktimeRepository;
 
 	private WorktimeManager worktimeManager;
-    
+
     private UserRepository userRepository;
 
 	@Autowired
@@ -49,10 +49,13 @@ public class WorkdayManagerImpl implements WorkdayManager{
 
 	@Override
     public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId,int roleId) {
+        // AKOS2: ezt elég lenne CurrentMonthOfYear -nek nevezni
+        // a töltelék szavakat, jelen eseben a 'The' célszerű kerülni
         TheCurrentMonthOfTheYear CurrentMonthOfTheYear = new TheCurrentMonthOfTheYear();
 		List<Workday> allWorkdaysAtMonth = workdayRepository.findByUserIdAndDateBetween(userId, CurrentMonthOfTheYear.getFirstDayOfCurrentMonth(), CurrentMonthOfTheYear.getLastDayOfCurrentMonth());
 		List<Long> onlyCurrentMonthWorkDayIds = getOnlyWorkdayId(allWorkdaysAtMonth);
-        List<Worktime> allWorktimesAtMonthBySpecifiedUser = worktimeRepository.findAllByWorkdayIdIn(onlyCurrentMonthWorkDayIds);
+        // AKOS2: ha a Workday-re már rájoin-oljtok a WorkTime-okat akkor nem kell külön betölteni
+		List<Worktime> allWorktimesAtMonthBySpecifiedUser = worktimeRepository.findAllByWorkdayIdIn(onlyCurrentMonthWorkDayIds);
         WorkDaysStatManager workDaysStatManager = new WorkDaysStatManager(allWorkdaysAtMonth, allWorktimesAtMonthBySpecifiedUser, getDateWithFirstDayOfCurrentWeek());
         if(Role.getById(roleId)== Role.ADMIN){
             Map<Long,String> usersList = UsersListMapper((List<User>) userRepository.findAll());
@@ -61,7 +64,8 @@ public class WorkdayManagerImpl implements WorkdayManager{
             return WorkdayWithWorkHoursStatsGetResponseMapper(allWorkdaysAtMonth,workDaysStatManager);
         }
 	}
-    
+
+    // AKOS2: nagy betűvel kezdődő metódus nevek
     private Map<Long,String> UsersListMapper(List<User> usersList){
         Map<Long,String> usersListContainerUserIdAndUsername = new HashMap<>();
         usersList.forEach((user) -> {
@@ -69,7 +73,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
         });
         return usersListContainerUserIdAndUsername;
     }
-    
+
     private WorkdayWithWorkHoursStatsGetResponse WorkdayWithWorkHoursStatsGetResponseMapper(List<Workday> allWorkdays, WorkDaysStatManager workDaysStatManager) {
         WorkdayWithWorkHoursStatsGetResponse response = new WorkdayWithWorkHoursStatsGetResponse();
         response.setWorkdaysGetResponse(workdayResponseMapper(allWorkdays,workDaysStatManager));
@@ -78,7 +82,14 @@ public class WorkdayManagerImpl implements WorkdayManager{
         response.setUserList(null);
         return response;
 	}
-    
+
+    // AKOS2: ezt a 2 metódust:
+    // - WorkdayWithWorkHoursStatsGetResponseMapper
+    // amiknek még a neve is ugyan az kicsit le lehetne rövidíteni
+    // elég sok a kód duplikáció bennük amit kerülni kellene
+    // a "szűkebb" metódust meghagynám így (ahol nincs a userList kitöltve)
+    // a másikból pedig ezt a metódust hívnám meg
+    // plusz az az gy sor ami beállítja a userList-et
     private WorkdayWithWorkHoursStatsGetResponse WorkdayWithWorkHoursStatsGetResponseMapper(List<Workday> allWorkdays, WorkDaysStatManager workDaysStatManager, Map<Long,String> usersList) {
         WorkdayWithWorkHoursStatsGetResponse response = new WorkdayWithWorkHoursStatsGetResponse();
         response.setWorkdaysGetResponse(workdayResponseMapper(allWorkdays,workDaysStatManager));
@@ -115,9 +126,11 @@ public class WorkdayManagerImpl implements WorkdayManager{
                 try {
                     response.setWorkhours(workDaysStatManager.getWorkedHours().get(workDay.getId())/60);
                 } catch (Exception e) {
+                // AKOS2: gondolom ez azért nem az elvárt viselkedés
+                // szóval itt vélszerő lenne error levelen kiloggolni az exception-t
                     response.setWorkhours(0);
                 }
-                
+
 				allWorkdaysGetResponse.add(response);
 		}
 		return allWorkdaysGetResponse;
