@@ -7,6 +7,13 @@ function bindListeners() {
 	$("#changePasswordSubmit").click(function(e) {
 		changePassword();
 	});
+	$("#backTo").click(function(e) {
+		backTo();
+	});
+}
+
+function backTo() {
+	window.location.href = "/workinghours/homepage.html";
 }
 
 function changePassword() {
