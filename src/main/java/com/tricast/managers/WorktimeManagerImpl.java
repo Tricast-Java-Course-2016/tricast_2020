@@ -99,19 +99,19 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private List<WorktimeCreationResponse> responseNewWorktimesMapper(List <Worktime> createdWorktimes) {
 
-		List<WorktimeCreationResponse> mappedWorktimesList = new LinkedList<>();
-		WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
+		List<WorktimeCreationResponse> mappedWorktimesList = new LinkedList<WorktimeCreationResponse>();
 
-		for (Worktime newWorktimes : createdWorktimes) {
-			worktimeCreationResponse.setId(newWorktimes.getId());
-			worktimeCreationResponse.setComment(newWorktimes.getComment());
-			worktimeCreationResponse.setEndTime(newWorktimes.getEndTime());
-			worktimeCreationResponse.setStartTime(newWorktimes.getStartTime());
-			worktimeCreationResponse.setModifiedBy(newWorktimes.getModifiedBy());
-			worktimeCreationResponse.setType(newWorktimes.getType());
-			worktimeCreationResponse.setWorkdayId(newWorktimes.getWorkdayId());
+        createdWorktimes.forEach( newWorktime-> {
+            WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
+			worktimeCreationResponse.setId(newWorktime.getId());
+			worktimeCreationResponse.setComment(newWorktime.getComment());
+			worktimeCreationResponse.setEndTime(newWorktime.getEndTime());
+			worktimeCreationResponse.setStartTime(newWorktime.getStartTime());
+			worktimeCreationResponse.setModifiedBy(newWorktime.getModifiedBy());
+			worktimeCreationResponse.setType(newWorktime.getType());
+			worktimeCreationResponse.setWorkdayId(newWorktime.getWorkdayId());
 			mappedWorktimesList.add(worktimeCreationResponse);
-		}
+        });
 		return mappedWorktimesList;
 	}
 
