@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +32,7 @@ import com.tricast.controllers.filters.AuthenticationSettings;
 import com.tricast.managers.UserManager;
 import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.User;
+import com.tricast.repositories.entities.enums.Role;
 
 @RestController
 @RequestMapping(path = "rest/users")
@@ -48,58 +50,82 @@ public class UserController {
 	}
 
 	@PostMapping(path = "/create")
-	public UserResponse createUser(@RequestBody UserCreationRequest userCreationRequest) {
+	public ResponseEntity<?> createUser(@RequestAttribute("authentication.roleId") int roleId,
+			@RequestBody UserCreationRequest userCreationRequest) {
 		LOG.info("UserCreationRequest:" + userCreationRequest.toString());
-		return userManager.createUserFromRequest(userCreationRequest);
+		if (Role.getById(roleId) != Role.ADMIN) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+		}
+
+		try {
+			return ResponseEntity.ok(userManager.createUserFromRequest(userCreationRequest));
+		} catch (WorkingHoursException e) {
+			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+		}
 	}
 
 	@PutMapping(path = "/update")
-	public UserResponse updateUser(@RequestBody UserUpdateRequest UserUpdateRequest) {
+	public ResponseEntity<?> updateUser(@RequestAttribute("authentication.roleId") int roleId,
+			@RequestBody UserUpdateRequest UserUpdateRequest) {
 		LOG.info("UserUpdateRequest:" + UserUpdateRequest.toString());
-        // ORSI
-        // Most egy üres null response-t adsz vissza 200-as response code-dal ha sikertelen a user request validálás,
-        // ehelyett jobb lenne egy error response-al visszatérni, ami tartalmaz egy megfelelő hibaüzenetet.
-		return userManager.updateUserFromRequest(UserUpdateRequest);
+		// ORSI
+		// Most egy üres null response-t adsz vissza 200-as response code-dal ha
+		// sikertelen a user request validálás,
+		// ehelyett jobb lenne egy error response-al visszatérni, ami tartalmaz egy
+		// megfelelő hibaüzenetet.
+		LOG.info("Role id tokenből: " + Role.getById(roleId));
+		if (Role.getById(roleId) != Role.ADMIN) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+		}
+
+		try {
+			return ResponseEntity.ok(userManager.updateUserFromRequest(UserUpdateRequest));
+		} catch (WorkingHoursException e) {
+			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Exception at updateUser: ", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
+//	@GetMapping(path = "/search")
+//	public ResponseEntity<?> searchUser(@RequestParam("userName") String userName) {
+//
+//		try {
+//			return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
+//		} catch (WorkingHoursException e) {
+//			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+//		} catch (Exception e) {
+//			LOG.error("Exception at searchUser: ", e);
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//		}
+//	}
+
+	// AKOS
 	@GetMapping(path = "/search")
-	public ResponseEntity<?> searchUser(@RequestParam("userName") String userName) {
+	public ResponseEntity<?> searchUser(@RequestAttribute("authentication.roleId") int roleId,
+			@RequestParam("userName") String userName) {
+		LOG.info("Search user:" + userName);
+		if (Role.getById(roleId) != Role.ADMIN) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+		}
 
 		try {
 			return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
 		} catch (WorkingHoursException e) {
 			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
 		} catch (Exception e) {
-			LOG.error("Exception at searchUser: ", e);
+			LOG.error("Excetion at searchUser: ", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
-	// AKOS
-    // @GetMapping(path = "/search")
-    // public ResponseEntity<?> searchUser(@RequestAttribute("authentication.roleId") int roleId,
-    // @RequestParam("userName") String userName) {
-    //
-    // if (Role.getById(roleId) != Role.ADMIN) {
-    // return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
-    // }
-    //
-    // try {
-    // return ResponseEntity.ok(userManager.searchUserFromRequest(userName));
-    // } catch (WorkingHoursException e) {
-    // return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
-    // } catch (Exception e) {
-    // LOG.error("Excetion at searchUser: ", e);
-    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    // }
-    // }
 
 	@PostMapping(path = "/login")
 	public ResponseEntity<?> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
 		UserResponse response = userManager.loginUserFromRequest(userLoginRequest);
 		if (response == null) {
-            return null;
-        }
+			return null;
+		}
 
 		String token = issueToken(response.getId(), response.getUserName(), response.getRoleId());
 		HttpHeaders header = buildAuthorizationHeader(token);

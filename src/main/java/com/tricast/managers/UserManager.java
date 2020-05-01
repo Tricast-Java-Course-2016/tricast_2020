@@ -17,9 +17,9 @@ public interface UserManager {
 
 	List<User> getAll();
 
-	UserResponse createUserFromRequest(UserCreationRequest userCreationRequest);
+	UserResponse createUserFromRequest(UserCreationRequest userCreationRequest) throws WorkingHoursException;
 
-	UserResponse updateUserFromRequest(UserUpdateRequest userUpdateRequest);
+	UserResponse updateUserFromRequest(UserUpdateRequest userUpdateRequest) throws WorkingHoursException;
 
 	UserResponse loginUserFromRequest(UserLoginRequest userLoginRequest);
 

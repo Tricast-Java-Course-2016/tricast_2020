@@ -52,17 +52,17 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public UserResponse createUserFromRequest(UserCreationRequest userCreationRequest) {
+	public UserResponse createUserFromRequest(UserCreationRequest userCreationRequest) throws WorkingHoursException {
 		User newUser = mapUserCreationRequestToUser(userCreationRequest);
 
-		boolean validUser = validateUser(newUser);
-		if (validUser) {
+		if (newUser != null) {
+			validateUser(newUser);
 			newUser.setPassword(encoder.encode(userCreationRequest.getPassword()));
 			User createdUser = userRepository.save(newUser);
 			return mapUserToUserResponse(createdUser);
 		} else {
-            return null;
-        }
+			throw new WorkingHoursException("There is no user to create!");
+		}
 	}
 
 	private boolean validateDateOfBirth(String dobToValidate) {
@@ -77,73 +77,76 @@ public class UserManagerImpl implements UserManager {
 		}
 	}
 
-    private boolean validateUser(User userToValidate) {
-		boolean validUser = true;
-        // ORSI
-        // Ebből a metódusból eldobhatnál egy WorkingHoursException-t, hasonlóan mint ahogy a search metódusnál
-        // csináltuk. Itt akár minden ághoz tudnál megadni külön hibaüzenetet és akkor lehetne tudni a kliens oldalon,
-        // hogy melyik mezővel votl a gond.
+	private void validateUser(User userToValidate) throws WorkingHoursException {
+
+		// ORSI
+		// Ebből a metódusból eldobhatnál egy WorkingHoursException-t, hasonlóan mint
+		// ahogy a search metódusnál
+		// csináltuk. Itt akár minden ághoz tudnál megadni külön hibaüzenetet és akkor
+		// lehetne tudni a kliens oldalon,
+		// hogy melyik mezővel votl a gond.
 		if (userToValidate.getFirstName().length() > STRING_LENGTH_60) {
-            validUser = false;
+			throw new WorkingHoursException("First name is too long!");
 
 		} else if (userToValidate.getMiddleName().length() > STRING_LENGTH_60) {
-			validUser = false;
+			throw new WorkingHoursException("Middle name is too long!");
 
 		} else if (userToValidate.getLastName().length() > STRING_LENGTH_60) {
-			validUser = false;
+			throw new WorkingHoursException("Last name is too long!");
 
 		} else if (validateDateOfBirth(userToValidate.getDob()) == false) {
-			validUser = false;
+			throw new WorkingHoursException("Wrong date of birth format");
 
 		} else if (userToValidate.getUserName().length() > STRING_LENGTH_30) {
-			validUser = false;
+			throw new WorkingHoursException("User name is too long!");
 
 			// TODO gender validation
 
 		} else if (userToValidate.getEmail().matches(EMAIL_REGEX) == false) {
-			validUser = false;
+			throw new WorkingHoursException("Wrong e-mail format");
 
 		} else if (userToValidate.getEmail().length() > STRING_LENGTH_100) {
-			validUser = false;
+			throw new WorkingHoursException("First name is too long!");
 
 		} else if (userToValidate.getAddress().length() > STRING_LENGTH_300) {
-			validUser = false;
+			throw new WorkingHoursException("E-mail is too long!");
 
 		} else if (userToValidate.getPostcode().length() > STRING_LENGTH_6) {
-			validUser = false;
+			throw new WorkingHoursException("First name is too long!");
 
 		} else if (userToValidate.getPhone().length() > STRING_LENGTH_12) {
-			validUser = false;
+			throw new WorkingHoursException("Phone is too long!");
 
 		} else if (userToValidate.getCompanyName().length() > STRING_LENGTH_50) {
-			validUser = false;
+			throw new WorkingHoursException("Company name is too long!");
 
-		} else if (userToValidate.getPassword().length() > STRING_LENGTH_60
-				|| userToValidate.getPassword().length() == 0) {
-			validUser = false;
+		} else if (userToValidate.getPassword().length() > STRING_LENGTH_60) {
+			throw new WorkingHoursException("Password is too long!");
+
+		} else if (userToValidate.getPassword().length() == 0) {
+			throw new WorkingHoursException("Password is too long!");
 		}
 
-		LOG.info("validateUser:" + validUser);
-		return validUser;
 	}
 
 	@Override
-    public UserResponse updateUserFromRequest(UserUpdateRequest UserUpdateRequest) {
+	public UserResponse updateUserFromRequest(UserUpdateRequest UserUpdateRequest) throws WorkingHoursException {
 
 		User userToUpdate = mapUserUpdateRequestToUser(UserUpdateRequest);
-		boolean validUser = validateUser(userToUpdate);
-		if (validUser) {
+
+		if (userToUpdate != null) {
+			validateUser(userToUpdate);
+
 			userToUpdate.setPassword(encoder.encode(UserUpdateRequest.getPassword()));
 			UserResponse userResponse = null;
-			if (userToUpdate != null) {
-				User updatedUser = userRepository.save(userToUpdate);
-				userResponse = mapUserToUserResponse(updatedUser);
-			}
-			return userResponse;
 
+			User updatedUser = userRepository.save(userToUpdate);
+			userResponse = mapUserToUserResponse(updatedUser);
+
+			return userResponse;
 		} else {
-            return null;
-        }
+			throw new WorkingHoursException("User to update does not exist!");
+		}
 
 	}
 
