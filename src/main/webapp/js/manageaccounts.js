@@ -11,14 +11,14 @@ function bindListeners() {
 	$("#saveChangesSubmit").click(function(e) {
 		saveChangesSubmit();
 	});
-//	$("#backTo").click(function(e) {
-//		backTo();
-//	});
+	$("#backTo").click(function(e) {
+		backTo();
+	});
 }
 
-//function backTo() {
-//	window.location.href = "/workinghours/WorktimesRecording.html";
-//}
+function backTo() {
+	window.location.href = "/workinghours/homepage.html";
+}
 
 function searchUserSubmit() {
 	let user = $('#searchedUser').val();
@@ -28,7 +28,7 @@ function searchUserSubmit() {
 	$.getJSON(url).done(function(data) {
 		displaySearchedUser(data);
 	}).fail(function(jqXHR, textStatus, errorThrown) {
-		SB.Utils.defaultErrorHandling(jqXHR);
+		//SB.Utils.defaultErrorHandling(jqXHR);
 	}).always(function() {
 		console.log("complete");
 	});
