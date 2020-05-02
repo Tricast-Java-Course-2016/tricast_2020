@@ -18,6 +18,7 @@ import com.tricast.api.requests.WorkTimeUpdateListRequest;
 import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.controllers.constants.WorkingHoursConstants;
+import static com.tricast.controllers.customClasses.ControllerHelper.userCheckValidator;
 import com.tricast.managers.WorktimeManager;
 import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.enums.Role;
@@ -57,7 +58,7 @@ public class WorktimeController {
 
     @PostMapping()
     public ResponseEntity<?> createWorkdayWithWorktime(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @RequestBody WorkdayCreationRequest workdayCreationRequest) {
-        if (userCheck(roleId, loggedInUser, workdayCreationRequest.getUserId())) {
+        if (userCheckValidator(roleId, loggedInUser, workdayCreationRequest.getUserId())) {
             try {
                 return ResponseEntity.ok(worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest));
             } catch (Exception e) {
@@ -72,7 +73,7 @@ public class WorktimeController {
 
     @PutMapping(path = "/{workdayId}")
     public ResponseEntity<?> saveWorktimesAndModified(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @RequestBody WorkTimeUpdateListRequest worktimesListRequest, @PathVariable("workdayId") long workdayId) {
-        if (userCheck(roleId, loggedInUser, worktimesListRequest.getUserId())) {
+        if (userCheckValidator(roleId, loggedInUser, worktimesListRequest.getUserId())) {
             try {
                 return ResponseEntity.ok(worktimeManager.saveModified(worktimesListRequest, workdayId));
             } catch (Exception e) {
@@ -88,9 +89,5 @@ public class WorktimeController {
     @GetMapping(path = "/stats/{year}/{userId}")
     public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("userId") long id, @PathVariable("year") int year) {
         return worktimeManager.workTimeStatByIdResponse(id, year);
-    }
-
-    private boolean userCheck(int roleId, int loggedInUser, int inRequestUserID) {
-        return Role.ADMIN == Role.getById(roleId) || loggedInUser == inRequestUserID;
     }
 }
