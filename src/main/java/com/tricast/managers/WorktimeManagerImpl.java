@@ -18,22 +18,21 @@ import com.tricast.api.requests.WorktimeCreationRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.responses.WorktimeGetResponse;
 import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
 import com.tricast.repositories.entities.Worktime;
-import com.tricast.repositories.models.DateManager;
+import com.tricast.managers.custom_classes.DateManager;
 
 @Component
 public class WorktimeManagerImpl implements WorktimeManager{
 
 	private WorktimeRepository worktimeRepository;
 	private WorkdayRepository workdayRepository;
-    // AKOS2: tényleg apróság de a konstansokat nagybetűvel írva és alulvonással elválasztva szokás java-ban megadni
-    // mint: ALL_WORKHOURS_OF_YEAR
-    private static final int allWorkhoursOfYear = 1920;
-    private static final int theNumberOfWeeksInTheYear= 53;
+    private static final int ALL_WORKHOURS_OF_YEAR = 1920;
+    private static final int NUMBER_OF_WEEKS_IN_YEAR = 53;
 
 	@Autowired
 	public WorktimeManagerImpl(WorktimeRepository worktimeRepository, WorkdayRepository workdayRepository) {
@@ -42,10 +41,10 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	}
 
 	@Override
-	public List<Worktime> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception{
+	public List<WorktimeGetResponse> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception{
         try {
             userCheck(loggedInUser, workdayId);
-            return worktimeRepository.findAllByWorkdayId(workdayId);
+            return worktimeMapper(worktimeRepository.findAllByWorkdayId(workdayId));
         } catch (IllegalAccessException e) {
             throw e;
         }
@@ -59,8 +58,24 @@ public class WorktimeManagerImpl implements WorktimeManager{
     }
 
     @Override
-    public List<Worktime> getAllWorktimeByWorktimeId(long workdayId) throws Exception {
-        return worktimeRepository.findAllByWorkdayId(workdayId);
+    public List<WorktimeGetResponse> getAllWorktimeByWorktimeId(long workdayId) throws Exception {
+        return worktimeMapper(worktimeRepository.findAllByWorkdayId(workdayId));
+    }
+    
+    private List<WorktimeGetResponse> worktimeMapper(List<Worktime> worktimes){
+        List<WorktimeGetResponse> listOfResponseWorktimes = new ArrayList<>();
+        worktimes.forEach( worktime-> {
+            WorktimeGetResponse wortimeResponse = new WorktimeGetResponse();
+            wortimeResponse.setId(worktime.getId());
+            wortimeResponse.setComment(worktime.getComment());
+            wortimeResponse.setEndTime(worktime.getEndTime());
+            wortimeResponse.setStartTime(worktime.getStartTime());
+            wortimeResponse.setType(worktime.getType());
+            wortimeResponse.setWorkdayId(worktime.getWorkdayId());
+            wortimeResponse.setModifiedBy(worktime.getModifiedBy());
+            listOfResponseWorktimes.add(wortimeResponse);
+        });
+        return listOfResponseWorktimes;
     }
 
 	@Override
@@ -99,19 +114,19 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private List<WorktimeCreationResponse> responseNewWorktimesMapper(List <Worktime> createdWorktimes) {
 
-		List<WorktimeCreationResponse> mappedWorktimesList = new LinkedList<>();
-		WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
+		List<WorktimeCreationResponse> mappedWorktimesList = new LinkedList<WorktimeCreationResponse>();
 
-		for (Worktime newWorktimes : createdWorktimes) {
-			worktimeCreationResponse.setId(newWorktimes.getId());
-			worktimeCreationResponse.setComment(newWorktimes.getComment());
-			worktimeCreationResponse.setEndTime(newWorktimes.getEndTime());
-			worktimeCreationResponse.setStartTime(newWorktimes.getStartTime());
-			worktimeCreationResponse.setModifiedBy(newWorktimes.getModifiedBy());
-			worktimeCreationResponse.setType(newWorktimes.getType());
-			worktimeCreationResponse.setWorkdayId(newWorktimes.getWorkdayId());
+        createdWorktimes.forEach( newWorktime-> {
+            WorktimeCreationResponse worktimeCreationResponse = new WorktimeCreationResponse();
+			worktimeCreationResponse.setId(newWorktime.getId());
+			worktimeCreationResponse.setComment(newWorktime.getComment());
+			worktimeCreationResponse.setEndTime(newWorktime.getEndTime());
+			worktimeCreationResponse.setStartTime(newWorktime.getStartTime());
+			worktimeCreationResponse.setModifiedBy(newWorktime.getModifiedBy());
+			worktimeCreationResponse.setType(newWorktime.getType());
+			worktimeCreationResponse.setWorkdayId(newWorktime.getWorkdayId());
 			mappedWorktimesList.add(worktimeCreationResponse);
-		}
+        });
 		return mappedWorktimesList;
 	}
 
@@ -295,7 +310,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private Map<Integer, Integer> declareMap(){
 		Map<Integer, Integer> newMap = new HashMap<>();
-		for(int i = 1; i <= theNumberOfWeeksInTheYear; i++) {
+		for(int i = 1; i <= NUMBER_OF_WEEKS_IN_YEAR; i++) {
 			newMap.put(i, 0);
 		}
 		return newMap;
@@ -316,7 +331,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		workTimeStatByIdResponse.setWorktimesOfTheWeeks(weeksOfTheYear);
 		int workhours= sumWorkhours(weeksOfTheYear);
 		workTimeStatByIdResponse.setWorktimehours(workhours);
-		workTimeStatByIdResponse.setOvertimes(howManyWorkhoursHaveTheEmployee(workhours));
+		workTimeStatByIdResponse.setOvertimes(calculateWorkedHours(workhours));
 		return workTimeStatByIdResponse;
 
 	}
@@ -325,10 +340,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
 	}
 
-    // AKOS2: csak név javasolat: calculateWorkedHours
-	private int howManyWorkhoursHaveTheEmployee(int theWorkersAllWorkhours) {
-		if (theWorkersAllWorkhours>=allWorkhoursOfYear) {
-			return allWorkhoursOfYear-theWorkersAllWorkhours;
+	private int calculateWorkedHours(int theWorkersAllWorkhours) {
+		if (theWorkersAllWorkhours>=ALL_WORKHOURS_OF_YEAR) {
+			return ALL_WORKHOURS_OF_YEAR-theWorkersAllWorkhours;
 		}
 		else {
 			return 0;

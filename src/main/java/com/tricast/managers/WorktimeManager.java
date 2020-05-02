@@ -7,13 +7,14 @@ import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.repositories.entities.Worktime;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
+import com.tricast.api.responses.WorktimeGetResponse;
 import com.tricast.api.responses.WorktimesUpdateResponse;
 
 public interface WorktimeManager {
 	
-	List<Worktime> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception;
+	List<WorktimeGetResponse> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception;
     
-    List<Worktime> getAllWorktimeByWorktimeId(long workdayId)throws Exception;
+    List<WorktimeGetResponse> getAllWorktimeByWorktimeId(long workdayId)throws Exception;
 	
 	WorktimesUpdateResponse saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid);
 	

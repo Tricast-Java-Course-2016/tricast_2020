@@ -21,10 +21,6 @@ public class WorktimeGetResponse {
 	
 	private WorktimeType type;
 
-	private ZonedDateTime modifiedEndTime;
-
-	private ZonedDateTime modifiedStartTime;
-
 	public long getId() {
 		return id;
 	}
@@ -63,22 +59,6 @@ public class WorktimeGetResponse {
 
 	public void setWorkdayId(long workdayId) {
 		this.workdayId = workdayId;
-	}
-
-	public ZonedDateTime getModifiedEndTime() {
-		return modifiedEndTime;
-	}
-
-	public void setModifiedEndTime(ZonedDateTime modifiedEndTime) {
-		this.modifiedEndTime = modifiedEndTime;
-	}
-
-	public ZonedDateTime getModifiedStartTime() {
-		return modifiedStartTime;
-	}
-
-	public void setModifiedStartTime(ZonedDateTime modifiedStartTime) {
-		this.modifiedStartTime = modifiedStartTime;
 	}
 
 	public static long getSerialversionworktimeid() {

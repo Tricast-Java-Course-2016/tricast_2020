@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tricast.repositories.models;
+package com.tricast.managers.custom_classes;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -17,29 +17,34 @@ import com.tricast.repositories.entities.Worktime;
  *
  * @author Dell
  */
-// AKOS2: ezt nem neveznám managernek mivel az az elnevézis itt már foglalt a tényleges "manager" layer számára
-// lehet simán WorkDaysStat is jó név
-// valamint package szinten szerintem nem a legjobb helyen van
-// valahova a manager szintre kéne tenni
-// ott esetleg valami subpackagebe
-// mondjuk pl. com.tricast.managers.workdays
-// (ugyan ez igaz a másik 2 class-ra ebben a packageben)
-public class WorkDaysStatManager {
+public class WorkDaysStat {
     private List<Workday> workDays;
     private List<Worktime> workTimes;
     private int currentWeekWorkTimes;
     private int previousWeekWorkTimes;
+    private int currentWeekWorkMinutes;
+    private int previousWeekWorkTimesMinutes;
     private Map<Long, Integer> workedHours;
     private ZonedDateTime firstDayOfcurrentWeekDateTime;
 
-    public WorkDaysStatManager(List<Workday> workDays, List<Worktime> workTimes,ZonedDateTime firstDayOfcurrentWeekDateTime) {
+    public WorkDaysStat(List<Workday> workDays, List<Worktime> workTimes,ZonedDateTime firstDayOfcurrentWeekDateTime) {
         workedHours = new HashMap<>();
         this.workDays = workDays;
         this.workTimes = workTimes;
         this.firstDayOfcurrentWeekDateTime = firstDayOfcurrentWeekDateTime;
         countsAllWorkedHoursByWorkDayIds();
-        this.currentWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime,workTimes)/60;
-        this.previousWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime.minusWeeks(1L),workTimes)/60;
+        int tempWorktimes = getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime,workTimes);
+        this.currentWeekWorkTimes = tempWorktimes/60;
+        this.currentWeekWorkMinutes = calculateMinutes(tempWorktimes);
+        tempWorktimes = getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime.minusWeeks(1L),workTimes);
+        this.previousWeekWorkTimes = tempWorktimes/60;
+        this.previousWeekWorkTimesMinutes = calculateMinutes(tempWorktimes);
+    }
+    
+    public int calculateMinutes(int minutes){
+        int workMinutes=minutes;
+        int workHours=workMinutes/60;
+        return workMinutes-(workHours*60);
     }
 
     private void countsAllWorkedHoursByWorkDayIds(){
@@ -49,9 +54,10 @@ public class WorkDaysStatManager {
     }
 
     private void addNewValueOrModifiedOldValue(Worktime workTime){
-        Long workTimeId = workTime.getId();
-        if(workedHours.containsKey(workTimeId)){
-            workedHours.replace(workTime.getWorkdayId(), workedHours.get(workTimeId)+calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime()));
+        Long getWorkdayId = workTime.getWorkdayId();
+        if(workedHours.containsKey(getWorkdayId)){
+            int newValue = workedHours.get(getWorkdayId)+calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime());
+            workedHours.replace(workTime.getWorkdayId(),newValue);
         }
         else{
             workedHours.put(workTime.getWorkdayId(),calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime()));
@@ -70,7 +76,7 @@ public class WorkDaysStatManager {
         int workedMinutes=0;
         for (Worktime worktime : worktimes) {
             if(worktime.getStartTime().isAfter(firstDayOfweek) && worktime.getEndTime().isBefore(firstDayOfweek.plusDays(6))){
-                workedMinutes = calculatedWorkdHours(worktime.getStartTime(), worktime.getEndTime());
+                workedMinutes = workedMinutes + calculatedWorkdHours(worktime.getStartTime(), worktime.getEndTime());
             }
         }
         return  workedMinutes;
@@ -90,6 +96,22 @@ public class WorkDaysStatManager {
 
     public ZonedDateTime getFirstDayOfcurrentWeekDateTime() {
         return firstDayOfcurrentWeekDateTime;
+    }
+
+    public int getCurrentWeekWorkMinutes() {
+        return currentWeekWorkMinutes;
+    }
+
+    public void setCurrentWeekWorkMinutes(int currentWeekWorkMinutes) {
+        this.currentWeekWorkMinutes = currentWeekWorkMinutes;
+    }
+
+    public int getPreviousWeekWorkTimesMinutes() {
+        return previousWeekWorkTimesMinutes;
+    }
+
+    public void setPreviousWeekWorkTimesMinutes(int previousWeekWorkTimesMinutes) {
+        this.previousWeekWorkTimesMinutes = previousWeekWorkTimesMinutes;
     }
 
 }

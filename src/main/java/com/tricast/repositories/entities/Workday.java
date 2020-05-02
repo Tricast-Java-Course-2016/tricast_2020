@@ -65,7 +65,6 @@ public class Workday implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
 	public List<Worktime> getWorktimes() {
 		return this.worktimes;
 	}
@@ -73,18 +72,14 @@ public class Workday implements Serializable {
 	public void setWorktimes(List<Worktime> worktimes) {
 		this.worktimes = worktimes;
 	}
-
 	public Worktime addWorktime(Worktime worktime) {
 		getWorktimes().add(worktime);
 		worktime.setWorkday(this);
-
 		return worktime;
 	}
-
 	public Worktime removeWorktime(Worktime worktime) {
 		getWorktimes().remove(worktime);
 		worktime.setWorkday(null);
-
 		return worktime;
 	}
 */
