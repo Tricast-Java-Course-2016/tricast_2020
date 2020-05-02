@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tricast.repositories.models;
+package com.tricast.managers.custom_classes;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

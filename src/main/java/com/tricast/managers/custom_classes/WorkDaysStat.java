@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tricast.repositories.models;
+package com.tricast.managers.custom_classes;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -17,14 +17,7 @@ import com.tricast.repositories.entities.Worktime;
  *
  * @author Dell
  */
-// AKOS2: ezt nem neveznám managernek mivel az az elnevézis itt már foglalt a tényleges "manager" layer számára
-// lehet simán WorkDaysStat is jó név
-// valamint package szinten szerintem nem a legjobb helyen van
-// valahova a manager szintre kéne tenni
-// ott esetleg valami subpackagebe
-// mondjuk pl. com.tricast.managers.workdays
-// (ugyan ez igaz a másik 2 class-ra ebben a packageben)
-public class WorkDaysStatManager {
+public class WorkDaysStat {
     private List<Workday> workDays;
     private List<Worktime> workTimes;
     private int currentWeekWorkTimes;
@@ -32,7 +25,7 @@ public class WorkDaysStatManager {
     private Map<Long, Integer> workedHours;
     private ZonedDateTime firstDayOfcurrentWeekDateTime;
 
-    public WorkDaysStatManager(List<Workday> workDays, List<Worktime> workTimes,ZonedDateTime firstDayOfcurrentWeekDateTime) {
+    public WorkDaysStat(List<Workday> workDays, List<Worktime> workTimes,ZonedDateTime firstDayOfcurrentWeekDateTime) {
         workedHours = new HashMap<>();
         this.workDays = workDays;
         this.workTimes = workTimes;
