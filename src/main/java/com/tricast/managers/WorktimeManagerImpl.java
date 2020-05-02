@@ -30,10 +30,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private WorktimeRepository worktimeRepository;
 	private WorkdayRepository workdayRepository;
-    // AKOS2: tényleg apróság de a konstansokat nagybetűvel írva és alulvonással elválasztva szokás java-ban megadni
-    // mint: ALL_WORKHOURS_OF_YEAR
-    private static final int allWorkhoursOfYear = 1920;
-    private static final int theNumberOfWeeksInTheYear= 53;
+    private static final int ALL_WORKHOURS_OF_YEAR = 1920;
+    private static final int NUMBER_OF_WEEKS_IN_YEAR = 53;
 
 	@Autowired
 	public WorktimeManagerImpl(WorktimeRepository worktimeRepository, WorkdayRepository workdayRepository) {
@@ -295,7 +293,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 
 	private Map<Integer, Integer> declareMap(){
 		Map<Integer, Integer> newMap = new HashMap<>();
-		for(int i = 1; i <= theNumberOfWeeksInTheYear; i++) {
+		for(int i = 1; i <= NUMBER_OF_WEEKS_IN_YEAR; i++) {
 			newMap.put(i, 0);
 		}
 		return newMap;
@@ -316,7 +314,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		workTimeStatByIdResponse.setWorktimesOfTheWeeks(weeksOfTheYear);
 		int workhours= sumWorkhours(weeksOfTheYear);
 		workTimeStatByIdResponse.setWorktimehours(workhours);
-		workTimeStatByIdResponse.setOvertimes(howManyWorkhoursHaveTheEmployee(workhours));
+		workTimeStatByIdResponse.setOvertimes(calculateWorkedHours(workhours));
 		return workTimeStatByIdResponse;
 
 	}
@@ -325,10 +323,9 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		return weeksOfTheYear.stream().mapToInt(i-> i).sum();
 	}
 
-    // AKOS2: csak név javasolat: calculateWorkedHours
-	private int howManyWorkhoursHaveTheEmployee(int theWorkersAllWorkhours) {
-		if (theWorkersAllWorkhours>=allWorkhoursOfYear) {
-			return allWorkhoursOfYear-theWorkersAllWorkhours;
+	private int calculateWorkedHours(int theWorkersAllWorkhours) {
+		if (theWorkersAllWorkhours>=ALL_WORKHOURS_OF_YEAR) {
+			return ALL_WORKHOURS_OF_YEAR-theWorkersAllWorkhours;
 		}
 		else {
 			return 0;
