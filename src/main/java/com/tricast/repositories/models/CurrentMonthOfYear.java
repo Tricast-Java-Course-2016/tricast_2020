@@ -10,11 +10,11 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 
 
-public class TheCurrentMonthOfTheYear {
+public class CurrentMonthOfYear {
     private ZonedDateTime firstDayOfCurrentMonth;
     private ZonedDateTime lastDayOfCurrentMonth;
 
-    public TheCurrentMonthOfTheYear() {
+    public CurrentMonthOfYear() {
         this.firstDayOfCurrentMonth = CurrentFirstDayOfMonth();
         this.lastDayOfCurrentMonth = CurrentLastDayOfMonth();
     }
