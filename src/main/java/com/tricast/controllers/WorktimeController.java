@@ -51,9 +51,7 @@ public class WorktimeController {
         }
     }
 
-    // AKOS2: a /create nem is szükséges ide
-    // mivel a POST alap esetben minden plusz URL szöveg nélkül pontossan ezt jelenti
-    @PostMapping(path = "/create")
+    @PostMapping()
     public ResponseEntity<?> createWorkdayWithWorktime(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @RequestBody WorkdayCreationRequest workdayCreationRequest) {
         if (userCheck(roleId, loggedInUser, workdayCreationRequest.getUserId())) {
             try {
@@ -79,8 +77,7 @@ public class WorktimeController {
         }
     }
 
-    // AKOS2: kicsit kilóg a nagybetúvel kezdődő URL a konvencióból (/Stat)
-    @GetMapping(path = "/Stats/{year}/{userId}")
+    @GetMapping(path = "/stats/{year}/{userId}")
     public WorkTimeStatByIdResponse getWorkTimesStat(@PathVariable("userId") long id, @PathVariable("year") int year) {
         return worktimeManager.workTimeStatByIdResponse(id, year);
     }
