@@ -50,6 +50,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	@Override
     public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId,int roleId) {
         CurrentMonthOfYear currentMonthOfYear = new CurrentMonthOfYear();
+        //MARK: Ha hónap forduló van az előző hetet nem számolja javítani kell
 		List<Workday> allWorkdaysAtMonth = workdayRepository.findByUserIdAndDateBetween(userId, currentMonthOfYear.getFirstDayOfCurrentMonth(), currentMonthOfYear.getLastDayOfCurrentMonth());
 		List<Long> onlyCurrentMonthWorkDayIds = getOnlyWorkdayId(allWorkdaysAtMonth);
         // AKOS2: ha a Workday-re már rájoin-oljtok a WorkTime-okat akkor nem kell külön betölteni
@@ -76,10 +77,12 @@ public class WorkdayManagerImpl implements WorkdayManager{
         response.setWorkdaysGetResponse(workdayResponseMapper(allWorkdays,workDaysStatManager));
         response.setWorkhoursCurrentWeek(workDaysStatManager.getCurrentWeekWorkTimes());
         response.setWorkhoursPreviouseWeek(workDaysStatManager.getPreviousWeekWorkTimes());
+        response.setWorkminutesCurrentWeek(workDaysStatManager.getCurrentWeekWorkMinutes());
+        response.setWorkminutesPreviouseWeek(workDaysStatManager.getPreviousWeekWorkTimesMinutes());
         response.setUserList(null);
         return response;
 	}
-
+    
     private WorkdayWithWorkHoursStatsGetResponse WorkdayWithWorkHoursStatsGetResponseMapper(List<Workday> allWorkdays, WorkDaysStat workDaysStatManager, Map<Long,String> usersList) {
         WorkdayWithWorkHoursStatsGetResponse response = workdayWithWorkHoursStatsGetResponseMapper(allWorkdays,workDaysStatManager);
         response.setUserList(usersList);
@@ -110,14 +113,15 @@ public class WorkdayManagerImpl implements WorkdayManager{
 				response.setId(workDay.getId());
 				response.setDate(workDay.getDate());
 				response.setUserId(workDay.getUserId());
-                try {
+                
+                if(workDaysStatManager.getWorkedHours().containsKey(workDay.getId())){
                     response.setWorkhours(workDaysStatManager.getWorkedHours().get(workDay.getId())/60);
-                } catch (Exception e) {
-                // AKOS2: gondolom ez azért nem az elvárt viselkedés
-                // szóval itt vélszerő lenne error levelen kiloggolni az exception-t
-                    response.setWorkhours(0);
+                    response.setWorkMinutes(workDaysStatManager.calculateMinutes(workDaysStatManager.getWorkedHours().get(workDay.getId())));
                 }
-
+                else{
+                    response.setWorkhours(0);
+                    response.setWorkMinutes(0);
+                }
 				allWorkdaysGetResponse.add(response);
 		}
 		return allWorkdaysGetResponse;
