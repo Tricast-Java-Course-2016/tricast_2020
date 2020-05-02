@@ -31,8 +31,6 @@ public class WorktimeController {
     public ResponseEntity<?> getAllWorktimeByWorktimeId(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedInUser, @PathVariable("workdayId") long workdayId) throws Exception {
         try {
             if (Role.getById(roleId) == Role.ADMIN) {
-                // AKOS2: itt még mindig db entityket adtok vissza
-                // azokat response osztályokra célszerű lecserélni
                 return ResponseEntity.ok(worktimeManager.getAllWorktimeByWorktimeId(workdayId));
             } else {
                 return ResponseEntity.ok(worktimeManager.getAllWorktimeByWorktimeId(loggedInUser, workdayId));
