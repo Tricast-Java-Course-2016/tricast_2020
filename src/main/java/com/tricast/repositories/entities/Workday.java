@@ -29,9 +29,9 @@ public class Workday implements Serializable {
 	@Column(name="userid")
 	private Integer userId;
 
-	
-	@OneToMany
-	private List<Worktime> worktimes;
+	//bi-directional many-to-one association to Worktime
+	/*@OneToMany(mappedBy="workday")
+	private List<Worktime> worktimes;*/
 	
 	public Workday() {
 	}
@@ -61,12 +61,26 @@ public class Workday implements Serializable {
 		this.userId = userId;
 	}
 
-    public List<Worktime> getWorktimes() {
-        return worktimes;
-    }
+	/*
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	public List<Worktime> getWorktimes() {
+		return this.worktimes;
+	}
 
-    public void setWorktimes(List<Worktime> worktimes) {
-        this.worktimes = worktimes;
-    }
-
+	public void setWorktimes(List<Worktime> worktimes) {
+		this.worktimes = worktimes;
+	}
+	public Worktime addWorktime(Worktime worktime) {
+		getWorktimes().add(worktime);
+		worktime.setWorkday(this);
+		return worktime;
+	}
+	public Worktime removeWorktime(Worktime worktime) {
+		getWorktimes().remove(worktime);
+		worktime.setWorkday(null);
+		return worktime;
+	}
+*/
 }
