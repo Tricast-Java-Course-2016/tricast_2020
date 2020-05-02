@@ -14,8 +14,8 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name="offdaylimits")
-@NamedQuery(name="OffDayLimits.findAll", query="SELECT o FROM OffDayLimits o")
-public class OffDayLimits implements Serializable {
+@NamedQuery(name="OffDayLimits.findAll", query="SELECT o FROM OffDayLimit o")
+public class OffDayLimit implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -36,7 +36,7 @@ public class OffDayLimits implements Serializable {
 	@Column(name = "year")
 	private String year;
 
-	public OffDayLimits() {
+	public OffDayLimit() {
 	}
 
 	public long getId() {
