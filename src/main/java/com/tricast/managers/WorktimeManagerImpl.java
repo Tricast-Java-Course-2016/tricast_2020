@@ -18,6 +18,7 @@ import com.tricast.api.requests.WorktimeCreationRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
 import com.tricast.api.responses.WorkdayCreationResponse;
 import com.tricast.api.responses.WorktimeCreationResponse;
+import com.tricast.api.responses.WorktimeGetResponse;
 import com.tricast.api.responses.WorktimesUpdateResponse;
 import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
@@ -40,10 +41,10 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	}
 
 	@Override
-	public List<Worktime> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception{
+	public List<WorktimeGetResponse> getAllWorktimeByWorktimeId(int loggedInUser,long workdayId) throws Exception{
         try {
             userCheck(loggedInUser, workdayId);
-            return worktimeRepository.findAllByWorkdayId(workdayId);
+            return worktimeMapper(worktimeRepository.findAllByWorkdayId(workdayId));
         } catch (IllegalAccessException e) {
             throw e;
         }
@@ -57,8 +58,24 @@ public class WorktimeManagerImpl implements WorktimeManager{
     }
 
     @Override
-    public List<Worktime> getAllWorktimeByWorktimeId(long workdayId) throws Exception {
-        return worktimeRepository.findAllByWorkdayId(workdayId);
+    public List<WorktimeGetResponse> getAllWorktimeByWorktimeId(long workdayId) throws Exception {
+        return worktimeMapper(worktimeRepository.findAllByWorkdayId(workdayId));
+    }
+    
+    private List<WorktimeGetResponse> worktimeMapper(List<Worktime> worktimes){
+        List<WorktimeGetResponse> listOfResponseWorktimes = new ArrayList<>();
+        worktimes.forEach( worktime-> {
+            WorktimeGetResponse wortimeResponse = new WorktimeGetResponse();
+            wortimeResponse.setId(worktime.getId());
+            wortimeResponse.setComment(worktime.getComment());
+            wortimeResponse.setEndTime(worktime.getEndTime());
+            wortimeResponse.setStartTime(worktime.getStartTime());
+            wortimeResponse.setType(worktime.getType());
+            wortimeResponse.setWorkdayId(worktime.getWorkdayId());
+            wortimeResponse.setModifiedBy(worktime.getModifiedBy());
+            listOfResponseWorktimes.add(wortimeResponse);
+        });
+        return listOfResponseWorktimes;
     }
 
 	@Override
