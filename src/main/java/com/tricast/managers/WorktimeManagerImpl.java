@@ -23,7 +23,7 @@ import com.tricast.repositories.WorkdayRepository;
 import com.tricast.repositories.WorktimeRepository;
 import com.tricast.repositories.entities.Workday;
 import com.tricast.repositories.entities.Worktime;
-import com.tricast.repositories.models.DateManager;
+import com.tricast.managers.custom_classes.DateManager;
 
 @Component
 public class WorktimeManagerImpl implements WorktimeManager{
