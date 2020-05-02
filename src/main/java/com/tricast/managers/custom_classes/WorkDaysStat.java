@@ -22,6 +22,8 @@ public class WorkDaysStat {
     private List<Worktime> workTimes;
     private int currentWeekWorkTimes;
     private int previousWeekWorkTimes;
+    private int currentWeekWorkMinutes;
+    private int previousWeekWorkTimesMinutes;
     private Map<Long, Integer> workedHours;
     private ZonedDateTime firstDayOfcurrentWeekDateTime;
 
@@ -31,8 +33,18 @@ public class WorkDaysStat {
         this.workTimes = workTimes;
         this.firstDayOfcurrentWeekDateTime = firstDayOfcurrentWeekDateTime;
         countsAllWorkedHoursByWorkDayIds();
-        this.currentWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime,workTimes)/60;
-        this.previousWeekWorkTimes=getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime.minusWeeks(1L),workTimes)/60;
+        int tempWorktimes = getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime,workTimes);
+        this.currentWeekWorkTimes = tempWorktimes/60;
+        this.currentWeekWorkMinutes = calculateMinutes(tempWorktimes);
+        tempWorktimes = getWorkMinutesAtAWeek(firstDayOfcurrentWeekDateTime.minusWeeks(1L),workTimes);
+        this.previousWeekWorkTimes = tempWorktimes/60;
+        this.previousWeekWorkTimesMinutes = calculateMinutes(tempWorktimes);
+    }
+    
+    public int calculateMinutes(int minutes){
+        int workMinutes=minutes;
+        int workHours=workMinutes/60;
+        return workMinutes-(workHours*60);
     }
 
     private void countsAllWorkedHoursByWorkDayIds(){
@@ -42,9 +54,10 @@ public class WorkDaysStat {
     }
 
     private void addNewValueOrModifiedOldValue(Worktime workTime){
-        Long workTimeId = workTime.getId();
-        if(workedHours.containsKey(workTimeId)){
-            workedHours.replace(workTime.getWorkdayId(), workedHours.get(workTimeId)+calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime()));
+        Long getWorkdayId = workTime.getWorkdayId();
+        if(workedHours.containsKey(getWorkdayId)){
+            int newValue = workedHours.get(getWorkdayId)+calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime());
+            workedHours.replace(workTime.getWorkdayId(),newValue);
         }
         else{
             workedHours.put(workTime.getWorkdayId(),calculatedWorkdHours(workTime.getStartTime(),workTime.getEndTime()));
@@ -63,7 +76,7 @@ public class WorkDaysStat {
         int workedMinutes=0;
         for (Worktime worktime : worktimes) {
             if(worktime.getStartTime().isAfter(firstDayOfweek) && worktime.getEndTime().isBefore(firstDayOfweek.plusDays(6))){
-                workedMinutes = calculatedWorkdHours(worktime.getStartTime(), worktime.getEndTime());
+                workedMinutes = workedMinutes + calculatedWorkdHours(worktime.getStartTime(), worktime.getEndTime());
             }
         }
         return  workedMinutes;
@@ -83,6 +96,22 @@ public class WorkDaysStat {
 
     public ZonedDateTime getFirstDayOfcurrentWeekDateTime() {
         return firstDayOfcurrentWeekDateTime;
+    }
+
+    public int getCurrentWeekWorkMinutes() {
+        return currentWeekWorkMinutes;
+    }
+
+    public void setCurrentWeekWorkMinutes(int currentWeekWorkMinutes) {
+        this.currentWeekWorkMinutes = currentWeekWorkMinutes;
+    }
+
+    public int getPreviousWeekWorkTimesMinutes() {
+        return previousWeekWorkTimesMinutes;
+    }
+
+    public void setPreviousWeekWorkTimesMinutes(int previousWeekWorkTimesMinutes) {
+        this.previousWeekWorkTimesMinutes = previousWeekWorkTimesMinutes;
     }
 
 }
