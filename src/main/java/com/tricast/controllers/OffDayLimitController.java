@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.api.requests.OffDayLimitCreationRequest;
 import com.tricast.api.responses.OffDayLimitCreationResponse;
 import com.tricast.managers.OffDayLimitManager;
 import com.tricast.repositories.entities.OffDayLimit;
@@ -32,7 +33,12 @@ public class OffDayLimitController {
 	@PostMapping
 	public OffDayLimit createOffDayLimit(@RequestBody OffDayLimit offdayLimitRequest) {
 		return offDayLimitManager.createOffDayLimit(offdayLimitRequest);
-		//return null;
+		//return offDayLimitManager;
+	}
+	
+	@PostMapping(path = "/create")
+	public OffDayLimitCreationResponse createOffDayLimitFromRequest(@RequestBody OffDayLimitCreationRequest offDayLimitCreationRequest) {
+		return offDayLimitManager.createOffDayFromRequest(offDayLimitCreationRequest);
 	}
 
 	@PutMapping
