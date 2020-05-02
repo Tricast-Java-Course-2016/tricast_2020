@@ -9,6 +9,8 @@ public class WorkdayGetResponse {
 	private long id;
 
     private int workhours;
+    
+    private int workMinutes;
 	
 	private ZonedDateTime date;
 
@@ -50,6 +52,12 @@ public class WorkdayGetResponse {
 		return serialVersionUID;
 	}
 
-	
+    public int getWorkMinutes() {
+        return workMinutes;
+    }
+
+    public void setWorkMinutes(int workMinutes) {
+        this.workMinutes = workMinutes;
+    }
 	
 }
