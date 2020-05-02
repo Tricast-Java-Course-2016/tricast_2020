@@ -15,11 +15,15 @@ import com.tricast.controllers.constants.WorkingHoursConstants;
 import com.tricast.managers.WorkdayManager;
 import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.enums.Role;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @RestController
 @RequestMapping(path = "rest/workdays")
 public class WorkdayController {
 
+     private static final Logger LOG = LogManager.getLogger(WorkdayController.class);
+    
     @Autowired
     private WorkdayManager workdayManager;
 
@@ -29,18 +33,12 @@ public class WorkdayController {
             try {
                 return ResponseEntity.ok(workdayManager.getAllWorkdayByUserIdAndMonth(userId, roleId));
             } catch (Exception e) {
-                // AKOS2: ebben az esetben nem adnám vissza a stack trace-t (body(e.getMessage()))
-                // Normál esetben a web fejlesztőnek nem mond semmit, ha valami bug miatt elszáll,
-                // a felhasználónak még annyira se.
-                // Viszont ha most csak kivennéd akkor soha senki nem tudná utólag kideríteni mi okozta a hibát.
-                // Ezért célszerű loggolást betenni ide, hogy te az eclipse consolbana lásd mi volt a hiba,
-                // valamint, hogy a szerveren a log fájlokba is belekerüljön ha esetleg már csak ott jön elő valami és
-                // ha valaki nekiáll kijavítani a hibát lássa mi is az.
-                // LOG.error("Failed to load worked hours: ", e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                LOG.info("getAllWorkdaysByIdAndMonth: Failed to load worked hours: ", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to load worked hours");
             }
         }
         else{
+            LOG.info("getAllWorkdaysByIdAndMonth:" + "IllegalAccess, "+ "logged in user ID: "+loggedUserId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
         }
     }
@@ -51,9 +49,11 @@ public class WorkdayController {
             workdayManager.deleteById(wordayId);
             return ResponseEntity.ok("DELETE SUCCESSFUL");
         }catch (EmptyResultDataAccessException e) {
-             return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+            LOG.info("deleteWorkday: not exists work id: " + wordayId);
+            return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body("Not exists work id: " + wordayId);
         }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body( e.getMessage());
+            LOG.info("Failed to detele workday" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to detele workday");
         }
     }
 

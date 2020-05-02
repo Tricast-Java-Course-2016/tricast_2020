@@ -17,13 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tricast.api.requests.WorkTimeUpdateListRequest;
 import com.tricast.api.requests.WorkdayCreationRequest;
 import com.tricast.api.responses.WorkTimeStatByIdResponse;
+import com.tricast.controllers.constants.WorkingHoursConstants;
 import com.tricast.managers.WorktimeManager;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.enums.Role;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @RestController
 @RequestMapping(path = "rest/worktimes")
 public class WorktimeController {
 
+    private static final Logger LOG = LogManager.getLogger(WorktimeController.class);
+    
     @Autowired
     private WorktimeManager worktimeManager;
 
@@ -35,17 +41,17 @@ public class WorktimeController {
             } else {
                 return ResponseEntity.ok(worktimeManager.getAllWorktimeByWorktimeId(loggedInUser, workdayId));
             }
-            // AKOS2: mivel nincs különbség az exception-ök lekezelése köztött itt
-            // teljessen elég csak az utolsó legáltalánosabbat meghagyni (Exception)
-            // nem kell külön legkezeni az IllegalAccessException és az NoSuchElementException -t
         } catch (IllegalAccessException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            LOG.info("getAllWorktimeByWorktimeId: "+ e.getMessage()+ "LoggedInuser: "+loggedInUser);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
         catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            LOG.info("getAllWorktimeByWorktimeId: " + e.getMessage()+"Searched id: "+workdayId );
+            return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(workdayId+" "+"not exists");
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            LOG.info("getAllWorktimeByWorktimeId: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to load worktimes");
         }
     }
 
@@ -55,9 +61,11 @@ public class WorktimeController {
             try {
                 return ResponseEntity.ok(worktimeManager.createWorkdayWithWorktimeFromRequest(workdayCreationRequest));
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                LOG.info("createWorkdayWithWorktime: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to created worktime");
             }
         } else {
+            LOG.info("createWorkdayWithWorktime:" + "IllegalAccess, "+ "logged in user: "+loggedInUser);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
         }
     }
@@ -68,9 +76,11 @@ public class WorktimeController {
             try {
                 return ResponseEntity.ok(worktimeManager.saveModified(worktimesListRequest, workdayId));
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                LOG.info("saveWorktimesAndModified: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to modified");
             }
         } else {
+            LOG.info("saveWorktimesAndModified:" + "IllegalAccess, "+ "logged in user: "+loggedInUser);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
         }
     }
