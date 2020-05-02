@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tricast.controllers.constants.WorkingHoursConstants;
+import static com.tricast.controllers.customClasses.ControllerHelper.userCheckValidator;
 import com.tricast.managers.WorkdayManager;
+import com.tricast.managers.WorkdayManagerImpl;
 import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.enums.Role;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +31,7 @@ public class WorkdayController {
 
     @GetMapping(path = "/workedhours/{userId}")
     public ResponseEntity<?> getAllWorkdaysByIdAndMonth(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedUserId, @PathVariable("userId") int userId) {
-        if (userCheck(roleId, loggedUserId, userId)) {
+        if (userCheckValidator(roleId, loggedUserId, userId)) {
             try {
                 return ResponseEntity.ok(workdayManager.getAllWorkdayByUserIdAndMonth(userId, roleId));
             } catch (Exception e) {
@@ -56,13 +58,4 @@ public class WorkdayController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to detele workday");
         }
     }
-
-    // AKOS2: láttam, hogy ugyan ez a metódus megvan a másik Controlleretekben
-    // mivel elég általánossan használható kód, akármelyik Controllernek jól jöhet
-    // célszerű az ilyeneket valami külön helper osztályba (pl. PermissionValidator vagy nagyon általános
-    // ControllerHelper nevű osztályba) kiszervezni és akkor csak egy helyen lenne meg, mindenki onnét használhatná.
-    private boolean userCheck(int roleId, int loggedInUser, int inRequestUserID) {
-        return Role.ADMIN == Role.getById(roleId) || loggedInUser == inRequestUserID;
-    }
-
 }
