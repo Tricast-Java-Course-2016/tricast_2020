@@ -11,22 +11,14 @@ window.onload = function() {
 
 };
 
-
-
-
 function init(){
 	loggedInUser = SB.Utils.getUserId();
     currMonth = new Date().getMonth();
     currYear = new Date().getFullYear();
     selectedUser = loggedInUser;
     WT.WorktimeUtils.setSelectedUserId(loggedInUser);
+    WT.WorktimeUtils.setSelectedUsername(SB.Utils.getUsername());
 }
-
-/*
-const monthNames = ["January", "February", "March", "April", "May", "June",
-	  "July", "August", "September", "October", "November", "December"
-	];
-*/
 
 function bindListeners() {
 	
@@ -37,7 +29,6 @@ function modifyWorktimes(workdayId, date){
 }
 
 function loadLoggedInUserWorkdays(){
-	//let url = "/workinghours/rest/workdays/workedhours/2";
 	let url = "/workinghours/rest/workdays/workedhours/" + loggedInUser;
 	let response = $.getJSON(url).done(function(data){
 		SB.Utils.getUserRole() == 1 ? loadSelectionList(response.responseJSON.userList)
@@ -52,25 +43,9 @@ function loadLoggedInUserWorkdays(){
 	
 }
 
-function loadSelectedUser(userId){
-	let url = "/workinghours/rest/workdays/workedhours/" + userId;
-	//let userList
-	let response = $.getJSON(url).done(function(data){
-		displayWorkdays(data);
-		WT.WorktimeUtils.setSelectedUserId(userId);
-		console.log("setSelectedUserId",userId);
-	}).fail(function(jqXHR, textStatus, errorThrown){
-		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
-    }).always(function() {
-        // Run always
-        console.log("loadSelectedUser completed");
-    });
-}
-
 function loadSelectionList(usersList){
 	let userSelectionList = [];
 	const [idList, userList]  = createUserLists(usersList);
-	
 	idList.forEach((userId, index) => {
 		userSelectionList.push({"userId" : userId, "userName" : userList[index]});
 	});
@@ -84,6 +59,25 @@ function createUserLists(object){
 	const userList = Object.values(object);
 	return [idList, userList];
 }
+
+
+function loadSelectedUser(userId, userName){
+	console.log("userName",userName);
+	let url = "/workinghours/rest/workdays/workedhours/" + userId;
+	//let userList
+	let response = $.getJSON(url).done(function(data){
+		displayWorkdays(data);
+		WT.WorktimeUtils.setSelectedUserId(userId);
+		WT.WorktimeUtils.setSelectedUsername(userName);
+		console.log("setSelectedUserId",userId);
+	}).fail(function(jqXHR, textStatus, errorThrown){
+		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
+    }).always(function() {
+        // Run always
+        console.log("loadSelectedUser completed");
+    });
+}
+
 
 function displayWorkdays(data){
 	let workdayFromDataList = [];
@@ -109,12 +103,10 @@ function createWorkdayListToDisplay(daysInMonth,workdayFromDataList){
 		let workdayToDisplay = null;
 		let foundEqualDate = false;
 		workdayFromDataList.forEach(wFDL => {
-			//console.log("wFDL.date.substring(0,10)", wFDL.date.substring(0,10));
 			if (dIM === wFDL.date.substring(0,10)){
 				workdayToDisplay = new WorkdayToDisplay(wFDL.id, modifyStringDateFormatToDisplay(wFDL.date), wFDL.userId, wFDL.workhours);
 				workdayToDisplayList.push(workdayToDisplay);
 				foundEqualDate = true;
-				//console.log("workdayToDisplay", modifyStringDateFormatToDisplay(workdayToDisplay.date));
 			}
 		});
 		if(!foundEqualDate){
@@ -144,12 +136,8 @@ function getDaysInMonth(month, year) {
 	let date = new Date(year, month, 1);
 	let days = [];
 	while (date.getMonth() === month) {
-		//convertUTCSToZonedDateTimeString()
-		
 		date.setDate(date.getDate() + 1);
 		days.push(convertUTCSToZonedDateTimeString(new Date(date).toUTCString()));
-		//days.push((new Date(date)).toUTCString());
-		
 	 }
 	 return days;
 }
@@ -181,13 +169,13 @@ class WorkdayFromData {
 	constructor(entry) {
 		this.id = entry.id;
 		this.date = entry.date;
-		//this.date = modifieDateFormat(entry.date);
+		//this.date = modifyDateFormat(entry.date);
 		this.workhours = entry.workhours;
 		this.userId = entry.userId;
 	}
 }
 
-function modifieDateFormat(date) {
+function modifyDateFormat(date) {
 	const month = date.substring(5,7);
 	const day = date.substring(8,10);
 	return month + "." + day;
@@ -199,6 +187,5 @@ class WorkdaysSummary {
 		this.workhoursCurrentWeek = entry.workhoursCurrentWeek;
 		this.workhoursPreviouseWeek = entry.workhoursPreviouseWeek;
 		this.workminutesCurrentWeek = entry.workminutesCurrentWeek;
-		//this.workminutesPreviouseWeek = workminutesPreviouseWeek;
 	}
 }

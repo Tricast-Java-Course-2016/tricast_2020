@@ -4,9 +4,10 @@ let loggedInUser = null;
 //Every row has an unique identifier for delete method
 let rowId = 0;
 //False if day not exists yet, with current user
-let newDay = false;
-const newDayId = -1;
-let currentWorkdayId = newDayId;
+//let newDay = false;
+const newWorkdayIdMinusOne = -1;
+const newWorktimeIdZero = 0;
+let currentWorkdayId = newWorkdayIdMinusOne;
 //const workdayId = 2;
 
 window.onload = function() {
@@ -39,6 +40,18 @@ function deleteWorktime(rowIds){
 	let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList($('#WorktimesForm'));
 	dataFromWorktimesForm = dataFromWorktimesForm.filter(worktime => parseInt(worktime.rowId) !== rowIds);
 	refreshToDisplayWorktimes(dataFromWorktimesForm);
+	/*
+	if (dataFromWorktimesForm.length === 0)
+		$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
+	        workdayWorktimes : worktimesList
+	    }));*/
+}
+
+//Save or Update, delete empty worktimes
+function deleteEmptyWorktime(dataFromWorktimesForm){
+	let listWithoutEmptyField = dataFromWorktimesForm.filter(worktime => 
+		worktime.startTime !== "" || worktime.endTime !== "");
+	return listWithoutEmptyField;
 }
 
 
@@ -59,7 +72,7 @@ function addWorktime(){
 
 
 function acceptWorktimes(){
-	if (currentWorkdayId === newDayId.toString()){
+	if (currentWorkdayId === newWorkdayIdMinusOne.toString()){
 		saveWorkday();
 	} else {
 		UpdateWorkday();
@@ -70,7 +83,7 @@ function acceptWorktimes(){
 //Update
 function UpdateWorkday(){
 	let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList($('#WorktimesForm'));
-	//console.log("dataFromWorktimesForm", dataFromWorktimesForm);
+	dataFromWorktimesForm = deleteEmptyWorktime(dataFromWorktimesForm);
 	let worktimesUpdateRequest = [];
 	let workdayUpdateRequest = {};
 	let worktime;
@@ -86,30 +99,66 @@ function UpdateWorkday(){
 		startTimes.push(worktime.startTime);
 		endTimes.push(worktime.endTime);
 	});
-	console.log("startTimes", startTimes);
-	console.log("endTimes", endTimes);
+
 	isCorrectWorktimes = checkWorktimes(startTimes, endTimes);
-	
-	console.log(isCorrectWorktimes);
 	workdayUpdateRequest = new WorkdayUpdateRequest(worktimesUpdateRequest);
 	if (!isCorrectWorktimes){
-		$.ajax({
-			type : 'PUT',
-			dataType : 'json',
-			url : "/workinghours/rest/worktimes/" + currentWorkdayId,
-			headers : {
-				"X-HTTP-Method-Override" : "PUT"
-			},
-			data : JSON.stringify(workdayUpdateRequest)
-		});
-		console.log("Worktimes has been updated.");
+		let updateResponse = $.ajax(new PutRequest("/workinghours/rest/worktimes/" + currentWorkdayId, workdayUpdateRequest));
 
 	} else {
 		console.log("The worktimes are not correct", workdayUpdateRequest);
 		alert("The worktimes are not correct");
 	}
+	setUpdatedWorkdayDependsOnTheresWorktime(dataFromWorktimesForm);
 }
 
+
+class WorktimeRequestFromFormData {
+	constructor(e){
+		//Modify the start- and end-Time to the correct format which can be save as ZonedDateTime
+		let startTimeInCorrectForm = getSelectedWorkdayDate();
+		let endTimeInCorrectForm = getSelectedWorkdayDate();
+		
+		//Cut the ":" from '08:00' and set the hour and it's minutes
+		endTimeInCorrectForm.setHours(e.endTime.substring(0, 2), e.endTime.substring(3,5));
+		startTimeInCorrectForm.setHours(e.startTime.substring(0, 2), e.startTime.substring(3,5));
+		
+		//Use the value which has been set before
+		this.startTime = startTimeInCorrectForm;
+		this.endTime = endTimeInCorrectForm;
+		this.type = e.type;
+		this.comment = e.comment;
+		this.modifiedBy = loggedInUser;
+		this.id = e.id;
+		//Modified
+		//this.workdayId = parseInt(workdayId);
+		this.workdayId = currentWorkdayId;
+	}
+}
+
+class PutRequest {
+	constructor(url, updateRequest){
+		this.type = 'PUT';
+		this.dataType = 'json';
+		this.url = url;
+		this.headers = {"X-HTTP-Method-Override" : "PUT"};
+		this.data = JSON.stringify(updateRequest);
+	}
+}
+
+function setUpdatedWorkdayDependsOnTheresWorktime(dataFromWorktimesForm){
+	if (dataFromWorktimesForm.length === 0){
+		WT.WorktimeUtils.setWorkdayId(newWorkdayIdMinusOne);
+		currentWorkdayId = WT.WorktimeUtils.getWorkdayId();
+		displayNotExistingDayEmptyWorktimes();
+	} else
+		refreshToDisplayWorktimes(dataFromWorktimesForm);
+}
+
+function setWorkdayIdToZeroOneIfTheresNoWorktime(worktimeListLength){
+	if (worktimeListLength === 0)
+		WT.WorktimeUtils.setWorkdayId(newWorkdayIdMinusOne);
+}
 
 function checkWorktimes(startTimes, endTimes){
 	let wrongWorktimes = false;
@@ -138,7 +187,12 @@ class WorkdayUpdateRequest {
 
 //Save a not existing workday
 function saveWorkday(){
+	/*let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList($('#WorktimesForm'));
+	deleteEmptyWorktime(dataFromWorktimesForm);*/
+	
 	let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList($('#WorktimesForm'));
+	console.log("dataFromWorktimesForm",dataFromWorktimesForm);
+	dataFromWorktimesForm = deleteEmptyWorktime(dataFromWorktimesForm);
 	if(dataFromWorktimesForm.length != 0)
 	{
 		//Go through the input fields and push them into a List
@@ -159,13 +213,14 @@ function saveWorkday(){
 			endTimes.push(worktime.endTime);
 		});
 		isCorrectWorktimes = checkWorktimes(startTimes, endTimes);
-		//ADMIN MODIFICATIO loggedInUser switched to parseInt(WT.WorktimeUtils.getSelectedUserId())
+		//ADMIN MODIFICATION loggedInUser switched to parseInt(WT.WorktimeUtils.getSelectedUserId())
 		workdayCreationRequest = new WorkdayCreationRequest(selectedDate, 
 				parseInt(WT.WorktimeUtils.getSelectedUserId()), worktimesCreationRequest);
 		
 		if(!isCorrectWorktimes){
 			let response = $.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
 				WT.WorktimeUtils.saveWorkdayData(response.responseJSON.id, WT.WorktimeUtils.getWorkdayDate());
+				currentWorkdayId = WT.WorktimeUtils.getWorkdayId();
 				console.log('Saved Worktime');
 				//location.reload();
 			});
@@ -173,15 +228,12 @@ function saveWorkday(){
 			console.log("The worktimes are not correct", workdayCreationRequest);
 			alert("The worktimes are not correct");
 		}
+		refreshToDisplayWorktimes(dataFromWorktimesForm);
 
 		
 	} else {
 		console.log("Cannot save an empty list");
 	}
-	
-}
-
-function checkStartAndEndTime(startTimes, endTimes){
 	
 }
 
@@ -209,45 +261,28 @@ function convertStringToYearMonthDay(currentDayString){
 	return yearMonthDay;
 }
 
-class WorktimeRequestFromFormData {
-	constructor(e){
-		//Modifie the start- and end-Time to the correct format which can be save as ZonedDateTime
-		let startTimeInCorrectForm = getSelectedWorkdayDate();
-		let endTimeInCorrectForm = getSelectedWorkdayDate();
-		
-		//Cut the ":" from '08:00' and set the hour and it's minutes
-		endTimeInCorrectForm.setHours(e.endTime.substring(0, 2), e.endTime.substring(3,5));
-		startTimeInCorrectForm.setHours(e.startTime.substring(0, 2), e.startTime.substring(3,5));
-		
-		//Use the value which has been set before
-		this.startTime = startTimeInCorrectForm;
-		this.endTime = endTimeInCorrectForm;
-		this.type = e.type;
-		this.comment = e.comment;
-		this.modifiedBy = loggedInUser;
-		//this.modifiedBy = SB.Utils.getUserId();
-		//Modified
-		//this.workdayId = parseInt(workdayId);
-		this.workdayId = currentWorkdayId;
-	}
-}
+
 
 //Get Workday's Worktimes
 function loadWorktimes(){
 
 	///workinghours/rest/worktimes/{workdayId}
-	let url = "/workinghours/rest/worktimes/" + currentWorkdayId
-	
+	let url = "/workinghours/rest/worktimes/" + currentWorkdayId;
 	$.getJSON(url).done(function(data){
 		displayWorktimes(data);
-		displayUsernameAndWorkdayDate();
 	}).fail(function(jqXHR, textStatus, errorThrown){
 		WT.WorktimeUtils.defaultErrorHandling(jqXHR);
-    }).always(function() {
-        console.log("Worktimes Loaded");
-    });
+		displayNotExistingDayEmptyWorktimes();
+
+	}).always(function() {
+	    console.log("Worktimes Loaded");
+		displayUsernameAndWorkdayDate();
+	});
+
+	
 	
 }
+
 /********************************
  * Display Worktimes
  *******************************/
@@ -255,34 +290,37 @@ function loadWorktimes(){
 //Display Username and Workday's date
 function displayUsernameAndWorkdayDate(){
 	const userNameAndWorkdayDate = {
-		username : SB.Utils.getUsername(),
+		//username : SB.Utils.getUsername(),
+		username : WT.WorktimeUtils.getSelectedUsername().toString(),
 		date : WT.WorktimeUtils.getWorkdayDate()
 	};
+	//Before worktimes
 	$('#row-first-table').html(Handlebars.compile($('#worktimes-row-first-template').html())({
 		rowFirst : userNameAndWorkdayDate
     }));
-	
+	//After worktimes
+	$('#row-last-table').html(Handlebars.compile($('#worktimes-row-last-template').html())({
+		rowLast : userNameAndWorkdayDate
+    }));
 }
 
 function displayWorktimes(data){
 	if (data.length !== 0){
 		displayExistingDayWorktimes(data);
 	} else {
-		newDay = true;
+		//newDay = true;
 		displayNotExistingDayEmptyWorktimes();
 	}
 }
 
 function displayExistingDayWorktimes(data){
-	let loadedListForAsyncronousWorking = [];
+	let worktimeList = [];
 	data.forEach(function(entry) {
 		worktime = new WorktimeResponseToDisplay(entry);
-		loadedListForAsyncronousWorking.push(worktime);
-		
-
+		worktimeList.push(worktime);
 	});
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
-        workdayWorktimes : loadedListForAsyncronousWorking
+        workdayWorktimes : worktimeList
     }));
 }
 
@@ -297,17 +335,19 @@ function displayNotExistingDayEmptyWorktimes() {
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
       workdayWorktimes : workdayWorktimesList
   }));
+	console.log("Empty list displayed");
 }
 
 //display Empty fields
 class emptyWorktimesToDisplay {
 	constructor() {
+		this.id = newWorktimeIdZero;
 		this.startTime = "";
 		this.endTime = "";
 		this.type = "HOMEOFFICE";
 		this.comment = "Happy time";
 		this.modifiedBy = loggedInUser;
-		//this.modifiedBy = SB.Utils.getUserId();
+
 		this.rowId = rowId++;
 	}
 }
@@ -324,6 +364,20 @@ class WorktimeResponseToDisplay {
 		this.type = entry.type;
 		this.workdayId = entry.workdayId;
 		
+		this.endTime = entry.endTime.substring(hoursStartsInDate,hoursEndsInDate);
+		this.startTime = entry.startTime.substring(hoursStartsInDate,hoursEndsInDate);
+		this.rowId = rowId++;
+		/*
+		if (entry.modifiedEndTime === null && entry.modifiedStartTime === null){
+			this.endTime = entry.endTime.substring(hoursStartsInDate,hoursEndsInDate);
+			this.startTime = entry.startTime.substring(hoursStartsInDate,hoursEndsInDate);
+			console.log("Modified Times are empty");
+		} else {
+			this.endTime = entry.modifiedEndTime.substring(hoursStartsInDate,hoursEndsInDate);
+			this.startTime = entry.modifiedStartTime.substring(hoursStartsInDate,hoursEndsInDate);
+			console.log("Modified Times are not empty");
+		}*/
+		/*
 		//Set the time fields with the correct time and it's format
 		if (entry.modifiedEndTime == null){
 			//Use the "simple" endTime field if we create a new Worktime
@@ -339,8 +393,8 @@ class WorktimeResponseToDisplay {
 		} else {
 			//If modifiedStartTime is not empty, we always use this field over the "simple" startTime
 			this.startTime = entry.modifiedStartTime.substring(hoursStartsInDate,hoursEndsInDate);
-		}
-		this.rowId = rowId++;
+		}*/
+
 		
 	}
 }
