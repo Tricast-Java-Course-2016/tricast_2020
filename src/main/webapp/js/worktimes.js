@@ -218,7 +218,7 @@ function saveWorkday(){
 				parseInt(WT.WorktimeUtils.getSelectedUserId()), worktimesCreationRequest);
 		
 		if(!isCorrectWorktimes){
-			let response = $.post("/workinghours/rest/worktimes/create", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
+			let response = $.post("/workinghours/rest/worktimes", JSON.stringify(workdayCreationRequest), function(workdayCreationRequest){
 				WT.WorktimeUtils.saveWorkdayData(response.responseJSON.id, WT.WorktimeUtils.getWorkdayDate());
 				currentWorkdayId = WT.WorktimeUtils.getWorkdayId();
 				console.log('Saved Worktime');
