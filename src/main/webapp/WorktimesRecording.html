@@ -40,10 +40,8 @@
     <script id="worktimes-row-template" type="text/x-handlebars-template">
 		{{#each workdayWorktimes}}
 		{{#with this}}
-			
             	<div class="row mb-3">
 					<div class="col-2 themed-grid-col"><input type="time" class="form-control" value="{{startTime}}" placeholder="Start time" name="startTime"></div>
-					
 					<div class="col-2 themed-grid-col"><input type="time" class="form-control" value="{{endTime}}" placeholder="End time" name="endTime"></div>
 					<div class="col-3 themed-grid-col">
 						<select type="text" class="form-control" id="workingTypes" name="type">
@@ -55,17 +53,30 @@
 						</select>
 					</div>
 					<div class="col-3 themed-grid-col"><input type="text" class="form-control" value="{{comment}}" placeholder="Description" name="comment"></div>
-					<input hidden type="number" class="form-control" value="{{rowId}}" placeholder="Description" name="rowId">
-					
-
+					<input hidden type="number" class="form-control" value="{{rowId}}" name="rowId">
+					<input hidden type="number" class="form-control" value="{{id}}" name="id">
 					<div class="col-2 themed-grid-col"><a class="btn btn-close" onclick="deleteWorktime({{rowId}})" id="deleteWorktime" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
-					
 				</div>
-            
 		{{/with}}
 		{{/each}}
 	</script>
-
+	
+    <script id="worktimes-row-last-template" type="text/x-handlebars-template">
+		{{#with rowLast}}
+			<div class="col-10 themed-grid-col">
+				<p>
+					<ion-icon name="construct-outline">
+					</ion-icon>
+					 {{date}}
+					 &#8722; 
+					 <ion-icon name="person-outline">
+					 </ion-icon>
+					  {{username}}
+				</p>
+			</div>
+		{{/with}}
+	</script>
+	
     <title>Working Hours</title>
 </head>
 <body>
@@ -76,11 +87,11 @@
 				</div>
 				
 				<div class="row mb-3 row-first" id="row-first-table">
-					<div class="col-6 themed-grid-col" id="user"><div class="content-name">Juhász Kristóf</div></div>
+					<div class="col-6 themed-grid-col" id="user"><div class="content-name">Username</div></div>
 					<div class="col-6 themed-grid-col" id="workdayDate">
 						<div class="col-last">
 							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline"></ion-icon></a>
-							<div class="content-date" id="currentDate">2020.04.10</div>
+							<div class="content-date" id="currentDate">Date</div>
 							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline"></ion-icon></a>
 						</div>
 					</div>
@@ -96,33 +107,10 @@
 				<hr class="mb-4">
 				
 				<div id="worktimes-table">
-					<div class="row mb-3">
-						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="Start time" name="startTime"></div>
-						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="End time" name="endTime"></div>
-						<div class="col-3 themed-grid-col">
-							<select type="text" class="form-control" id="workingTypes" name="type">
-								<option value="OFFICE">Office</option>
-								<option value="HOMEOFFICE">Home Office</option>
-								<option value="DELEGACY">Delegacy</option>
-							</select>
-						</div>
-						<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description" name="comment"></div>
-						<div class="col-2 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
-					</div>
-					
-					<div class="row mb-3">
-						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="Start time" name="startTime"></div>
-						<div class="col-2 themed-grid-col"><input type="time" class="form-control" placeholder="End time" name="endTime"></div>
-						<div class="col-3 themed-grid-col">
-							<select type="text" class="form-control" id="workingTypes" name="type">
-								<option value="OFFICE">Office</option>
-								<option value="HOMEOFFICE">Home Office</option>
-								<option value="DELEGACY">Delegacy</option>
-							</select>
-						</div>
-						<div class="col-3 themed-grid-col"><input type="text" class="form-control" placeholder="Description" name="comment"></div>
-						<div class="col-2 themed-grid-col"><a class="btn btn-close" id="deleteWorktime" href="#"><ion-icon name="close-outline"></ion-icon></a></div>
-					</div>
+					<div class="row mb-1 row-btn">
+						<div class="col-5 themed-grid-col"></div>
+						<div class="loader"></div> 
+					</div> 
 				</div>
 
 				<hr class="mb-4">
@@ -138,10 +126,21 @@
 						<a class="btn btn-primary" id="saveWorkdayWorktimes" href="#">Accept</a>
 					</div>
 				</div>
-				<div class="row mb-3 footer">
-					<div class="col-10 themed-grid-col"><p><ion-icon name="construct-outline"></ion-icon> 2020.04.10 &#8722; <ion-icon name="person-outline"></ion-icon> Erik</p></div>
-
+				
+				<div class="row mb-3 footer" id="row-last-table">
+					<div class="col-10 themed-grid-col">
+						<p>
+							<ion-icon name="construct-outline">
+							</ion-icon>
+							 2020.04.10 
+							 &#8722; 
+							<ion-icon name="person-outline">
+							</ion-icon>
+							   Erik
+						</p>
+					</div>
 				</div>
+
 			</form>
 	</section>
 	
