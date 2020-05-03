@@ -3,6 +3,7 @@ window.WT = window.WT || {};
 const workdayId = "WH_WORKDAY_ID";
 const workdayDate = "WH_WORKDAY_DATE";
 const selectedUserId = "WH_WORKDAY_SELECTED_USER_ID";
+const selectedUsername = "WH_WORKDAY_SELECTED_USER_NAME";
 
 window.WT.WorktimeUtils = {
 	
@@ -11,8 +12,16 @@ window.WT.WorktimeUtils = {
 		localStorage.setItem(workdayDate, date);
 	},	
 	
+	setWorkdayId : function setWorkdayId(id){
+		localStorage.setItem(workdayId, id);
+	},
+	
 	setSelectedUserId : function setSelectedUserId(selectedId){
 		localStorage.setItem(selectedUserId, selectedId);
+	},
+	
+	setSelectedUsername : function setSelectedUsername(selectedName) {
+		localStorage.setItem(selectedUsername,selectedName);
 	},
 	
 	getWorkdayId : function getWorkdayId() {
@@ -25,6 +34,9 @@ window.WT.WorktimeUtils = {
 	
 	getSelectedUserId : function getSelectedUserId(){
 		return localStorage.getItem(selectedUserId);
+	},
+	getSelectedUsername : function getSelectedUsername(){
+		return localStorage.getItem(selectedUsername);
 	},
 		//EXAMPLE
 	    readFormData : function readFormData($form) {
@@ -43,7 +55,7 @@ window.WT.WorktimeUtils = {
     	let dataList = [];
     	let data = {};
     	//The 5th field is hidden -> rowId
-    	const worktimeInputFieldsCount = 5;
+    	const worktimeInputFieldsCount = 6;
     	let nthInputField = 0;
     	
     	for(let val of (new FormData($form.get(0))).entries()) {
@@ -66,7 +78,7 @@ window.WT.WorktimeUtils = {
             errorMsg = (xhr.statusText != "")? xhr.responseText : xhr.response;
         }
         console.log(errorMsg);
-        alert(errorMsg);
+        //alert(errorMsg);
      },
      
     initAjax : function initAjax() {
