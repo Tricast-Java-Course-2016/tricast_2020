@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.api.requests.OffDayLimitCreationRequest;
 import com.tricast.api.requests.OffDayRequest;
+import com.tricast.api.responses.OffDayLimitCreationResponse;
 import com.tricast.api.responses.OffDayResponse;
 import com.tricast.managers.OffDayManager;
+import com.tricast.repositories.entities.OffDayLimit;
+import com.tricast.repositories.entities.Offday;
 import com.tricast.repositories.entities.enums.Role;
 
 @RestController
@@ -45,7 +49,7 @@ public class OffDayController {
 	public ResponseEntity<?> createOffday(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody OffDayRequest offdayCreationRequest) {
 		if(userCheck(roleId, loggedInUser, offdayCreationRequest.getuserId())){
             try {
-                return ResponseEntity.ok(offdayManager.createOffDayRequest(offdayCreationRequest));
+                return ResponseEntity.ok(offdayManager.createOffDayFromRequest(offdayCreationRequest));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -67,4 +71,16 @@ public class OffDayController {
 	private boolean userCheck(int roleId,int loggedInUser,Long getuserId){
         return Role.ADMIN == Role.getById(roleId) || loggedInUser ==getuserId;
     }
+	
+	// -- ISTVÁN
+	// TESTING
+	@GetMapping(path = "/all")
+	public List<Offday> getAllOffDays() {
+		return offdayManager.getAlloffDays();
+	}
+	
+	@PostMapping(path = "/create")
+	public OffDayResponse createOffDayLimitFromRequest(@RequestBody OffDayRequest offDayRequest) {
+		return offdayManager.createOffDayFromRequest(offDayRequest);
+	}
 }

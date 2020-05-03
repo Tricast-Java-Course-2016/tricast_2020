@@ -1,5 +1,10 @@
 package com.tricast.managers;
 
+import java.time.Duration;
+import java.time.Period;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,13 +13,18 @@ import org.springframework.stereotype.Component;
 
 import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayResponse;
+import com.tricast.api.responses.UserResponse;
 import com.tricast.repositories.OffDayRepository;
+import com.tricast.repositories.entities.OffDayLimit;
 import com.tricast.repositories.entities.Offday;
+import com.tricast.repositories.entities.User;
+import com.tricast.repositories.entities.enums.OffDayStatus;
 
 @Component
 public class OffDayManagerImpl implements OffDayManager {
 
 	private OffDayRepository offDayRepository;
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
 	public OffDayManagerImpl(OffDayRepository offDayRepository) {
@@ -36,9 +46,10 @@ public class OffDayManagerImpl implements OffDayManager {
 
 
     @Override
-    public OffDayResponse createOffDayRequest(OffDayRequest offdayRequest) {
-        // TODO Auto-generated method stub
-        return null;
+    public OffDayResponse createOffDayFromRequest(OffDayRequest offdayRequest) {
+    	Offday newOffDay = mapOffDayCreationRequestToOffDay(offdayRequest);
+    	Offday createdOffDay = offDayRepository.save(newOffDay);
+    	return mapOffDayToOffDayResponse(createdOffDay);
     }
 
 	@Override
@@ -61,12 +72,28 @@ public class OffDayManagerImpl implements OffDayManager {
 		}
 	}
 
-	private Offday mapOffDayRequestToOffday(OffDayRequest offDayRequest) {
+	private Offday mapOffDayCreationRequestToOffDay(OffDayRequest offDayRequest) {
 		Offday newOffday = new Offday();
-		newOffday.setStarTtime(offDayRequest.getFromDay());
-		newOffday.setEndTime(offDayRequest.getToDay());
+		newOffday.setDate(ZonedDateTime.now());
 		newOffday.setType(offDayRequest.getType());
+		newOffday.setStatus(OffDayStatus.REQUESTED);
+		newOffday.setApprovedby(1);
+		newOffday.setUserId(offDayRequest.getuserId());
+		newOffday.setStartTime(offDayRequest.getStartTime());
+		newOffday.setEndTime(offDayRequest.getEndTime());
+		
 		return newOffday;
 	}
-
+	
+	private OffDayResponse mapOffDayToOffDayResponse(Offday offDay) {
+		OffDayResponse createdOffDay = new OffDayResponse();
+		
+		createdOffDay.setType(offDay.getType());
+		//createdOffDay.setFullName(User.getFirstName + user.getMiddleName ...);
+		createdOffDay.setUserId(offDay.getUserId());
+		createdOffDay.setStartTime(offDay.getStartTime());
+		createdOffDay.setEndTime(offDay.getEndTime());
+		createdOffDay.setActualDayCount(offDay.getStartTime().until(offDay.getEndTime(), ChronoUnit.DAYS));
+		return createdOffDay;
+	}
 }

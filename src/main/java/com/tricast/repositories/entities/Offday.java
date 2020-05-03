@@ -45,7 +45,7 @@ public class Offday implements Serializable {
 	private OffDayType type;
 
 	@Column(name = "userid")
-	private Integer userId;
+	private Long userId;
 
 	public Offday() {
 	}
@@ -86,7 +86,7 @@ public class Offday implements Serializable {
 		return this.startTime;
 	}
 
-	public void setStarTtime(ZonedDateTime startTime) {
+	public void setStartTime(ZonedDateTime startTime) {
 		this.startTime = startTime;
 	}
 
@@ -106,11 +106,11 @@ public class Offday implements Serializable {
 		this.type = type;
 	}
 
-	public Integer getUserId() {
+	public Long getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 

@@ -61,9 +61,9 @@ function loadOffDayRequests() {
 }
 
 function displayOffDayRequests(data) {
-    let offDayLimitList = [];
+    let offDayList = [];
     data.forEach(function(entry) {
-        offDayLimitList.push({
+        offDayList.push({
             'userId' : entry.userId,
             'startTime' : (entry.startTime).substring(0, 10), // Backenden kellene lekezelni
             'endTime' : (entry.endTime).substring(0, 10),
@@ -73,7 +73,7 @@ function displayOffDayRequests(data) {
     });
 
     $('.card-body').html(Handlebars.compile($('#offDayRequest').html())({
-        offDayLimits : offDayLimitList
+        offDays : offDayList
     }));
 }
 

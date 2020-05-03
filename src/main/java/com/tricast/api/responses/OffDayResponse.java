@@ -1,51 +1,52 @@
 package com.tricast.api.responses;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 import com.tricast.repositories.entities.enums.OffDayType;
 import com.tricast.repositories.entities.*;
 
 public class OffDayResponse implements Serializable{
 	
-	private static final long serialVersionUID =4L;
+	private static final long serialVersionUID = 4L;
 	
-	private long userId;
-	private String lastName;
-	private String fromDay;
-	private String toDay;
+	private Long userId;
+	private String fullName;
+	private ZonedDateTime startTime;
+	private ZonedDateTime endTime;
 	private long actualDayCount;
-	private OffDayType type;
+	private OffDayType type;	
 
-	public long getuserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setuserId(long userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setFullName(String name) {
+		this.fullName = name;
 	}
 
-	public String getFromDay() {
-		return fromDay;
+	public ZonedDateTime getStartTime() {
+		return startTime;
 	}
 
-	public void setFromDay(String fromDay) {
-		this.fromDay = fromDay;
+	public void setStartTime(ZonedDateTime startTime) {
+		this.startTime = startTime;
 	}
 
-	public String getToDay() {
-		return toDay;
+	public ZonedDateTime getEndTime() {
+		return endTime;
 	}
 
-	public void setToDay(String toDay) {
-		this.toDay = toDay;
+	public void setEndTime(ZonedDateTime endTime) {
+		this.endTime = endTime;
 	}
 
 	public long getActualDayCount() {
@@ -63,27 +64,27 @@ public class OffDayResponse implements Serializable{
 	public void setType(OffDayType type) {
 		this.type = type;
 	}
-	
-	
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
 		result = prime * result + (int) (userId ^ (userId >>> 32));
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + (int) (actualDayCount ^ (actualDayCount >>> 32));
-		result = prime * result + ((fromDay == null) ? 0 : fromDay.hashCode());
-		result = prime * result + ((toDay == null) ? 0 : toDay.hashCode());
+		result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "OffDayResponse [accountId=" + userId + ", accountRealName=" + lastName
-				+ ", fromDay=" + fromDay + ", toDay=" + toDay + ", actualDayCount=" + actualDayCount + "]";
-	}
-	
-	
+		return "OffDayResponse [userId=" + userId + ", fullName=" + fullName + ", startTime=" + startTime + ", endTime="
+				+ endTime + ", actualDayCount=" + actualDayCount + ", type=" + type + "]";
+	}	
 }

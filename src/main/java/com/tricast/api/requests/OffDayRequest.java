@@ -7,11 +7,11 @@ import com.tricast.repositories.entities.enums.OffDayType;
 
 public class OffDayRequest implements Serializable{
 
-	private static final long serialVersionUID =4L;
+	private static final long serialVersionUID = 4L;
 
 	private Long userId;
-	private ZonedDateTime fromDay;
-	private ZonedDateTime toDay;
+	private ZonedDateTime startTime;
+	private ZonedDateTime endTime;
 	private OffDayType type;
 
 	public Long getuserId() {
@@ -22,20 +22,20 @@ public class OffDayRequest implements Serializable{
 		this.userId = userId;
 	}
 
-	public ZonedDateTime getFromDay() {
-		return fromDay;
+	public ZonedDateTime getStartTime() {
+		return startTime;
 	}
 
-	public void setFromDay(ZonedDateTime fromDay) {
-		this.fromDay = fromDay;
+	public void setStartTime(ZonedDateTime startTime) {
+		this.startTime = startTime;
 	}
 
-	public ZonedDateTime getToDay() {
-		return toDay;
+	public ZonedDateTime getEndTime() {
+		return endTime;
 	}
 
-	public void setToDay(ZonedDateTime toDay) {
-		this.toDay = toDay;
+	public void setEndTime(ZonedDateTime endTime) {
+		this.endTime = endTime;
 	}
 
 	public OffDayType getType() {
@@ -47,19 +47,19 @@ public class OffDayRequest implements Serializable{
 	}
 
 	@Override
-	public String toString() {
-		return "OffDayRequest [ userId=" + userId + ", fromDay=" + fromDay + ", toDay=" + toDay
-				+ ", type=" + type + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		result = prime * result + ((fromDay == null) ? 0 : fromDay.hashCode());
-		result = prime * result + ((toDay == null) ? 0 : toDay.hashCode());
+		//result = prime * result + (int)((userId == null) ? 0 : userId.hashCode()); // long <-> LONG, cannot invoke
+		result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return "OffDayRequest [ userId=" + userId + ", fromDay=" + startTime + ", toDay=" + endTime
+				+ ", type=" + type + "]";
 	}
 }
