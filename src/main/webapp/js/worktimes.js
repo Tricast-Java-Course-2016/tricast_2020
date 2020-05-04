@@ -315,9 +315,16 @@ function displayExistingDayWorktimes(data){
 		worktime = new WorktimeResponseToDisplay(entry);
 		worktimeList.push(worktime);
 	});
+
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
-        workdayWorktimes : worktimeList
+        workdayWorktimes : sortByStartTime(worktimeList)
     }));
+}
+
+function sortByStartTime(worktimeList){
+	return worktimeList.sort((a, b) => {
+	    return (a.startTime.substring(0,2) - b.startTime.substring(0,2));
+	});
 }
 
 //Load empty rows if there is not a workday in a current date
@@ -330,7 +337,6 @@ function displayNotExistingDayEmptyWorktimes() {
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
       workdayWorktimes : workdayWorktimesList
   }));
-	console.log("Empty list displayed");
 }
 
 //display Empty fields
