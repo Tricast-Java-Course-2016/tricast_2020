@@ -18,11 +18,7 @@ window.onload = function() {
     loadWorktimes();
 };
 /* Soon display the worktime's worktype*/
-window.Handlebars.registerHelper('select', function( value, options ){
-    var $el = $('<select />').html( options.fn(this) );
-    $el.find('[value="' + value + '"]').attr({'selected':'selected'});
-    return $el.html();
-});
+
 
 function bindListeners() {
 	
@@ -331,7 +327,6 @@ function displayNotExistingDayEmptyWorktimes() {
 	for (i = 0; i < worktimesToDisplayCount; i++){
 		workdayWorktimesList.push(new emptyWorktimesToDisplay());
 	}
-	
 	$('#worktimes-table').html(Handlebars.compile($('#worktimes-row-template').html())({
       workdayWorktimes : workdayWorktimesList
   }));
@@ -344,8 +339,8 @@ class emptyWorktimesToDisplay {
 		this.id = newWorktimeIdZero;
 		this.startTime = "";
 		this.endTime = "";
-		this.type = "HOMEOFFICE";
-		this.comment = "Happy time";
+		this.type = "OFFICE";
+		this.comment = "Happy Hours";
 		this.modifiedBy = loggedInUser;
 
 		this.rowId = rowId++;
