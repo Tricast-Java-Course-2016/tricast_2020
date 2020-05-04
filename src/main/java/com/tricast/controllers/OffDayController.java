@@ -80,7 +80,7 @@ public class OffDayController {
 	}
 	
 	@PostMapping(path = "/create")
-	public OffDayResponse createOffDayLimitFromRequest(@RequestBody OffDayRequest offDayRequest) {
+	public OffDayResponse createOffDayFromRequest(@RequestBody OffDayRequest offDayRequest) {
 		return offdayManager.createOffDayFromRequest(offDayRequest);
 	}
 }

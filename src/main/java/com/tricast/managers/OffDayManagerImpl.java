@@ -15,6 +15,7 @@ import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayResponse;
 import com.tricast.api.responses.UserResponse;
 import com.tricast.repositories.OffDayRepository;
+import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.entities.OffDayLimit;
 import com.tricast.repositories.entities.Offday;
 import com.tricast.repositories.entities.User;
@@ -24,11 +25,13 @@ import com.tricast.repositories.entities.enums.OffDayStatus;
 public class OffDayManagerImpl implements OffDayManager {
 
 	private OffDayRepository offDayRepository;
+	private UserRepository userRepository;
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
-	public OffDayManagerImpl(OffDayRepository offDayRepository) {
+	public OffDayManagerImpl(OffDayRepository offDayRepository, UserRepository userRepository) {
 		this.offDayRepository = offDayRepository;
+		this.userRepository = userRepository;
 	}
 
     @Override
@@ -54,6 +57,13 @@ public class OffDayManagerImpl implements OffDayManager {
 
 	@Override
 	public List<Offday> getAlloffDays() {
+		/*Optional<User> newUser = userRepository.findById(Long.valueOf(1));
+		User foundUser = newUser.get();
+		StringBuilder fullName = new StringBuilder();
+		fullName.append(foundUser.getLastName() + " ");
+		fullName.append(foundUser.getMiddleName() + " ");
+		fullName.append(foundUser.getFirstName());
+		System.out.println(fullName.toString());*/
 		return offDayRepository.findAll();
 	}
 
@@ -77,7 +87,7 @@ public class OffDayManagerImpl implements OffDayManager {
 		newOffday.setDate(ZonedDateTime.now());
 		newOffday.setType(offDayRequest.getType());
 		newOffday.setStatus(OffDayStatus.REQUESTED);
-		newOffday.setApprovedby(1);
+		newOffday.setApprovedby(null);
 		newOffday.setUserId(offDayRequest.getuserId());
 		newOffday.setStartTime(offDayRequest.getStartTime());
 		newOffday.setEndTime(offDayRequest.getEndTime());
@@ -87,9 +97,15 @@ public class OffDayManagerImpl implements OffDayManager {
 	
 	private OffDayResponse mapOffDayToOffDayResponse(Offday offDay) {
 		OffDayResponse createdOffDay = new OffDayResponse();
+		Optional<User> newUser = userRepository.findById(offDay.getUserId());
+		StringBuilder fullName = new StringBuilder();
+		User foundUser = newUser.get();
 		
+		fullName.append(foundUser.getLastName() + " ");
+		fullName.append(foundUser.getMiddleName() + " ");
+		fullName.append(foundUser.getFirstName());
+		createdOffDay.setFullName(fullName.toString());
 		createdOffDay.setType(offDay.getType());
-		//createdOffDay.setFullName(User.getFirstName + user.getMiddleName ...);
 		createdOffDay.setUserId(offDay.getUserId());
 		createdOffDay.setStartTime(offDay.getStartTime());
 		createdOffDay.setEndTime(offDay.getEndTime());
