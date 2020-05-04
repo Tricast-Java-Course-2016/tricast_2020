@@ -123,7 +123,7 @@
 					<div class="col-3 themed-grid-col"></div>
 					<div class="col-6 themed-grid-col col-last">
 						<a class="btn btn-secondary" href="workday.html">Back</a>
-						<a class="btn btn-primary" id="saveWorkdayWorktimes" href="#">Accept</a>
+						<a class="btn btn-primary" id="saveWorkdayWorktimes" href="#" data-toggle="modal" data-target="#exampleModalCenter">Accept</a>
 					</div>
 				</div>
 				
@@ -132,7 +132,24 @@
 
 			</form>
 	</section>
-	
+
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="pop-up-success modal-header">
+	        <h5 class="modal-title" id="exampleModalLongTitle">Saved succesfully!</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+
+	      <div class="pop-up-window-buttons modal-footer">
+	      	<a class="btn btn-secondary" href="workday.html">Workdays</a>
+	        <a type="button" class="btn btn-primary" data-dismiss="modal" href="#">Ok</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 	<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
 	
 </body>
