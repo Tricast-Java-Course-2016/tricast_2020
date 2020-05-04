@@ -292,6 +292,11 @@ function convertStringToYearMonthDay(currentDayString) {
 function loadWorktimes() {
   ///workinghours/rest/worktimes/{workdayId}
   let url = "/workinghours/rest/worktimes/" + currentWorkdayId;
+  
+  //Gonna be some default value to dismiss this alert
+  if(WT.WorktimeUtils.getWorkdayId() === "" || WT.WorktimeUtils.getWorkdayId() === null)
+	  alert("First go to workday.html and select a workday, after that all be fine");
+  
   $.getJSON(url)
     .done(function (data) {
       displayWorktimes(data);
