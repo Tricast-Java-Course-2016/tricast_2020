@@ -20,17 +20,20 @@
 					alt="Tricast Logo" />
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
-						<li class="nav-item"><a class="nav-link" href="#"> <span
-								class="oi oi-home"></span> Dashboard
+						<li class="nav-item"><a class="nav-link" href="homepage.html">
+							<span class="oi oi-home"></span> Dashboard
 						</a></li>
-						<li class="nav-item"><a class="nav-link" href="#"> <span
-								class="oi oi-clock"></span> Time management
+						<li class="nav-item"><a class="nav-link" href="AdminNavigation.html">
+							<span class="oi oi-clock"></span> Admin navigation
 						</a></li>
-						<li class="nav-item"><a class="nav-link active" href="#">
-								<span class="oi oi-calendar"></span> Time off view
+						<li class="nav-item"><a class="nav-link active" href="timeoffview.html">
+							<span class="oi oi-calendar"></span> Time off view
 						</a></li>
-						<li class="nav-item"><a class="nav-link" href="manageaccountsUJ.html"> <span
-								class="oi oi-person"></span> Manage accounts
+						<li class="nav-item"><a class="nav-link" href="manageaccountsUJ.html">
+							<span class="oi oi-person"></span> Manage accounts
+						</a></li>
+						<li class="nav-item"><a class="nav-link" href="login.html">
+							<span class="oi oi-account-login"></span> Login
 						</a></li>
 					</ul>
 					<div class="bottom-profile center mb-3">
@@ -53,21 +56,21 @@
 				<h2 class="title center pt-3">Time Off View</h2>
 				<div>
 					<button type="button" class="btn btn-primary mt-3 mb-3" data-toggle="modal" data-target="#offdayModal">New Offday</button>
-					<button type="button" id="getOffDayLimits" class="btn btn-primary mt-3 mb-3">Load limits</button>
+					<button type="button" id="getCurrentOffDays" class="btn btn-primary mt-3 mb-3">Load Offdays</button>
 					<button type="button" id="toggle-admin" class="btn btn-dark mt-3 mb-3">Admin view</button>
 					<button type="button" id="getOffDayRequests" class="btn btn-dark mt-3 mb-3">Load Requests</button>
 				</div>
 				<div class="row">
 				<div id="table-container" class="col-md-12">
 					<div class="table-responsive mt-2 shadow-lg">
-						<table id="offDayLimits-table" class="table table-striped table-sm">
+						<table id="currentOffDays-table" class="table table-striped table-sm">
 							<thead class="thead-dark">
 								<tr>
-									<th>ID</th>
-									<th>User ID</th>
-									<th>Year</th>
+									<th>Name</th>
+									<th>Start time</th>
+									<th>End time</th>
+									<th>Days</th>
 									<th>Type</th>
-									<th>Max Days</th>
 								</tr>
 							</thead>
 							<tbody></tbody>
@@ -139,15 +142,15 @@
 	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/timeoffview.js"></script>
 	
-	<script id="offDayLimits-row-template" type="text/x-handlebars-template">
-		{{#each offDayLimits}}
+	<script id="currentOffDays-row-template" type="text/x-handlebars-template">
+		{{#each currentOffDays}}
 		{{#with this}}
 			<tr>
-				<td>{{id}}</td>
-				<td>{{userId}}</td>
-				<td>{{year}}</td>
+				<td>{{fullName}}</td>
+				<td>{{startTime}}</td>
+				<td>{{endTime}}</td>
+				<td>{{actualDayCount}}</td>
 				<td>{{type}}</td>
-				<td>{{maxAmount}}</td>
 			</tr>
 		{{/with}}
 		{{/each}}

@@ -24,4 +24,6 @@ public interface OffDayManager {
 	List<OffDayResponse> getAllOffDays();
 	
 	List<OffDayResponse> getAllUnApprovedOffDays();
+	
+	List<OffDayResponse> getAllCurrentMonthOffDays();
 }

@@ -6,8 +6,8 @@ window.onload = function() {
 
 function bindListeners() {
     
-    $("#getOffDayLimits").click(function(e) {
-        loadOffDayLimits();
+    $("#getCurrentOffDays").click(function(e) {
+        loadCurrentOffDays();
     });
 
     $("#getOffDayRequests").click(function(e) {
@@ -28,34 +28,34 @@ function toggleAdminView() {
     });
 }
 
-function loadOffDayLimits() {
-	let url = "/workinghours/rest/offdaylimits";
+function loadCurrentOffDays() {
+	let url = "/workinghours/rest/offdays/current";
     $.getJSON(url).done(function(data) {
         // Successful call
-        displayOffDayLimits(data);
+        displayCurrentOffDays(data);
     }).fail(function(jqXHR, textStatus, errorThrown) {
         // Error happened
         SB.Utils.defaultErrorHandling(jqXHR);
     }).always(function() {
         // Run always
-        console.log("complete OffDayLimits");
+        console.log("complete Current OffDays");
     });
 }
 
-function displayOffDayLimits(data) {
-    let offDayLimitList = [];
+function displayCurrentOffDays(data) {
+    let currentOffDayList = [];
     data.forEach(function(entry) {
-        offDayLimitList.push({
-            'id' : entry.id,
-            'userId' : entry.userId,
-            'year' : entry.year,
-            'type' : entry.type,
-            'maxAmount' : entry.maximumAmount
+        currentOffDayList.push({
+            'fullName' : entry.fullName,
+            'startTime' : entry.startTime,
+            'endTime' : entry.endTime,
+            'actualDayCount' : entry.actualDayCount,
+            'type' : entry.type
         });
     });
 
-    $('#offDayLimits-table tbody').html(Handlebars.compile($('#offDayLimits-row-template').html())({
-        offDayLimits : offDayLimitList
+    $('#currentOffDays-table tbody').html(Handlebars.compile($('#currentOffDays-row-template').html())({
+        currentOffDays : currentOffDayList
     }));
 }
 

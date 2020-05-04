@@ -90,6 +90,19 @@ public class OffDayManagerImpl implements OffDayManager {
 		
 		return unApprovedOffDays;
 	}
+	
+	@Override
+	public List<OffDayResponse> getAllCurrentMonthOffDays() {
+		List<Offday> offdays = offDayRepository.findAll();
+		List<OffDayResponse> currentMonthOffDayList = new ArrayList<>();
+		int currentMonth = ZonedDateTime.now().getMonthValue();
+		 
+		for (Offday offday : offdays)
+			if (offday.getStartTime().getMonthValue() == currentMonth)
+				currentMonthOffDayList.add(mapOffDayToOffDayResponse(offday));
+		
+		return currentMonthOffDayList;
+	}
 
 	private Offday mapOffDayCreationRequestToOffDay(OffDayRequest offDayRequest) {
 		Offday newOffday = new Offday();

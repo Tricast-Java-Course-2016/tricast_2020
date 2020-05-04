@@ -73,7 +73,6 @@ public class OffDayController {
     }
 	
 	// -- ISTVÁN
-	// TESTING
 	@GetMapping(path = "/all")
 	public List<OffDayResponse> getAllOffDays() {
 		return offdayManager.getAllOffDays();
@@ -87,5 +86,10 @@ public class OffDayController {
 	@GetMapping(path = "/unapproved")
 	public List<OffDayResponse> getAllUnApprovedOffDays() {
 		return offdayManager.getAllUnApprovedOffDays();
+	}
+	
+	@GetMapping(path = "/current")
+	public List<OffDayResponse> getAllCurrentMonthOffDays() {
+		return offdayManager.getAllCurrentMonthOffDays();
 	}
 }
