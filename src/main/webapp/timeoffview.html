@@ -153,13 +153,13 @@
 		{{/each}}
 	</script>
 	<script id="offDayRequest" type="text/x-handlebars-template">
-		{{#each offDayLimits}}
+		{{#each offDays}}
 		{{#with this}}
 		<div class="request my-2">
 			<img src="assets/img/profile.jpg" class="rounded-circle float-left" alt="Cinque Terre">
-			<h6>UserID: {{userId}}</h6>
+			<h6> {{fullName}}</h6>
 			<p>{{type}}</p>
-			<p class="offday-calc">4 days (static)</p>
+			<p class="offday-calc">{{actualDayCount}}</p>
 			<p><span class="oi oi-calendar main-color"></span>{{startTime}} <span class="branding-effect">-</span> {{endTime}}</p>
 			<a href="#" class="badge badge-success">Accept</a>
 			<a href="#" class="badge badge-danger">Decline</a>

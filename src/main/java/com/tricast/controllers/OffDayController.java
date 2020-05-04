@@ -75,12 +75,17 @@ public class OffDayController {
 	// -- ISTVÁN
 	// TESTING
 	@GetMapping(path = "/all")
-	public List<Offday> getAllOffDays() {
-		return offdayManager.getAlloffDays();
+	public List<OffDayResponse> getAllOffDays() {
+		return offdayManager.getAllOffDays();
 	}
 	
 	@PostMapping(path = "/create")
 	public OffDayResponse createOffDayFromRequest(@RequestBody OffDayRequest offDayRequest) {
 		return offdayManager.createOffDayFromRequest(offDayRequest);
+	}
+	
+	@GetMapping(path = "/unapproved")
+	public List<OffDayResponse> getAllUnApprovedOffDays() {
+		return offdayManager.getAllUnApprovedOffDays();
 	}
 }

@@ -47,7 +47,7 @@ function displayOffDayLimits(data) {
 }
 
 function loadOffDayRequests() {
-	let url = "/workinghours/rest/offdays";
+	let url = "/workinghours/rest/offdays/unapproved";
     $.getJSON(url).done(function(data) {
         // Successful call
         displayOffDayRequests(data);
@@ -65,10 +65,11 @@ function displayOffDayRequests(data) {
     data.forEach(function(entry) {
         offDayList.push({
             'userId' : entry.userId,
-            'startTime' : (entry.startTime).substring(0, 10), // Backenden kellene lekezelni
+            'fullName' : entry.fullName,
+            'startTime' : (entry.startTime).substring(0, 10),
             'endTime' : (entry.endTime).substring(0, 10),
-            'type' : entry.type
-            // Calculated day
+            'type' : entry.type,
+            'actualDayCount' : entry.actualDayCount
         });
     });
 

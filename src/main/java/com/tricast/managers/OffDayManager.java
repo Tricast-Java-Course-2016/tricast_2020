@@ -21,5 +21,7 @@ public interface OffDayManager {
     
     void deleteOffday(long leaveId);
 
-	List<Offday> getAlloffDays();
+	List<OffDayResponse> getAllOffDays();
+	
+	List<OffDayResponse> getAllUnApprovedOffDays();
 }

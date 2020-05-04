@@ -5,6 +5,8 @@ import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,15 +58,8 @@ public class OffDayManagerImpl implements OffDayManager {
     }
 
 	@Override
-	public List<Offday> getAlloffDays() {
-		/*Optional<User> newUser = userRepository.findById(Long.valueOf(1));
-		User foundUser = newUser.get();
-		StringBuilder fullName = new StringBuilder();
-		fullName.append(foundUser.getLastName() + " ");
-		fullName.append(foundUser.getMiddleName() + " ");
-		fullName.append(foundUser.getFirstName());
-		System.out.println(fullName.toString());*/
-		return offDayRepository.findAll();
+	public List<OffDayResponse> getAllOffDays() {
+		return offDayMapper(offDayRepository.findAll());
 	}
 
 	@Override
@@ -81,13 +76,25 @@ public class OffDayManagerImpl implements OffDayManager {
 			}
 		}
 	}
+	
+	@Override
+	public List<OffDayResponse> getAllUnApprovedOffDays() {
+		List<Offday> offdays = offDayRepository.findAll();
+		List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
+		
+		for (Offday offday : offdays)
+			if (offday.getApprovedby().equals(1)) // null értékkel nullexeption
+				unApprovedOffDays.add(mapOffDayToOffDayResponse(offday));
+		
+		return unApprovedOffDays;
+	}
 
 	private Offday mapOffDayCreationRequestToOffDay(OffDayRequest offDayRequest) {
 		Offday newOffday = new Offday();
 		newOffday.setDate(ZonedDateTime.now());
 		newOffday.setType(offDayRequest.getType());
 		newOffday.setStatus(OffDayStatus.REQUESTED);
-		newOffday.setApprovedby(null);
+		newOffday.setApprovedby(1); // null értékkel nullexception
 		newOffday.setUserId(offDayRequest.getuserId());
 		newOffday.setStartTime(offDayRequest.getStartTime());
 		newOffday.setEndTime(offDayRequest.getEndTime());
@@ -111,5 +118,13 @@ public class OffDayManagerImpl implements OffDayManager {
 		createdOffDay.setEndTime(offDay.getEndTime());
 		createdOffDay.setActualDayCount(offDay.getStartTime().until(offDay.getEndTime(), ChronoUnit.DAYS));
 		return createdOffDay;
+	}
+	
+	private List<OffDayResponse> offDayMapper(List<Offday> offdays) {
+		List<OffDayResponse> offdayResponseList = new ArrayList<>();
+		offdays.forEach(offday -> {
+			offdayResponseList.add(mapOffDayToOffDayResponse(offday));
+		});
+		return offdayResponseList;
 	}
 }
