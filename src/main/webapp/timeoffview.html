@@ -100,33 +100,33 @@
 				</div>
 				<div class="modal-body">
 					<img src="assets/img/vacation.png" class="img-fluid offday-img" alt="Vacation">
-					<form>
+					<form id="postOffDay">
 						<div class="form-group mb-3">
-							<label for="offdayFrom">From</label>
-							<input id="offdayFrom" class="form-control input-lg" type="date">
+							<label for="offdayFrom">From (2020-04-05T08:00:00+01:00)</label>
+							<input id="offdayFrom" class="form-control input-lg" type="text" name="startTime">
 						</div>
 						<div class="form-group mb-3">
-							<label for="offdayTo">To</label>
-							<input id="offdayTo" class="form-control input-lg" type="date">
+							<label for="offdayTo">To (2020-04-06T16:00:00+01:00)</label>
+							<input id="offdayTo" class="form-control input-lg" type="text" name="endTime">
 						</div>
 						<div class="form-group mb-3">
 							<label for="offdayType">Type</label>
-							<select class="form-control" id="offdayType">
+							<select class="form-control" id="offdayType" name="type">
 							  <option>PAID</option>
 							  <option>SICK</option>
 							  <option>OTHER</option>
 							</select>
 						</div>
 						<div class="form-group mb-3">
-							<label>Comment</label>
-							<textarea class="form-control" rows="3"></textarea>
+							<label for="userId">User ID</label>
+							<input id="userId" class="form-control input-lg" type="text" name="userId">
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
 					<div class="mx-auto">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Request</button>
+						<button id="saveOffDay" type="button" class="btn btn-primary">Request</button>
 					</div>
 				</div>
 			</div>
@@ -159,7 +159,7 @@
 			<img src="assets/img/profile.jpg" class="rounded-circle float-left" alt="Cinque Terre">
 			<h6> {{fullName}}</h6>
 			<p>{{type}}</p>
-			<p class="offday-calc">{{actualDayCount}}</p>
+			<p class="offday-calc">{{actualDayCount}} DAYS</p>
 			<p><span class="oi oi-calendar main-color"></span>{{startTime}} <span class="branding-effect">-</span> {{endTime}}</p>
 			<a href="#" class="badge badge-success">Accept</a>
 			<a href="#" class="badge badge-danger">Decline</a>

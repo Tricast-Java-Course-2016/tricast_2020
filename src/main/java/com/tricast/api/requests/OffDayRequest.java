@@ -10,8 +10,8 @@ public class OffDayRequest implements Serializable{
 	private static final long serialVersionUID = 4L;
 
 	private Long userId;
-	private ZonedDateTime startTime;
-	private ZonedDateTime endTime;
+	private String startTime;
+	private String endTime;
 	private OffDayType type;
 
 	public Long getuserId() {
@@ -22,19 +22,19 @@ public class OffDayRequest implements Serializable{
 		this.userId = userId;
 	}
 
-	public ZonedDateTime getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(ZonedDateTime startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 
-	public ZonedDateTime getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(ZonedDateTime endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
 

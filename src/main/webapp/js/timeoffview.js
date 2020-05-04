@@ -13,6 +13,19 @@ function bindListeners() {
     $("#getOffDayRequests").click(function(e) {
         loadOffDayRequests();
     });
+
+    $("#saveOffDay").click(function(e) {
+        saveOffDay();
+        $('#offdayModal').modal('hide');
+        loadOffDayRequests();
+    });
+}
+
+function toggleAdminView() {
+    $("#toggle-admin").click(function() {
+        $("#table-container").toggleClass("col-md-12 col-md-8");
+        $(".hide").toggle();
+    });
 }
 
 function loadOffDayLimits() {
@@ -78,9 +91,10 @@ function displayOffDayRequests(data) {
     }));
 }
 
-function toggleAdminView() {
-    $("#toggle-admin").click(function() {
-        $("#table-container").toggleClass("col-md-12 col-md-8");
-        $(".hide").toggle();
+function saveOffDay() {
+    let data = SB.Utils.readFormData($('#postOffDay'));
+
+    $.post("/workinghours/rest/offdays/create", JSON.stringify(data), function(data) {
+        console.log("Offday created");
     });
 }

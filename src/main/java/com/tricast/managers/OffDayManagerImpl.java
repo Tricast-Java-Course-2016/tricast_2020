@@ -1,6 +1,8 @@
 package com.tricast.managers;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -96,8 +98,8 @@ public class OffDayManagerImpl implements OffDayManager {
 		newOffday.setStatus(OffDayStatus.REQUESTED);
 		newOffday.setApprovedby(1); // null értékkel nullexception
 		newOffday.setUserId(offDayRequest.getuserId());
-		newOffday.setStartTime(offDayRequest.getStartTime());
-		newOffday.setEndTime(offDayRequest.getEndTime());
+		newOffday.setStartTime(ZonedDateTime.parse(offDayRequest.getStartTime()));
+		newOffday.setEndTime(ZonedDateTime.parse(offDayRequest.getEndTime()));
 		
 		return newOffday;
 	}
