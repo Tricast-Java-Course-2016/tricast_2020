@@ -7,7 +7,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.tricast.repositories.entities.Specialday;
 
-public interface SpecialdayRepository extends CrudRepository<Specialday, Long>{
-	
-	List<Specialday> getAllByDateBetween(ZonedDateTime startDateTime , ZonedDateTime finishDate);
+public interface SpecialdayRepository extends CrudRepository<Specialday, Long> {
+
+	@Override
+	List<Specialday> findAll();
+
+	List<Specialday> getAllByDateBetween(ZonedDateTime startDateTime, ZonedDateTime finishDate);
 }

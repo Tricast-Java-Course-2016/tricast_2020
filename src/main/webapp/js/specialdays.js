@@ -15,7 +15,7 @@ function bindListeners() {
 
 function loadSpecialdays() {
 
-	let url = "/workinghours/rest/specialdays";
+	let url = "/workinghours/rest/specialdays/all";
 
 	$.getJSON(url).done(function(data) {
 		// Successful call
@@ -34,7 +34,7 @@ function displaySpecialdays(data) {
 	data.forEach(function(entry) {
 		specialdayList.push({
 			'date' : entry.date,
-			'type' : entry.type
+			//'type' : entry.type
 		});
 	});
 
