@@ -81,8 +81,8 @@ public class DateManager {
 	}
     
     private int getWithDayOfMonth(int specifiedYear,int specifiedMonth) {
-        Calendar calendar = new GregorianCalendar(specifiedYear,specifiedMonth,1,00,00,00);
-        return calendar.getActualMaximum(specifiedMonth);
+        ZonedDateTime date =ZonedDateTime.of(specifiedYear, specifiedMonth, 1, 0, 0, 0, 0, ZoneId.systemDefault());
+        return date.getMonth().length(false);
 	}
 
     public ZonedDateTime getStartDate() {
