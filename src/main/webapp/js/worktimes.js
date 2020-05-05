@@ -45,7 +45,7 @@ function deleteWorktime(rowIds) {
     $("#WorktimesForm")
   );
   dataFromWorktimesForm = dataFromWorktimesForm.filter(
-    (worktime) => {parseInt(worktime.rowId) !== rowIds}
+    (worktime) => parseInt(worktime.rowId) !== rowIds
   );
   refreshToDisplayWorktimes(dataFromWorktimesForm);
   deletedFieldCount++;
