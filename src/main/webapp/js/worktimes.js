@@ -79,6 +79,18 @@ function acceptWorktimes() {
   deletedFieldCount = 0;
 }
 
+function toggleAcceptSuccessModal(){ 
+	$("#acceptWorktimes").modal('toggle');
+};
+
+function toggleCannotSaveEmptyWorktimesModal(){ 
+	$("#cannotSaveEmptyWorktimes").modal('toggle');
+};
+
+function toggleWorktimesAreNotCorrectModal(){ 
+	$("#worktimesAreNotCorrect").modal('toggle');
+};
+
 //Update
 function UpdateWorkday() {
   let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList(
@@ -110,9 +122,10 @@ function UpdateWorkday() {
         workdayUpdateRequest
       )
     );
+    toggleAcceptSuccessModal();
   } else {
     console.log("The worktimes are not correct", workdayUpdateRequest);
-    alert("The worktimes are not correct");
+    toggleWorktimesAreNotCorrectModal();
   }
   setUpdatedWorkdayDependsOnTheresWorktime(dataFromWorktimesForm);
 }
@@ -246,14 +259,16 @@ function saveWorkday() {
           //location.reload();
         }
       );
+      toggleAcceptSuccessModal();
     } else {
       console.log("The worktimes are not correct", workdayCreationRequest);
-      alert("The worktimes are not correct");
+      toggleWorktimesAreNotCorrectModal();
+      //alert("The worktimes are not correct");
     }
     refreshToDisplayWorktimes(dataFromWorktimesForm);
   } else {
     console.log("Cannot save an empty list");
-    alert("Cannot save an empty list!");
+    toggleCannotSaveEmptyWorktimesModal();
   }
 }
 
@@ -293,8 +308,11 @@ function loadWorktimes() {
   ///workinghours/rest/worktimes/{workdayId}
   let url = "/workinghours/rest/worktimes/" + currentWorkdayId;
   //Gonna be some default value to dismiss this alert
-  if(WT.WorktimeUtils.getWorkdayId() === "" || WT.WorktimeUtils.getWorkdayId() === null)
-	  alert("First go to workday.html and select a workday, after that all be fine");
+  if(WT.WorktimeUtils.getWorkdayId() === null){
+	  WT.WorktimeUtils.setDefaultValues(newWorkdayIdMinusOne, "2020.01.01", loggedInUser, SB.Utils.getUsername());
+	  
+  }
+	  
   
   $.getJSON(url)
     .done(function (data) {
