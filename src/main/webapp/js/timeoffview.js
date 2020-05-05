@@ -2,6 +2,7 @@ window.onload = function() {
     SB.Utils.initAjax();
     bindListeners();
     toggleAdminView();
+    reloadPageAfterModal();
     //responseToOffer();
 };
 
@@ -18,9 +19,13 @@ function bindListeners() {
     $("#saveOffDay").click(function(e) {
         saveOffDay();
         $('#offdayModal').modal('hide');
-        // location.reload();
-        // setTimeout(function() { loadCurrentOffDays(); }, 500);
     });
+}
+
+function reloadPageAfterModal() {
+	$('#offdayModal').on('hidden.bs.modal', function () {
+		loadCurrentOffDays();
+	});
 }
 
 function toggleAdminView() {
@@ -115,7 +120,10 @@ function displayOffDayRequests(data) {
 
 function saveOffDay() {
     let data = SB.Utils.readFormData($('#postOffDay'));
-
+    data.userId = localStorage.getItem('WH_USER_ID');
+    data.startTime = moment(data.startTime).format();
+    data.endTime = moment(data.endTime).format();
+    
     $.post("/workinghours/rest/offdays/create", JSON.stringify(data), function(data) {
         console.log("Offday created");
     });

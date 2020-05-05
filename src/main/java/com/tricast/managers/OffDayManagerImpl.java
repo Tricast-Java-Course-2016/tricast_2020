@@ -87,7 +87,7 @@ public class OffDayManagerImpl implements OffDayManager {
 		if (offdays != null) {
 			List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
 			for (Offday offday : offdays) {
-				if (offday.getApprovedby().equals(1)) { // null értékkel nullexeption
+				if (offday.getStatus().equals(OffDayStatus.REQUESTED)) {
 					unApprovedOffDays.add(mapOffDayToOffDayResponse(offday));
 				}
 			}
@@ -120,8 +120,10 @@ public class OffDayManagerImpl implements OffDayManager {
 		newOffday.setStatus(OffDayStatus.REQUESTED);
 		newOffday.setApprovedby(1); // null értékkel nullexception
 		newOffday.setUserId(offDayRequest.getuserId());
-		newOffday.setStartTime(ZonedDateTime.parse(offDayRequest.getStartTime()));
-		newOffday.setEndTime(ZonedDateTime.parse(offDayRequest.getEndTime()));
+		newOffday.setStartTime(offDayRequest.getStartTime());
+		newOffday.setEndTime(offDayRequest.getEndTime());
+		//newOffday.setStartTime(ZonedDateTime.parse(offDayRequest.getStartTime()));
+		//newOffday.setEndTime(ZonedDateTime.parse(offDayRequest.getEndTime()));
 		
 		return newOffday;
 	}
