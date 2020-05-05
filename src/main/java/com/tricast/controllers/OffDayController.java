@@ -103,7 +103,7 @@ public class OffDayController {
 	}
 	
 	@GetMapping(path = "/current")
-	public List<OffDayResponse> getAllCurrentMonthOffDays() {
-		return offdayManager.getAllCurrentMonthOffDays();
+	public List<OffDayResponse> getAllCurrentMonthOffDays(@RequestAttribute("authentication.userId") long loggedUserId) {
+		return offdayManager.getAllCurrentMonthOffDays(loggedUserId);
 	}
 }

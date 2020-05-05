@@ -26,5 +26,5 @@ public interface OffDayManager {
 	
 	List<OffDayResponse> getAllUnApprovedOffDays() throws WorkingHoursException;;
 	
-	List<OffDayResponse> getAllCurrentMonthOffDays();
+	List<OffDayResponse> getAllCurrentMonthOffDays(long loggedUserId);
 }

@@ -98,13 +98,16 @@ public class OffDayManagerImpl implements OffDayManager {
 	}
 	
 	@Override
-	public List<OffDayResponse> getAllCurrentMonthOffDays() {
+	public List<OffDayResponse> getAllCurrentMonthOffDays(long loggedUserId) {
 		List<Offday> offdays = offDayRepository.findAll();
 		List<OffDayResponse> currentMonthOffDayList = new ArrayList<>();
+		Optional<User> newUser = userRepository.findById(loggedUserId);
+		User foundUser = newUser.get();
 		int currentMonth = ZonedDateTime.now().getMonthValue();
 		 
 		for (Offday offday : offdays)
-			if (offday.getStartTime().getMonthValue() == currentMonth)
+			if (offday.getStartTime().getMonthValue() == currentMonth &&
+				foundUser.getId() == offday.getUserId())
 				currentMonthOffDayList.add(mapOffDayToOffDayResponse(offday));
 		
 		return currentMonthOffDayList;
