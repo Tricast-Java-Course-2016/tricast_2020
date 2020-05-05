@@ -20,6 +20,26 @@
 	    <script type="text/javascript" src="js/worktimesUtil.js"></script>
 	    <script type="text/javascript" src="js/workday.js"></script>
 	    
+	    <script id="users-template" type="text/x-handlebars-template">
+			{{#with user}}
+				<div class="row mb-3">
+					<div class="col-4">
+						{{username}}
+					</div>
+					<div class="col-8">
+						
+					</div>
+				</div>
+			{{/with}}
+	    </script>
+	    
+	    <script id="date-template" type="text/x-handlebars-template">
+			{{#with selectedDate}}
+			<span>
+				{{date}}
+			</span>
+			{{/with}}
+	    </script>
 	    
 	    <script id="users-list-template" type="text/x-handlebars-template">
 				<div class="row mb-3">
@@ -35,12 +55,15 @@
 					<div class="col-4">
 						
 					</div>
+					{{#with selectedDate}}
 					<div class="col-4">
 						<div class="col-third">
-							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline"></ion-icon></a>
-							<div class="content-date" id="currentDate">2020.05</div>
-							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline"></ion-icon></a>
-						</div></div>
+							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline" id="step-backward"></ion-icon></a>
+							<div class="content-date" id="currentDate">{{date}}</div>
+							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline" id="step-forward"></ion-icon></a>
+						</div>
+					</div>
+					{{/with}}
 				</div>
 	    </script>
 	    
@@ -71,6 +94,10 @@
 
 </head>
 <body>
+<!-- <a href="#" class="btn btn-scroll"><ion-icon name="chevron-back-outline"></ion-icon></a>
+							<div class="content-date" id="currentDate">{{date}}</div>
+							<a href="#" class="btn btn-scroll"><ion-icon name="chevron-forward-outline"></ion-icon></a>
+						 -->
 	<section class="container container-workday">
 		<form>
 			<div class="row mb-5 header">
@@ -79,6 +106,28 @@
 			<div id="users-table">
 			
 			</div>
+			
+				<div class="row mb-3 date">
+					<div class="col-4"> 
+						
+					</div>
+					<div class="col-4"> 
+						<div class="col-third">
+							<a href="#" class="btn btn-scroll" ><ion-icon id="stepBackward" name="chevron-back-outline"></ion-icon></a>
+							<div class="content-date" id="currentDate">Date</div>
+							<a href="#" class="btn btn-scroll" ><ion-icon id="stepForward" name="chevron-forward-outline"></ion-icon></a>
+						</div>
+					</div>
+					<div class="col-4"> 
+						
+					</div>
+					<div class="col-4">
+					</div>
+					<div class="col-4">
+						
+					</div>
+				</div>
+				
 			<div class="row mb-3 input-name">
 				<div class="col-4 themed-grid-col">Day</div>
 				<div class="col-4 themed-grid-col">Worked hours</div>
