@@ -3,6 +3,8 @@ let currMonth = null;
 let currYear = null;
 let selectedUser = null;
 const newDayId = -1;
+let selectedYearAndMonthInString = null;
+
 window.onload = function () {
   WT.WorktimeUtils.initAjax();
   bindListeners();
@@ -17,9 +19,67 @@ function init() {
   selectedUser = loggedInUser;
   WT.WorktimeUtils.setSelectedUserId(loggedInUser);
   WT.WorktimeUtils.setSelectedUsername(SB.Utils.getUsername());
+  /*selectedYearAndMonthInString = {
+		  "date" : new Date().getFullYear().toString() + "." + (new Date().getMonth()+1).toString()
+		  }*/createSelectedDate
+  selectedYearAndMonthInString = new createSelectedDate(new Date().getFullYear().toString() + "." + (new Date().getMonth()+1).toString());
+  console.log(selectedYearAndMonthInString);
 }
 
-function bindListeners() {}
+function bindListeners() {
+	$("#stepBackward").click(function (e) {
+		stepByMonth(selectedYearAndMonthInString, false);
+	  });
+	$("#stepForward").click(function (e) {
+		stepByMonth(selectedYearAndMonthInString, true);
+	  });
+}
+
+function stepByMonth(yearAndMonthInObject, forward){
+	  let url = "/workinghours/rest/workdays/workedhours/" + selectedUser;
+	
+	let currentYear = parseInt(yearAndMonthInObject.date.substring(0,4));
+	let currentMonth = parseInt(yearAndMonthInObject.date.substring(5,7));
+	//console.log(currentYear);
+	
+	let modifiedYear = null;
+	let modifiedMonth = null;
+	//When forward is true modify the date to the next month, else prev month
+	if (forward){
+		if(currentMonth === 12){
+			modifiedMonth = 1;
+			modifiedYear = currentYear + 1;
+		} else {
+			modifiedMonth = currentMonth+1;
+			modifiedYear = currentYear;
+		}
+	} else {
+		if(currentMonth === 1){
+			modifiedMonth = 12;
+			modifiedYear = currentYear - 1;
+		} else {
+			modifiedMonth = currentMonth - 1;
+			modifiedYear = currentYear;
+		}
+	}
+	
+	selectedYearAndMonthInString = new createSelectedDate(modifiedYear.toString() + "." + modifiedMonth.toString());
+
+	  let workdayRequest = {"month": modifiedMonth, "year": modifiedYear};
+	  
+	  let workdaysGetResponse = $.post(
+		  url,
+		  JSON.stringify(workdayRequest),
+		  function (workdayRequest) {
+			  displayWorkdays(workdaysGetResponse.responseJSON, modifiedMonth-1, modifiedYear);
+			  $("#currentDate").html(
+		  		  Handlebars.compile($("#date-template").html())({
+		  		  selectedDate: selectedYearAndMonthInString
+		  		})
+		  	);
+	  });
+}
+
 
 function modifyWorktimes(workdayId, date) {
   WT.WorktimeUtils.saveWorkdayData(workdayId, date);
@@ -31,8 +91,8 @@ function loadLoggedInUserWorkdays() {
     .done(function (data) {
       SB.Utils.getUserRole() == 1
         ? loadSelectionList(response.responseJSON.userList)
-        : console.log("Don't have permission for userSelection");
-      displayWorkdays(data);
+        : loadUsername();
+      displayWorkdays(data, currMonth, currYear);
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
       WT.WorktimeUtils.defaultErrorHandling(jqXHR);
@@ -41,6 +101,20 @@ function loadLoggedInUserWorkdays() {
       // Run always
       console.log("onLoadWorkdays completed");
     });
+  $("#currentDate").html(
+		    Handlebars.compile($("#date-template").html())({
+		      selectedDate: selectedYearAndMonthInString
+		    })
+		  );
+}
+
+//continue
+function loadUsername() {
+	$("#users-table").html(
+		    Handlebars.compile($("#users-template").html())({
+		      user: {"username": SB.Utils.getUsername()},
+		    })
+	);
 }
 
 function loadSelectionList(usersList) {
@@ -52,8 +126,21 @@ function loadSelectionList(usersList) {
   $("#users-table").html(
     Handlebars.compile($("#users-list-template").html())({
       users: userSelectionList,
+      //selectedDate: selectedYearAndMonthInString
     })
   );
+  $("#currentDate").html(
+		    Handlebars.compile($("#date-template").html())({
+		      selectedDate: selectedYearAndMonthInString
+		    })
+		  );
+}
+
+
+class createSelectedDate {
+	constructor(dateInString){
+		this.date = dateInString;
+	}
 }
 
 function createUserLists(object) {
@@ -62,15 +149,19 @@ function createUserLists(object) {
   return [idList, userList];
 }
 
+//Edit
 function loadSelectedUser(userId, userName) {
   console.log("userName", userName);
+  let currentYear = parseInt(selectedYearAndMonthInString.date.substring(0,4));
+  let currentMonth = parseInt(selectedYearAndMonthInString.date.substring(5,7));
   let url = "/workinghours/rest/workdays/workedhours/" + userId;
   //let userList
   let response = $.getJSON(url)
     .done(function (data) {
-      displayWorkdays(data);
+      displayWorkdays(data, currentMonth-1, currentYear);
       WT.WorktimeUtils.setSelectedUserId(userId);
       WT.WorktimeUtils.setSelectedUsername(userName);
+      selectedUser = WT.WorktimeUtils.getSelectedUserId();
       console.log("setSelectedUserId", userId);
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
@@ -82,13 +173,14 @@ function loadSelectedUser(userId, userName) {
     });
 }
 
-function displayWorkdays(data) {
+function displayWorkdays(data, selectedMonth, selectedYear) {
   let workdayFromDataList = [];
   let workdaysSummary = new WorkdaysSummary(data);
   workdaysSummary.workdaysGetResponse.forEach((element) => {
     workdayFromDataList.push(new WorkdayFromData(element));
   });
-  let daysInMonth = getDaysInMonth(currMonth, currYear);
+  //let daysInMonth = getDaysInMonth(currMonth, currYear);
+  let daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
   let workdayToDisplayList = createWorkdayListToDisplay(
     daysInMonth,
     workdayFromDataList
