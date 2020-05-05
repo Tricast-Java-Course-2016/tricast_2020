@@ -119,6 +119,9 @@ a:active {
 	color: #007bff;;
 }
 
+.pop-up-error{
+	color: #fa210f;
+}
 /* ----- LOADER ----- */
 
 .loader {
