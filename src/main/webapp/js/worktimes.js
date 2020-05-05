@@ -27,6 +27,16 @@ function bindListeners() {
   $("#addNewWorktime").click(function (e) {
     addWorktime();
   });
+  $("#backToWorkdays").click(function (e) {
+	backToWorkdays();
+  });
+}
+
+function backToWorkdays(){
+	if (deletedFieldCount !== 0)
+		toggleDeletedWorktimesWithoutSaveModal();
+	else
+		location.href = "workday.html";
 }
 
 //Delete field
@@ -35,7 +45,7 @@ function deleteWorktime(rowIds) {
     $("#WorktimesForm")
   );
   dataFromWorktimesForm = dataFromWorktimesForm.filter(
-    (worktime) => parseInt(worktime.rowId) !== rowIds
+    (worktime) => {parseInt(worktime.rowId) !== rowIds}
   );
   refreshToDisplayWorktimes(dataFromWorktimesForm);
   deletedFieldCount++;
@@ -81,15 +91,28 @@ function acceptWorktimes() {
 
 function toggleAcceptSuccessModal(){ 
 	$("#acceptWorktimes").modal('toggle');
-};
+}
 
 function toggleCannotSaveEmptyWorktimesModal(){ 
 	$("#cannotSaveEmptyWorktimes").modal('toggle');
-};
+}
 
 function toggleWorktimesAreNotCorrectModal(){ 
 	$("#worktimesAreNotCorrect").modal('toggle');
-};
+}
+
+function toggleDeletedWorktimesWithoutSaveModal(){ 
+	$("#deletedWorktimesWithoutSave").modal('toggle');
+}
+/*
+function toggleErrorModal(errorMessageAndButtonString){ 
+	$("#modal").html(
+		    Handlebars.compile($("#error-message-template").html())({
+		    	errorMessage: errorMessageAndButtonString,
+		    })
+	);
+}
+*/
 
 //Update
 function UpdateWorkday() {
@@ -217,7 +240,7 @@ function saveWorkday() {
   let dataFromWorktimesForm = WT.WorktimeUtils.readWorktimesFormDataList(
     $("#WorktimesForm")
   );
-  console.log("dataFromWorktimesForm", dataFromWorktimesForm);
+  //console.log("dataFromWorktimesForm", dataFromWorktimesForm);
   dataFromWorktimesForm = deleteEmptyWorktime(dataFromWorktimesForm);
   if (dataFromWorktimesForm.length != 0) {
     //Go through the input fields and push them into a List
@@ -268,6 +291,7 @@ function saveWorkday() {
     refreshToDisplayWorktimes(dataFromWorktimesForm);
   } else {
     console.log("Cannot save an empty list");
+    //toggleErrorModal({"message": "asd", "errorButton" : "sad"});
     toggleCannotSaveEmptyWorktimesModal();
   }
 }
@@ -310,9 +334,7 @@ function loadWorktimes() {
   //Gonna be some default value to dismiss this alert
   if(WT.WorktimeUtils.getWorkdayId() === null){
 	  WT.WorktimeUtils.setDefaultValues(newWorkdayIdMinusOne, "2020.01.01", loggedInUser, SB.Utils.getUsername());
-	  
   }
-	  
   
   $.getJSON(url)
     .done(function (data) {
