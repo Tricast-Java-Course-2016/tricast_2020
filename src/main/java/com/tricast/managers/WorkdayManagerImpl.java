@@ -65,16 +65,21 @@ public class WorkdayManagerImpl implements WorkdayManager{
     private WorkdayWithWorkHoursStatsGetResponse getWorkday(int roleId,int userId,ZonedDateTime startDateTime,ZonedDateTime finishDateTime){
         //MARK: Ha hónap forduló van az előző hetet nem számolja javítani kell
         List<Workday> allWorkdaysAtMonth = workdayRepository.findByUserIdAndDateBetween(userId, startDateTime,finishDateTime);
-        List<Long> onlyCurrentMonthWorkDayIds = getOnlyWorkdayId(allWorkdaysAtMonth);
-        // AKOS2: ha a Workday-re már rájoin-oljtok a WorkTime-okat akkor nem kell külön betölteni
-		List<Worktime> allWorktimesAtMonthBySpecifiedUser = worktimeRepository.findAllByWorkdayIdIn(onlyCurrentMonthWorkDayIds);
-        WorkDaysStat workDaysStatManager = new WorkDaysStat(allWorkdaysAtMonth, allWorktimesAtMonthBySpecifiedUser, getDateWithFirstDayOfCurrentWeek());//MARK: itt javítani kell getDateWithFirstDayOfCurrentWeek() ide nem jó
+        WorkDaysStat workDaysStatManager = new WorkDaysStat(allWorkdaysAtMonth, collectWorktimes(allWorkdaysAtMonth), getDateWithFirstDayOfCurrentWeek());//MARK: itt javítani kell getDateWithFirstDayOfCurrentWeek() ide nem jó
         if(Role.getById(roleId)== Role.ADMIN){
             Map<Long,String> usersList = usersListMapper((List<User>) userRepository.findAll());
             return WorkdayWithWorkHoursStatsGetResponseMapper(allWorkdaysAtMonth,workDaysStatManager,usersList);
         }else{
             return workdayWithWorkHoursStatsGetResponseMapper(allWorkdaysAtMonth,workDaysStatManager);
         }
+    }
+    
+    private List<Worktime> collectWorktimes(List<Workday> allWorkdaysAtMonth ){
+        List<Worktime> collectedWorktimes = new ArrayList<Worktime>();
+        allWorkdaysAtMonth.forEach(workday ->{
+            collectedWorktimes.addAll(workday.getWorkTimes());
+        });
+        return collectedWorktimes;
     }
 
     private Map<Long,String> usersListMapper(List<User> usersList){
