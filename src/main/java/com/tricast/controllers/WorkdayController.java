@@ -16,6 +16,7 @@ import com.tricast.controllers.constants.WorkingHoursConstants;
 import static com.tricast.controllers.customClasses.ControllerHelper.userCheckValidator;
 import com.tricast.managers.WorkdayManager;
 import com.tricast.managers.exceptions.WorkingHoursException;
+import java.time.DateTimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,12 @@ public class WorkdayController {
         if (userCheckValidator(roleId, loggedUserId, userId)) {
             try {
                 return ResponseEntity.ok(workdayManager.getAllWorkdayByUserId(userId, roleId));
-            } catch (Exception e) {
+            }
+            catch (DateTimeException e) {
+                LOG.info("getAllWorkdaysByIdAndMonth: Failed to load worked hours, Date problem: ", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to load worked hours: Date problem");
+            }
+            catch (Exception e) {
                 LOG.info("getAllWorkdaysByIdAndMonth: Failed to load worked hours: ", e);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to load worked hours");
             }
