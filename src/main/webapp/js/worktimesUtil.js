@@ -10,6 +10,13 @@ window.WT.WorktimeUtils = {
     localStorage.setItem(workdayId, id);
     localStorage.setItem(workdayDate, date);
   },
+  
+  setDefaultValues: function setDefaultValues(wId, wDate, sUId, sUsername) {
+	  localStorage.setItem(workdayId, wId);
+	  localStorage.setItem(workdayDate, wDate);
+	  localStorage.setItem(selectedUserId, sUId);
+	  localStorage.setItem(selectedUsername, sUsername);
+  },
 
   setWorkdayId: function setWorkdayId(id) {
     localStorage.setItem(workdayId, id);
