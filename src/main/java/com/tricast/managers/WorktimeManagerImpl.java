@@ -82,11 +82,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
 		Workday newWorkday = requestWorkdayMapper(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday); // ezt nem itt kéne
-        // AKOS COMMENT: használjunk long id-kat a request/responsokon is
-        // az entityken is long van
-        // ha túl nagy a long akkor így visszakasztolni amúgy is veszélyes
-		int newWorkdayId = (int) createdWorkday.getId();
+		Workday createdWorkday = workdayRepository.save(newWorkday);
         List<Worktime> newWorktimes = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,createdWorkday);
 		List<Worktime> createdWorktimes =  (List<Worktime>)worktimeRepository.saveAll(newWorktimes);
 		WorkdayCreationResponse responseNewWorkday = responseNewWorkdayMapper(createdWorkday);
