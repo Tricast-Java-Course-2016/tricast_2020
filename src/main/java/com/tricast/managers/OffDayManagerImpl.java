@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayResponse;
 import com.tricast.api.responses.UserResponse;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.OffDayRepository;
 import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.entities.OffDayLimit;
@@ -80,15 +81,20 @@ public class OffDayManagerImpl implements OffDayManager {
 	}
 	
 	@Override
-	public List<OffDayResponse> getAllUnApprovedOffDays() {
+	public List<OffDayResponse> getAllUnApprovedOffDays() throws WorkingHoursException {
 		List<Offday> offdays = offDayRepository.findAll();
-		List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
 		
-		for (Offday offday : offdays)
-			if (offday.getApprovedby().equals(1)) // null értékkel nullexeption
-				unApprovedOffDays.add(mapOffDayToOffDayResponse(offday));
-		
-		return unApprovedOffDays;
+		if (offdays != null) {
+			List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
+			for (Offday offday : offdays) {
+				if (offday.getApprovedby().equals(1)) { // null értékkel nullexeption
+					unApprovedOffDays.add(mapOffDayToOffDayResponse(offday));
+				}
+			}
+			return unApprovedOffDays;
+		} else {
+			throw new WorkingHoursException("There is no Unapproved offdays to show!");
+		}
 	}
 	
 	@Override

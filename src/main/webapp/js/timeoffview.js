@@ -2,6 +2,7 @@ window.onload = function() {
     SB.Utils.initAjax();
     bindListeners();
     toggleAdminView();
+    //responseToOffer();
 };
 
 function bindListeners() {
@@ -17,7 +18,8 @@ function bindListeners() {
     $("#saveOffDay").click(function(e) {
         saveOffDay();
         $('#offdayModal').modal('hide');
-        loadOffDayRequests();
+        // location.reload();
+        // setTimeout(function() { loadCurrentOffDays(); }, 500);
     });
 }
 
@@ -25,6 +27,26 @@ function toggleAdminView() {
     $("#toggle-admin").click(function() {
         $("#table-container").toggleClass("col-md-12 col-md-8");
         $(".hide").toggle();
+    });
+
+    if (localStorage.getItem("WH_USER_ROLE") == "1") {
+        $(".admin-view").show();
+    } else {
+        $(".admin-view").hide();
+    }
+}
+
+function responseToOffer() {
+	$("#acceptOffday").click(function() {
+        $(this).parents().hide();
+        console.log('accept hide');
+        // send accept
+    });
+
+    $(".request").on('click', '#declineOffday',function() {
+        $(this).parents().hide();
+        console.log('decline hide');
+        // send decline
     });
 }
 

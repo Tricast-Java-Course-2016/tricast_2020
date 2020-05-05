@@ -7,6 +7,7 @@ import com.tricast.api.requests.OffDayLimitCreationRequest;
 import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayLimitCreationResponse;
 import com.tricast.api.responses.OffDayResponse;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.Offday;
 
 public interface OffDayManager {
@@ -23,7 +24,7 @@ public interface OffDayManager {
 
 	List<OffDayResponse> getAllOffDays();
 	
-	List<OffDayResponse> getAllUnApprovedOffDays();
+	List<OffDayResponse> getAllUnApprovedOffDays() throws WorkingHoursException;;
 	
 	List<OffDayResponse> getAllCurrentMonthOffDays();
 }
