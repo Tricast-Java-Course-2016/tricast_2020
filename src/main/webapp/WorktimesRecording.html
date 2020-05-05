@@ -36,8 +36,8 @@
 			</div>
 		{{/with}}
 	</script>
-    
-    <script id="worktimes-row-template" type="text/x-handlebars-template">
+
+        <script id="worktimes-row-template" type="text/x-handlebars-template">
 		{{#each workdayWorktimes}}
 		{{#with this}}
             	<div class="row mb-3">
@@ -45,12 +45,12 @@
 					<div class="col-2 themed-grid-col"><input type="time" class="form-control" value="{{endTime}}" placeholder="End time" name="endTime"></div>
 					<div class="col-3 themed-grid-col">
 						<select type="text" class="form-control" id="workingTypes" name="type">
-							{{#select status}}
-							<option value="OFFICE">Office</option>
-							<option value="HOMEOFFICE">Home Office</option>
-							<option value="DELEGACY">Delegacy</option>
-							{{/select}}
-						</select>
+							<option hidden selected value="{{type}}">{{type}}</option>					
+							<option value="OFFICE">OFFICE</option>
+							<option value="HOMEOFFICE">HOMEOFFICE</option>
+							<option value="DELEGACY">DELEGACY</option>
+					</select>
+
 					</div>
 					<div class="col-3 themed-grid-col"><input type="text" class="form-control" value="{{comment}}" placeholder="Description" name="comment"></div>
 					<input hidden type="number" class="form-control" value="{{rowId}}" name="rowId">
@@ -60,7 +60,7 @@
 		{{/with}}
 		{{/each}}
 	</script>
-	
+
     <script id="worktimes-row-last-template" type="text/x-handlebars-template">
 		{{#with rowLast}}
 			<div class="col-10 themed-grid-col">
@@ -83,7 +83,7 @@
 	<section class="container container-workday">
 			<form id="WorktimesForm">
 				<div class="row mb-5 header">
-					<div class="col-12 themed-grid-col"><h1>Workday</h1></div>
+					<div class="col-12 themed-grid-col"><h1>Worktimes</h1></div>
 				</div>
 				
 				<div class="row mb-3 row-first" id="row-first-table">
@@ -122,28 +122,34 @@
 					<div class="col-3 themed-grid-col"></div>
 					<div class="col-3 themed-grid-col"></div>
 					<div class="col-6 themed-grid-col col-last">
-						<a class="btn btn-secondary" href="workday.html">Back</a>
-						<a class="btn btn-primary" id="saveWorkdayWorktimes" href="#">Accept</a>
+						<a class="btn btn-secondary" href="workday.html" id="backToWorkdays">Back</a>
+						<a class="btn btn-primary" id="saveWorkdayWorktimes" href="#" data-toggle="modal" data-target="#exampleModalCenter">Accept</a>
 					</div>
 				</div>
 				
 				<div class="row mb-3 footer" id="row-last-table">
-					<div class="col-10 themed-grid-col">
-						<p>
-							<ion-icon name="construct-outline">
-							</ion-icon>
-							 2020.04.10 
-							 &#8722; 
-							<ion-icon name="person-outline">
-							</ion-icon>
-							   Erik
-						</p>
-					</div>
 				</div>
 
 			</form>
 	</section>
-	
+
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="pop-up-success modal-header">
+	        <h5 class="modal-title" id="exampleModalLongTitle">Saved succesfully!</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+
+	      <div class="pop-up-window-buttons modal-footer">
+	      	<a class="btn btn-secondary" href="workday.html">Workdays</a>
+	        <a type="button" class="btn btn-primary" data-dismiss="modal" href="#">Ok</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 	<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
 	
 </body>

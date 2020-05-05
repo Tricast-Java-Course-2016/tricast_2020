@@ -17,7 +17,9 @@ import com.tricast.api.requests.OffDayLimitCreationRequest;
 import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayLimitCreationResponse;
 import com.tricast.api.responses.OffDayResponse;
+import com.tricast.controllers.constants.WorkingHoursConstants;
 import com.tricast.managers.OffDayManager;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.entities.OffDayLimit;
 import com.tricast.repositories.entities.Offday;
 import com.tricast.repositories.entities.enums.Role;
@@ -46,7 +48,7 @@ public class OffDayController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createOffday(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody OffDayRequest offdayCreationRequest) {
+	/*public ResponseEntity<?> createOffday(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody OffDayRequest offdayCreationRequest) {
 		if(userCheck(roleId, loggedInUser, offdayCreationRequest.getuserId())){
             try {
                 return ResponseEntity.ok(offdayManager.createOffDayFromRequest(offdayCreationRequest));
@@ -57,7 +59,7 @@ public class OffDayController {
         else{
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
         }
-	}
+	}*/
 
 	public ResponseEntity<?> deleteOffdayById(@PathVariable("offdayId") long offdayId) {
 		try {
@@ -68,8 +70,8 @@ public class OffDayController {
         }
 	}
 
-	private boolean userCheck(int roleId,int loggedInUser,Long getuserId){
-        return Role.ADMIN == Role.getById(roleId) || loggedInUser ==getuserId;
+	private boolean userCheck(int roleId, int loggedInUser, Long getuserId) {
+        return Role.ADMIN == Role.getById(roleId) || loggedInUser == getuserId;
     }
 	
 	// -- ISTVÁN
@@ -83,13 +85,25 @@ public class OffDayController {
 		return offdayManager.createOffDayFromRequest(offDayRequest);
 	}
 	
-	@GetMapping(path = "/unapproved")
+	/*@GetMapping(path = "/unapproved")
 	public List<OffDayResponse> getAllUnApprovedOffDays() {
 		return offdayManager.getAllUnApprovedOffDays();
+	}*/
+	
+	@GetMapping(path = "/unapproved")
+	public ResponseEntity<?> getAllUnApprovedOffDays(@RequestAttribute("authentication.roleId") int roleId) {
+		if (Role.getById(roleId) != Role.ADMIN) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+		}
+		try {
+			return ResponseEntity.ok(offdayManager.getAllUnApprovedOffDays());
+		} catch (WorkingHoursException e) {
+			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
+		}
 	}
 	
 	@GetMapping(path = "/current")
-	public List<OffDayResponse> getAllCurrentMonthOffDays() {
-		return offdayManager.getAllCurrentMonthOffDays();
+	public List<OffDayResponse> getAllCurrentMonthOffDays(@RequestAttribute("authentication.userId") long loggedUserId) {
+		return offdayManager.getAllCurrentMonthOffDays(loggedUserId);
 	}
 }

@@ -2,6 +2,8 @@ window.onload = function() {
     SB.Utils.initAjax();
     bindListeners();
     toggleAdminView();
+    reloadPageAfterModal();
+    //responseToOffer();
 };
 
 function bindListeners() {
@@ -17,14 +19,39 @@ function bindListeners() {
     $("#saveOffDay").click(function(e) {
         saveOffDay();
         $('#offdayModal').modal('hide');
-        loadOffDayRequests();
     });
+}
+
+function reloadPageAfterModal() {
+	$('#offdayModal').on('hidden.bs.modal', function () {
+		loadCurrentOffDays();
+	});
 }
 
 function toggleAdminView() {
     $("#toggle-admin").click(function() {
         $("#table-container").toggleClass("col-md-12 col-md-8");
         $(".hide").toggle();
+    });
+
+    if (localStorage.getItem("WH_USER_ROLE") == "1") {
+        $(".admin-view").show();
+    } else {
+        $(".admin-view").hide();
+    }
+}
+
+function responseToOffer() {
+	$("#acceptOffday").click(function() {
+        $(this).parents().hide();
+        console.log('accept hide');
+        // send accept
+    });
+
+    $(".request").on('click', '#declineOffday',function() {
+        $(this).parents().hide();
+        console.log('decline hide');
+        // send decline
     });
 }
 
@@ -93,7 +120,10 @@ function displayOffDayRequests(data) {
 
 function saveOffDay() {
     let data = SB.Utils.readFormData($('#postOffDay'));
-
+    data.userId = localStorage.getItem('WH_USER_ID');
+    data.startTime = moment(data.startTime).format();
+    data.endTime = moment(data.endTime).format();
+    
     $.post("/workinghours/rest/offdays/create", JSON.stringify(data), function(data) {
         console.log("Offday created");
     });

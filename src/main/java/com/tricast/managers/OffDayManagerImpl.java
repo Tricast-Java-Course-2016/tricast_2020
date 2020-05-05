@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.tricast.api.requests.OffDayRequest;
 import com.tricast.api.responses.OffDayResponse;
 import com.tricast.api.responses.UserResponse;
+import com.tricast.managers.exceptions.WorkingHoursException;
 import com.tricast.repositories.OffDayRepository;
 import com.tricast.repositories.UserRepository;
 import com.tricast.repositories.entities.OffDayLimit;
@@ -80,25 +81,33 @@ public class OffDayManagerImpl implements OffDayManager {
 	}
 	
 	@Override
-	public List<OffDayResponse> getAllUnApprovedOffDays() {
+	public List<OffDayResponse> getAllUnApprovedOffDays() throws WorkingHoursException {
 		List<Offday> offdays = offDayRepository.findAll();
-		List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
 		
-		for (Offday offday : offdays)
-			if (offday.getApprovedby().equals(1)) // null értékkel nullexeption
-				unApprovedOffDays.add(mapOffDayToOffDayResponse(offday));
-		
-		return unApprovedOffDays;
+		if (offdays != null) {
+			List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
+			for (Offday offday : offdays) {
+				if (offday.getStatus().equals(OffDayStatus.REQUESTED)) {
+					unApprovedOffDays.add(mapOffDayToOffDayResponse(offday));
+				}
+			}
+			return unApprovedOffDays;
+		} else {
+			throw new WorkingHoursException("There is no Unapproved offdays to show!");
+		}
 	}
 	
 	@Override
-	public List<OffDayResponse> getAllCurrentMonthOffDays() {
+	public List<OffDayResponse> getAllCurrentMonthOffDays(long loggedUserId) {
 		List<Offday> offdays = offDayRepository.findAll();
 		List<OffDayResponse> currentMonthOffDayList = new ArrayList<>();
+		Optional<User> newUser = userRepository.findById(loggedUserId);
+		User foundUser = newUser.get();
 		int currentMonth = ZonedDateTime.now().getMonthValue();
 		 
 		for (Offday offday : offdays)
-			if (offday.getStartTime().getMonthValue() == currentMonth)
+			if (offday.getStartTime().getMonthValue() == currentMonth &&
+				foundUser.getId() == offday.getUserId())
 				currentMonthOffDayList.add(mapOffDayToOffDayResponse(offday));
 		
 		return currentMonthOffDayList;
@@ -111,8 +120,10 @@ public class OffDayManagerImpl implements OffDayManager {
 		newOffday.setStatus(OffDayStatus.REQUESTED);
 		newOffday.setApprovedby(1); // null értékkel nullexception
 		newOffday.setUserId(offDayRequest.getuserId());
-		newOffday.setStartTime(ZonedDateTime.parse(offDayRequest.getStartTime()));
-		newOffday.setEndTime(ZonedDateTime.parse(offDayRequest.getEndTime()));
+		newOffday.setStartTime(offDayRequest.getStartTime());
+		newOffday.setEndTime(offDayRequest.getEndTime());
+		//newOffday.setStartTime(ZonedDateTime.parse(offDayRequest.getStartTime()));
+		//newOffday.setEndTime(ZonedDateTime.parse(offDayRequest.getEndTime()));
 		
 		return newOffday;
 	}

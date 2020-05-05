@@ -1,5 +1,6 @@
 package com.tricast.managers;
 
+import com.tricast.api.requests.WorkdayByMounthRequest;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.tricast.repositories.entities.Workday;
 import com.tricast.repositories.entities.Worktime;
 import com.tricast.repositories.entities.enums.Role;
 import com.tricast.managers.custom_classes.CurrentMonthOfYear;
+import com.tricast.managers.custom_classes.DateManager;
 import com.tricast.managers.custom_classes.WorkDaysStat;
 
 @Component
@@ -45,24 +47,40 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	@Override
 	public void deleteById(long id) throws EmptyResultDataAccessException{
 		worktimeManager.deleteAllWorkTimesById(id);
+        //workdayRepository.deleteById(id);
 	}
 
 	@Override
-    public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId,int roleId) {
+    public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserId(int userId,int roleId) {
         CurrentMonthOfYear currentMonthOfYear = new CurrentMonthOfYear();
+		return getWorkday(roleId,userId,currentMonthOfYear.getFirstDayOfCurrentMonth(),currentMonthOfYear.getLastDayOfCurrentMonth());
+	}
+    
+    @Override
+    public WorkdayWithWorkHoursStatsGetResponse getAllWorkdayByUserIdAndMonth(int userId, int roleId, WorkdayByMounthRequest workdayByMounthRequest) {
+        DateManager date = new DateManager(workdayByMounthRequest.getYear(), workdayByMounthRequest.getMonth());
+        return getWorkday(roleId,userId,date.getStartDate(),date.getFinishDate());
+    }
+    
+    private WorkdayWithWorkHoursStatsGetResponse getWorkday(int roleId,int userId,ZonedDateTime startDateTime,ZonedDateTime finishDateTime){
         //MARK: Ha hónap forduló van az előző hetet nem számolja javítani kell
-		List<Workday> allWorkdaysAtMonth = workdayRepository.findByUserIdAndDateBetween(userId, currentMonthOfYear.getFirstDayOfCurrentMonth(), currentMonthOfYear.getLastDayOfCurrentMonth());
-		List<Long> onlyCurrentMonthWorkDayIds = getOnlyWorkdayId(allWorkdaysAtMonth);
-        // AKOS2: ha a Workday-re már rájoin-oljtok a WorkTime-okat akkor nem kell külön betölteni
-		List<Worktime> allWorktimesAtMonthBySpecifiedUser = worktimeRepository.findAllByWorkdayIdIn(onlyCurrentMonthWorkDayIds);
-        WorkDaysStat workDaysStatManager = new WorkDaysStat(allWorkdaysAtMonth, allWorktimesAtMonthBySpecifiedUser, getDateWithFirstDayOfCurrentWeek());
+        List<Workday> allWorkdaysAtMonth = workdayRepository.findByUserIdAndDateBetween(userId, startDateTime,finishDateTime);
+        WorkDaysStat workDaysStatManager = new WorkDaysStat(allWorkdaysAtMonth, collectWorktimes(allWorkdaysAtMonth), getDateWithFirstDayOfCurrentWeek());//MARK: itt javítani kell getDateWithFirstDayOfCurrentWeek() ide nem jó
         if(Role.getById(roleId)== Role.ADMIN){
             Map<Long,String> usersList = usersListMapper((List<User>) userRepository.findAll());
             return WorkdayWithWorkHoursStatsGetResponseMapper(allWorkdaysAtMonth,workDaysStatManager,usersList);
         }else{
             return workdayWithWorkHoursStatsGetResponseMapper(allWorkdaysAtMonth,workDaysStatManager);
         }
-	}
+    }
+    
+    private List<Worktime> collectWorktimes(List<Workday> allWorkdaysAtMonth ){
+        List<Worktime> collectedWorktimes = new ArrayList<Worktime>();
+        allWorkdaysAtMonth.forEach(workday ->{
+            collectedWorktimes.addAll(workday.getWorkTimes());
+        });
+        return collectedWorktimes;
+    }
 
     private Map<Long,String> usersListMapper(List<User> usersList){
         Map<Long,String> usersListContainerUserIdAndUsername = new HashMap<>();

@@ -82,17 +82,11 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	public WorkdayCreationResponse createWorkdayWithWorktimeFromRequest(WorkdayCreationRequest workdayCreationRequest) {
 
 		Workday newWorkday = requestWorkdayMapper(workdayCreationRequest);
-		Workday createdWorkday = workdayRepository.save(newWorkday); // ezt nem itt kéne
-        // AKOS COMMENT: használjunk long id-kat a request/responsokon is
-        // az entityken is long van
-        // ha túl nagy a long akkor így visszakasztolni amúgy is veszélyes
-		int newWorkdayId = (int) createdWorkday.getId();
-		List<Worktime> newWorktimes = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,newWorkdayId);
-
+		Workday createdWorkday = workdayRepository.save(newWorkday);
+        List<Worktime> newWorktimes = mapWorktimeCreationRequestToWorktime(workdayCreationRequest,createdWorkday);
 		List<Worktime> createdWorktimes =  (List<Worktime>)worktimeRepository.saveAll(newWorktimes);
-
 		WorkdayCreationResponse responseNewWorkday = responseNewWorkdayMapper(createdWorkday);
-		List <WorktimeCreationResponse> worktimeCreationResponse = responseNewWorktimesMapper(createdWorktimes);
+	    List <WorktimeCreationResponse> worktimeCreationResponse = responseNewWorktimesMapper(createdWorktimes);
 		return responseNewWorkdayWithNewWorktimes(responseNewWorkday,worktimeCreationResponse);
 
 	}
@@ -135,7 +129,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		 return responseWorkday;
 	}
 
-	private List<Worktime> mapWorktimeCreationRequestToWorktime(WorkdayCreationRequest worktimeCreationRequest,int newWorkDayId) {
+	private List<Worktime> mapWorktimeCreationRequestToWorktime(WorkdayCreationRequest worktimeCreationRequest,Workday newWorkDayId) {
 		List<Worktime> newWorktimes = new LinkedList<>();
 		List<WorktimeCreationRequest> worktimes = worktimeCreationRequest.getWorktimesCreationRequest();
 
@@ -146,7 +140,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 			newWorktime.setStartTime(worktime.getStartTime());
 			newWorktime.setModifiedBy(worktime.getModifiedBy());
 			newWorktime.setType(worktime.getType());
-			newWorktime.setWorkdayId(newWorkDayId);
+			newWorktime.setWorkday(newWorkDayId);
 			newWorktimes.add(newWorktime);
 		}
 		return newWorktimes;
@@ -158,10 +152,11 @@ public class WorktimeManagerImpl implements WorktimeManager{
 	@Override
 	public WorktimesUpdateResponse saveModified(WorkTimeUpdateListRequest worktimesListRequest, long workDayid) {
 		if(!worktimesListRequest.getDatasList().isEmpty()) {
-			List<Worktime> updatedWorktimes = updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(worktimesListRequest);
+			List<Worktime> updatedWorktimes = updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(worktimesListRequest,workDayid);
 			List<Worktime> responseWorktimes = updateTheDatabase(updatedWorktimes);
-			int numberOfDeletedRows = deleteRemovedWorktimes(updatedWorktimes,workDayid);
-            return updateWorktimesResponseMapper(responseWorktimes,numberOfDeletedRows);
+            int numberOfDeletedRows = deleteRemovedWorktimes(updatedWorktimes,workDayid);
+            List<WorktimeGetResponse> responseWorktime = worktimeMapper(responseWorktimes);
+            return updateWorktimesResponseMapper(responseWorktime,numberOfDeletedRows);
 		}
 		else {
 			int numberOfDeletedRows = deleteAllWorkTimesById(workDayid);
@@ -169,10 +164,10 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		}
 	}
 
-	private List<Worktime> updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest) {
+	private List<Worktime> updateExistsWorkTimesAndCreatedNewWorktimesRequestMapper(WorkTimeUpdateListRequest worktimesListRequest,long workDayId) {
 		List<Worktime> updatedWorktimes = new LinkedList<>();
 		List<WorkTimeUpdateRequest> worktimesList =worktimesListRequest.getDatasList();
-
+        Optional<Workday> workday = workdayRepository.findById(workDayId);
 		for (WorkTimeUpdateRequest updateDatas : worktimesList) {
 			Worktime updateWorktimesWorktime = new Worktime();
 			long worktimeId = updateDatas.getId();
@@ -185,7 +180,8 @@ public class WorktimeManagerImpl implements WorktimeManager{
 			updateWorktimesWorktime.setStartTime(updateDatas.getStartTime());
 			updateWorktimesWorktime.setModifiedBy(updateDatas.getModifiedBy());
 			updateWorktimesWorktime.setType(updateDatas.getType());
-			updateWorktimesWorktime.setWorkdayId(updateDatas.getWorkdayId());
+			updateWorktimesWorktime.setWorkdayId(workDayId);
+            updateWorktimesWorktime.setWorkday(workday.get());
 			updatedWorktimes.add(updateWorktimesWorktime);
 		}
 		return updatedWorktimes;
@@ -209,7 +205,7 @@ public class WorktimeManagerImpl implements WorktimeManager{
 		}
 		return updateWorktime.get();
 	}
-
+    
 	private List<Worktime> updateTheDatabase(List<Worktime> updatedWorktimes) {
 			return (List<Worktime>) worktimeRepository.saveAll(updatedWorktimes);
 	}
@@ -233,13 +229,13 @@ public class WorktimeManagerImpl implements WorktimeManager{
         return deletedAllWorktimes;
     }
 
-    private WorktimesUpdateResponse updateWorktimesResponseMapper(List<Worktime> savedWorktimes ,int numberOfDeletedRows){
+    private  WorktimesUpdateResponse updateWorktimesResponseMapper( List<WorktimeGetResponse> savedWorktimes ,int numberOfDeletedRows){
         WorktimesUpdateResponse deletedAllWorktimes = new WorktimesUpdateResponse();
         deletedAllWorktimes.setDeletedWorktimes(numberOfDeletedRows);
         deletedAllWorktimes.setUpdatedWorkTimes(savedWorktimes);
         return deletedAllWorktimes;
     }
-
+    
 	@Override
 	public int deleteAllWorkTimesById(long id) {
 		List<Worktime> deleteWorkdays = worktimeRepository.findAllByWorkdayId(id);

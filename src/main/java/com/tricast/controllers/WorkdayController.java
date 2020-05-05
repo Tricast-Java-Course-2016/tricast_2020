@@ -1,5 +1,6 @@
 package com.tricast.controllers;
 
+import com.tricast.api.requests.WorkdayByMounthRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tricast.controllers.constants.WorkingHoursConstants;
 import static com.tricast.controllers.customClasses.ControllerHelper.userCheckValidator;
 import com.tricast.managers.WorkdayManager;
-import com.tricast.managers.WorkdayManagerImpl;
 import com.tricast.managers.exceptions.WorkingHoursException;
-import com.tricast.repositories.entities.enums.Role;
+import java.time.DateTimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping(path = "rest/workdays")
@@ -30,10 +32,31 @@ public class WorkdayController {
     private WorkdayManager workdayManager;
 
     @GetMapping(path = "/workedhours/{userId}")
-    public ResponseEntity<?> getAllWorkdaysByIdAndMonth(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedUserId, @PathVariable("userId") int userId) {
+    public ResponseEntity<?> getAllWorkdaysById(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedUserId, @PathVariable("userId") int userId) {
         if (userCheckValidator(roleId, loggedUserId, userId)) {
             try {
-                return ResponseEntity.ok(workdayManager.getAllWorkdayByUserIdAndMonth(userId, roleId));
+                return ResponseEntity.ok(workdayManager.getAllWorkdayByUserId(userId, roleId));
+            }
+            catch (DateTimeException e) {
+                LOG.info("getAllWorkdaysByIdAndMonth: Failed to load worked hours, Date problem: ", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to load worked hours: Date problem");
+            }
+            catch (Exception e) {
+                LOG.info("getAllWorkdaysByIdAndMonth: Failed to load worked hours: ", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to load worked hours");
+            }
+        }
+        else{
+            LOG.info("getAllWorkdaysByIdAndMonth:" + "IllegalAccess, "+ "logged in user ID: "+loggedUserId);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
+        }
+    }
+    
+    @PostMapping(path = "/workedhours/{userId}")
+    public ResponseEntity<?> getAllWorkdaysByIdAndMonth(@RequestAttribute("authentication.roleId") int roleId, @RequestAttribute("authentication.userId") int loggedUserId, @PathVariable("userId") int userId,@RequestBody WorkdayByMounthRequest workdayByMounthRequest) {
+        if (userCheckValidator(roleId, loggedUserId, userId)) {
+            try {
+                return ResponseEntity.ok(workdayManager.getAllWorkdayByUserIdAndMonth(userId, roleId,workdayByMounthRequest));
             } catch (Exception e) {
                 LOG.info("getAllWorkdaysByIdAndMonth: Failed to load worked hours: ", e);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to load worked hours");

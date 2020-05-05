@@ -24,7 +24,7 @@ public class WorkTimeUpdateRequest {
 	private ZonedDateTime startTime;
 
 	private WorktimeType type;
-	
+    
 	private long workdayId;
 
 	public long getId() {
