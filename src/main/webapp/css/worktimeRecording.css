@@ -109,6 +109,18 @@ a:active {
 	border-color: #fff;
 }
 
+/* ----- POP-UPS ----- */
+
+.pop-up-window-buttons{
+	font-size: 60%;
+}
+
+.pop-up-success{
+	color: #007bff;;
+}
+
+/* ----- LOADER ----- */
+
 .loader {
   border: 16px solid #f3f3f3;
   border-radius: 50%;
