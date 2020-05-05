@@ -204,6 +204,14 @@ a:active {
 	padding-right: 70px;
 }
 
+.date {
+	letter-spacing: 10px;
+	 margin-right:-10px;
+	font-weight: 500;
+	font-size: 120%;
+	color: #007bff;
+}
+
 /* ----------------------------------------------- */
 /* SEARCH */
 /* ----------------------------------------------- */
