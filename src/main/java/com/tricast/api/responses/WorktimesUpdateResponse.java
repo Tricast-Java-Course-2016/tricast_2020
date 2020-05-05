@@ -5,26 +5,25 @@
  */
 package com.tricast.api.responses;
 
-import com.tricast.repositories.entities.Worktime;
 import java.util.LinkedList;
 import java.util.List;
 
 public class WorktimesUpdateResponse {
 
-    private List<Worktime> updatedWorkTimes;
+    private List<WorktimeGetResponse> updatedWorkTimes;
     private int deletedWorktimes;
 
     
     public WorktimesUpdateResponse() {
-        this.updatedWorkTimes = new LinkedList<Worktime>();
+        this.updatedWorkTimes = new LinkedList<WorktimeGetResponse>();
         this.deletedWorktimes = 0;
     }
 
-    public List<Worktime> getUpdatedWorkTimes() {
+    public List<WorktimeGetResponse> getUpdatedWorkTimes() {
         return updatedWorkTimes;
     }
 
-    public void setUpdatedWorkTimes(List<Worktime> updatedWorkTimes) {
+    public void setUpdatedWorkTimes(List<WorktimeGetResponse> updatedWorkTimes) {
         this.updatedWorkTimes = updatedWorkTimes;
     }
 

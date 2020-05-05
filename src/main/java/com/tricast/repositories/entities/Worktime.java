@@ -16,6 +16,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.tricast.repositories.entities.enums.WorktimeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -56,12 +58,11 @@ public class Worktime implements Serializable {
 	@Column(name="type")
 	private WorktimeType type;
 
-	//bi-directional many-to-one association to Workday
-	/*@ManyToOne
-	@JoinColumn(name="workdayid")
-	private Workday workday;*/
+    @ManyToOne
+    @JoinColumn(name = "workdayid")
+    private Workday workday;
 
-	@Column(name="workdayid")
+	@Column(name = "workdayid",updatable = false, insertable = false)
 	private long workdayId;
 	
 	public Worktime() {
@@ -162,6 +163,14 @@ public class Worktime implements Serializable {
 	public void setWorkday(Workday workday) {
 		this.workday = workday;
 	}*/
+
+    public Workday getWorkday() {
+        return workday;
+    }
+
+    public void setWorkday(Workday workday) {
+        this.workday = workday;
+    }
 
 	
 }

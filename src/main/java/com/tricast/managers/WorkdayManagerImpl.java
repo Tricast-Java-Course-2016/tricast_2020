@@ -45,6 +45,7 @@ public class WorkdayManagerImpl implements WorkdayManager{
 	@Override
 	public void deleteById(long id) throws EmptyResultDataAccessException{
 		worktimeManager.deleteAllWorkTimesById(id);
+        //workdayRepository.deleteById(id);
 	}
 
 	@Override

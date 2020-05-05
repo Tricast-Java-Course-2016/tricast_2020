@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tricast.controllers.constants.WorkingHoursConstants;
 import static com.tricast.controllers.customClasses.ControllerHelper.userCheckValidator;
 import com.tricast.managers.WorkdayManager;
-import com.tricast.managers.WorkdayManagerImpl;
 import com.tricast.managers.exceptions.WorkingHoursException;
-import com.tricast.repositories.entities.enums.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
