@@ -3,6 +3,8 @@ package com.tricast.api.responses;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+import com.tricast.repositories.entities.enums.SpecialDayType;
+
 public class SpecialDayResponse {
 
 	private static final long serialVersionUID = 1870713627974030003L;
@@ -49,6 +51,10 @@ public class SpecialDayResponse {
 		this.type = getSpecialdayType(date);
 		return this.type;
 	}
+	
+	public String getType() {
+		return type;
+	}
 
 	private String getSpecialdayType(ZonedDateTime date) {
 		Date inputDate = Date.from(date.toInstant());
@@ -56,9 +62,9 @@ public class SpecialDayResponse {
 		String type;
 
 		if (day.substring(0, 3) == "Sat") {
-			type = "WORKDAY";
+			type = SpecialDayType.WORKDAY.name();
 		} else {
-			type = "HOLIDAY";
+			type = SpecialDayType.HOLIDAY.name();
 		}
 		return type;
 	}

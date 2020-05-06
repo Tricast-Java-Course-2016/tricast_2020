@@ -34,7 +34,7 @@ function displaySpecialdays(data) {
 	data.forEach(function(entry) {
 		specialdayList.push({
 			'date' : entry.date,
-			//'type' : entry.type
+			'type' : entry.type
 		});
 	});
 
