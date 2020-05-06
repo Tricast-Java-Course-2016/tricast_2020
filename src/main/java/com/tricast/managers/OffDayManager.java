@@ -14,17 +14,17 @@ public interface OffDayManager {
 
 	Optional<Offday> getById(long id);
 
-    List<OffDayResponse> getAllOffDayByOffDayId(long offdayId) throws Exception;
+	OffDayResponse createOffDayFromRequest(OffDayRequest offDayRequest);
 
-    List<OffDayResponse> getAllOffDayByOffDayId(int loggedInUser, long offdayId) throws Exception;
+	List<OffDayResponse> getAllOffDayByOffDayId(long offdayId) throws Exception;
 
-    OffDayResponse createOffDayFromRequest(OffDayRequest offDayRequest);
-    
-    void deleteOffday(long leaveId);
+	List<OffDayResponse> getAllOffDayByOffDayId(int loggedInUser, long offdayId) throws Exception;
 
 	List<OffDayResponse> getAllOffDays();
-	
+
 	List<OffDayResponse> getAllUnApprovedOffDays() throws WorkingHoursException;;
-	
+
 	List<OffDayResponse> getAllCurrentMonthOffDays(long loggedUserId);
+
+	void deleteOffday(long leaveId);
 }

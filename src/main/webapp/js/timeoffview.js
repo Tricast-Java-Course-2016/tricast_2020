@@ -74,8 +74,8 @@ function displayCurrentOffDays(data) {
     data.forEach(function(entry) {
         currentOffDayList.push({
             'fullName' : entry.fullName,
-            'startTime' : entry.startTime,
-            'endTime' : entry.endTime,
+            'startTime' : (entry.startTime).substring(0, 10),
+            'endTime' : (entry.endTime).substring(0, 10),
             'actualDayCount' : entry.actualDayCount,
             'type' : entry.type
         });

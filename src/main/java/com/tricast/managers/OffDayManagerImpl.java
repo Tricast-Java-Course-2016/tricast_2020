@@ -39,26 +39,29 @@ public class OffDayManagerImpl implements OffDayManager {
 		this.userRepository = userRepository;
 	}
 
-    @Override
-    public List<OffDayResponse> getAllOffDayByOffDayId(long offdayId) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Optional<Offday> getById(long id) {
+		return offDayRepository.findById(id);
+	}
 
+	@Override
+	public OffDayResponse createOffDayFromRequest(OffDayRequest offdayRequest) {
+		Offday newOffDay = mapOffDayCreationRequestToOffDay(offdayRequest);
+		Offday createdOffDay = offDayRepository.save(newOffDay);
+		return mapOffDayToOffDayResponse(createdOffDay);
+	}
 
-    @Override
-    public List<OffDayResponse> getAllOffDayByOffDayId(int loggedInUser, long offdayId) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<OffDayResponse> getAllOffDayByOffDayId(long offdayId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-
-    @Override
-    public OffDayResponse createOffDayFromRequest(OffDayRequest offdayRequest) {
-    	Offday newOffDay = mapOffDayCreationRequestToOffDay(offdayRequest);
-    	Offday createdOffDay = offDayRepository.save(newOffDay);
-    	return mapOffDayToOffDayResponse(createdOffDay);
-    }
+	@Override
+	public List<OffDayResponse> getAllOffDayByOffDayId(int loggedInUser, long offdayId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public List<OffDayResponse> getAllOffDays() {
@@ -66,24 +69,9 @@ public class OffDayManagerImpl implements OffDayManager {
 	}
 
 	@Override
-	public Optional<Offday> getById(long id) {
-		return offDayRepository.findById(id);
-	}
-
-	@Override
-	public void deleteOffday(long leaveId) {
-		List<Offday> offdays = offDayRepository.findAll();
-		for (Offday o : offdays) {
-			if (o.getId() == leaveId) {
-				offDayRepository.deleteById(o.getId());
-			}
-		}
-	}
-	
-	@Override
 	public List<OffDayResponse> getAllUnApprovedOffDays() throws WorkingHoursException {
 		List<Offday> offdays = offDayRepository.findAll();
-		
+
 		if (offdays != null) {
 			List<OffDayResponse> unApprovedOffDays = new ArrayList<>();
 			for (Offday offday : offdays) {
@@ -96,7 +84,7 @@ public class OffDayManagerImpl implements OffDayManager {
 			throw new WorkingHoursException("There is no Unapproved offdays to show!");
 		}
 	}
-	
+
 	@Override
 	public List<OffDayResponse> getAllCurrentMonthOffDays(long loggedUserId) {
 		List<Offday> offdays = offDayRepository.findAll();
@@ -104,13 +92,22 @@ public class OffDayManagerImpl implements OffDayManager {
 		Optional<User> newUser = userRepository.findById(loggedUserId);
 		User foundUser = newUser.get();
 		int currentMonth = ZonedDateTime.now().getMonthValue();
-		 
+
 		for (Offday offday : offdays)
-			if (offday.getStartTime().getMonthValue() == currentMonth &&
-				foundUser.getId() == offday.getUserId())
+			if (offday.getStartTime().getMonthValue() == currentMonth && foundUser.getId() == offday.getUserId())
 				currentMonthOffDayList.add(mapOffDayToOffDayResponse(offday));
-		
+
 		return currentMonthOffDayList;
+	}
+
+	@Override
+	public void deleteOffday(long leaveId) {
+		List<Offday> offdays = offDayRepository.findAll();
+		for (Offday o : offdays) {
+			if (o.getId() == leaveId) {
+				offDayRepository.deleteById(o.getId());
+			}
+		}
 	}
 
 	private Offday mapOffDayCreationRequestToOffDay(OffDayRequest offDayRequest) {
@@ -118,22 +115,20 @@ public class OffDayManagerImpl implements OffDayManager {
 		newOffday.setDate(ZonedDateTime.now());
 		newOffday.setType(offDayRequest.getType());
 		newOffday.setStatus(OffDayStatus.REQUESTED);
-		newOffday.setApprovedby(1); // null értékkel nullexception
+		newOffday.setApprovedby(null);
 		newOffday.setUserId(offDayRequest.getuserId());
 		newOffday.setStartTime(offDayRequest.getStartTime());
 		newOffday.setEndTime(offDayRequest.getEndTime());
-		//newOffday.setStartTime(ZonedDateTime.parse(offDayRequest.getStartTime()));
-		//newOffday.setEndTime(ZonedDateTime.parse(offDayRequest.getEndTime()));
-		
+
 		return newOffday;
 	}
-	
+
 	private OffDayResponse mapOffDayToOffDayResponse(Offday offDay) {
 		OffDayResponse createdOffDay = new OffDayResponse();
 		Optional<User> newUser = userRepository.findById(offDay.getUserId());
 		StringBuilder fullName = new StringBuilder();
 		User foundUser = newUser.get();
-		
+
 		fullName.append(foundUser.getLastName() + " ");
 		fullName.append(foundUser.getMiddleName() + " ");
 		fullName.append(foundUser.getFirstName());
@@ -142,10 +137,10 @@ public class OffDayManagerImpl implements OffDayManager {
 		createdOffDay.setUserId(offDay.getUserId());
 		createdOffDay.setStartTime(offDay.getStartTime());
 		createdOffDay.setEndTime(offDay.getEndTime());
-		createdOffDay.setActualDayCount(offDay.getStartTime().until(offDay.getEndTime(), ChronoUnit.DAYS));
+		createdOffDay.setActualDayCount(offDay.getStartTime().until(offDay.getEndTime(), ChronoUnit.DAYS) + 1);
 		return createdOffDay;
 	}
-	
+
 	private List<OffDayResponse> offDayMapper(List<Offday> offdays) {
 		List<OffDayResponse> offdayResponseList = new ArrayList<>();
 		offdays.forEach(offday -> {

@@ -32,64 +32,30 @@ public class OffDayController {
 	private OffDayManager offdayManager;
 
 	@GetMapping
-    public List<OffDayResponse> getAllOffDayByOffDayId(@RequestAttribute("authentication.roleId") int roleId,
-            @RequestAttribute("authentication.userId") int loggedInUser, @PathVariable("workdayId") long offdayID)
-            throws Exception {
-		if(Role.getById(roleId) == Role.ADMIN){
-            return offdayManager.getAllOffDayByOffDayId(offdayID);
-        }
-        else{
-            try {
-                return offdayManager.getAllOffDayByOffDayId(loggedInUser,offdayID);
-            } catch (Exception e) {
-                throw e;
-            }
-        }
+	public List<OffDayResponse> getAllOffDayByOffDayId(@RequestAttribute("authentication.roleId") int roleId,
+			@RequestAttribute("authentication.userId") int loggedInUser, @PathVariable("workdayId") long offdayID)
+			throws Exception {
+		if (Role.getById(roleId) == Role.ADMIN) {
+			return offdayManager.getAllOffDayByOffDayId(offdayID);
+		} else {
+			try {
+				return offdayManager.getAllOffDayByOffDayId(loggedInUser, offdayID);
+			} catch (Exception e) {
+				throw e;
+			}
+		}
 	}
 
-	@PostMapping
-	/*public ResponseEntity<?> createOffday(@RequestAttribute("authentication.roleId") int roleId,@RequestAttribute("authentication.userId") int loggedInUser,@RequestBody OffDayRequest offdayCreationRequest) {
-		if(userCheck(roleId, loggedInUser, offdayCreationRequest.getuserId())){
-            try {
-                return ResponseEntity.ok(offdayManager.createOffDayFromRequest(offdayCreationRequest));
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        }
-        else{
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Permission denied");
-        }
-	}*/
-
-	public ResponseEntity<?> deleteOffdayById(@PathVariable("offdayId") long offdayId) {
-		try {
-            offdayManager.deleteOffday(offdayId);
-            return ResponseEntity.ok("DELETE SUCCESSFUL");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-	}
-
-	private boolean userCheck(int roleId, int loggedInUser, Long getuserId) {
-        return Role.ADMIN == Role.getById(roleId) || loggedInUser == getuserId;
-    }
-	
-	// -- ISTVÁN
 	@GetMapping(path = "/all")
 	public List<OffDayResponse> getAllOffDays() {
 		return offdayManager.getAllOffDays();
 	}
-	
+
 	@PostMapping(path = "/create")
 	public OffDayResponse createOffDayFromRequest(@RequestBody OffDayRequest offDayRequest) {
 		return offdayManager.createOffDayFromRequest(offDayRequest);
 	}
-	
-	/*@GetMapping(path = "/unapproved")
-	public List<OffDayResponse> getAllUnApprovedOffDays() {
-		return offdayManager.getAllUnApprovedOffDays();
-	}*/
-	
+
 	@GetMapping(path = "/unapproved")
 	public ResponseEntity<?> getAllUnApprovedOffDays(@RequestAttribute("authentication.roleId") int roleId) {
 		if (Role.getById(roleId) != Role.ADMIN) {
@@ -101,9 +67,19 @@ public class OffDayController {
 			return ResponseEntity.status(WorkingHoursConstants.APPLICATION_ERROR_RESPONSE_CODE).body(e.getMessage());
 		}
 	}
-	
+
 	@GetMapping(path = "/current")
-	public List<OffDayResponse> getAllCurrentMonthOffDays(@RequestAttribute("authentication.userId") long loggedUserId) {
+	public List<OffDayResponse> getAllCurrentMonthOffDays(
+			@RequestAttribute("authentication.userId") long loggedUserId) {
 		return offdayManager.getAllCurrentMonthOffDays(loggedUserId);
+	}
+
+	public ResponseEntity<?> deleteOffdayById(@PathVariable("offdayId") long offdayId) {
+		try {
+			offdayManager.deleteOffday(offdayId);
+			return ResponseEntity.ok("DELETE SUCCESSFUL");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 }
